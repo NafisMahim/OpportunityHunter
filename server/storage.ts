@@ -12,6 +12,8 @@ import {
   type Activity,
   type InsertActivity
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, like, or, desc } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -39,105 +41,74 @@ export interface IStorage {
   createActivity(activity: InsertActivity): Promise<Activity>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private opportunities: Map<number, Opportunity>;
-  private applications: Map<number, Application>;
-  private activities: Map<number, Activity>;
-  private currentUserId: number;
-  private currentOpportunityId: number;
-  private currentApplicationId: number;
-  private currentActivityId: number;
-
+export class DatabaseStorage implements IStorage {
   constructor() {
-    this.users = new Map();
-    this.opportunities = new Map();
-    this.applications = new Map();
-    this.activities = new Map();
-    this.currentUserId = 1;
-    this.currentOpportunityId = 1;
-    this.currentApplicationId = 1;
-    this.currentActivityId = 1;
-    
-    // Initialize with basic user profile only
+    // Initialize basic user if not exists
     this.initializeBasicUser();
   }
 
-  private initializeBasicUser() {
-    // Create basic user profile for demo
-    const user: User = {
-      id: this.currentUserId++,
-      name: "User",
-      email: "user@example.com",
-      location: null,
-      experienceLevel: null,
-      skills: null,
-      preferences: null,
-      createdAt: new Date(),
-    };
-    this.users.set(user.id, user);
+  private async initializeBasicUser() {
+    try {
+      // Check if basic user exists
+      const existingUser = await db.select().from(users).where(eq(users.id, 1));
+      
+      if (existingUser.length === 0) {
+        // Create basic user profile for demo
+        await db.insert(users).values({
+          name: "User",
+          email: "user@example.com",
+          location: null,
+          experienceLevel: null,
+          skills: null,
+          preferences: null,
+        });
+      }
+    } catch (error) {
+      console.error("Error initializing basic user:", error);
+    }
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.email === email);
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { 
-      ...insertUser, 
-      id,
-      location: insertUser.location || null,
-      experienceLevel: insertUser.experienceLevel || null,
-      skills: insertUser.skills || null,
-      preferences: insertUser.preferences || null,
-      createdAt: new Date()
-    };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   async updateUser(id: number, updateData: Partial<InsertUser>): Promise<User | undefined> {
-    const user = this.users.get(id);
-    if (!user) return undefined;
-    
-    const updatedUser = { ...user, ...updateData };
-    this.users.set(id, updatedUser);
-    return updatedUser;
+    const [user] = await db
+      .update(users)
+      .set(updateData)
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
   }
 
   async getOpportunities(): Promise<Opportunity[]> {
-    return Array.from(this.opportunities.values()).sort((a, b) => 
-      new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
-    );
+    return await db.select().from(opportunities).orderBy(desc(opportunities.createdAt));
   }
 
   async getOpportunity(id: number): Promise<Opportunity | undefined> {
-    return this.opportunities.get(id);
+    const [opportunity] = await db.select().from(opportunities).where(eq(opportunities.id, id));
+    return opportunity || undefined;
   }
 
   async createOpportunity(insertOpportunity: InsertOpportunity): Promise<Opportunity> {
-    const id = this.currentOpportunityId++;
-    const opportunity: Opportunity = { 
-      ...insertOpportunity, 
-      id,
-      location: insertOpportunity.location || null,
-      salary: insertOpportunity.salary || null,
-      amount: insertOpportunity.amount || null,
-      prize: insertOpportunity.prize || null,
-      organization: insertOpportunity.organization || null,
-      deadline: insertOpportunity.deadline || null,
-      url: insertOpportunity.url || null,
-      relevancyScore: insertOpportunity.relevancyScore || null,
-      requirements: insertOpportunity.requirements || null,
-      tags: insertOpportunity.tags || null,
-      createdAt: new Date()
-    };
-    this.opportunities.set(id, opportunity);
+    const [opportunity] = await db
+      .insert(opportunities)
+      .values(insertOpportunity)
+      .returning();
     return opportunity;
   }
 
@@ -146,70 +117,67 @@ export class MemStorage implements IStorage {
     source?: string;
     location?: string;
   }): Promise<Opportunity[]> {
-    let results = Array.from(this.opportunities.values());
+    let whereConditions = [];
 
     if (query) {
-      const lowerQuery = query.toLowerCase();
-      results = results.filter(opp => 
-        opp.title.toLowerCase().includes(lowerQuery) ||
-        opp.description.toLowerCase().includes(lowerQuery) ||
-        opp.organization?.toLowerCase().includes(lowerQuery) ||
-        opp.tags?.some(tag => tag.toLowerCase().includes(lowerQuery))
+      const lowerQuery = `%${query.toLowerCase()}%`;
+      whereConditions.push(
+        or(
+          like(opportunities.title, lowerQuery),
+          like(opportunities.description, lowerQuery),
+          like(opportunities.organization, lowerQuery)
+        )
       );
     }
 
     if (filters?.type && filters.type !== 'all') {
-      results = results.filter(opp => opp.type === filters.type);
+      whereConditions.push(eq(opportunities.type, filters.type));
     }
 
     if (filters?.source && filters.source !== 'all') {
-      results = results.filter(opp => opp.source === filters.source);
+      whereConditions.push(eq(opportunities.source, filters.source));
     }
 
     if (filters?.location) {
-      results = results.filter(opp => 
-        opp.location?.toLowerCase().includes(filters.location!.toLowerCase())
-      );
+      whereConditions.push(like(opportunities.location, `%${filters.location}%`));
     }
 
-    return results.sort((a, b) => (b.relevancyScore || 0) - (a.relevancyScore || 0));
+    const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+    return await db
+      .select()
+      .from(opportunities)
+      .where(whereClause)
+      .orderBy(desc(opportunities.relevancyScore), desc(opportunities.createdAt));
   }
 
   async getApplications(userId: number): Promise<Application[]> {
-    return Array.from(this.applications.values()).filter(app => app.userId === userId);
+    return await db.select().from(applications).where(eq(applications.userId, userId));
   }
 
   async createApplication(insertApplication: InsertApplication): Promise<Application> {
-    const id = this.currentApplicationId++;
-    const application: Application = { 
-      ...insertApplication, 
-      id,
-      userId: insertApplication.userId || null,
-      opportunityId: insertApplication.opportunityId || null,
-      autoApplied: insertApplication.autoApplied || null,
-      appliedAt: new Date()
-    };
-    this.applications.set(id, application);
+    const [application] = await db
+      .insert(applications)
+      .values(insertApplication)
+      .returning();
     return application;
   }
 
   async getActivities(userId: number): Promise<Activity[]> {
-    return Array.from(this.activities.values())
-      .filter(activity => activity.userId === userId)
-      .sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
+    return await db
+      .select()
+      .from(activities)
+      .where(eq(activities.userId, userId))
+      .orderBy(desc(activities.createdAt));
   }
 
   async createActivity(insertActivity: InsertActivity): Promise<Activity> {
-    const id = this.currentActivityId++;
-    const activity: Activity = { 
-      ...insertActivity, 
-      id,
-      userId: insertActivity.userId || null,
-      createdAt: new Date()
-    };
-    this.activities.set(id, activity);
+    const [activity] = await db
+      .insert(activities)
+      .values(insertActivity)
+      .returning();
     return activity;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
