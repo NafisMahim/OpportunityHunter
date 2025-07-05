@@ -17,15 +17,19 @@ export default function LoadingModal({ isOpen, onClose }: LoadingModalProps) {
             </div>
           </div>
           
-          <h3 className="text-xl font-bold text-primary mb-2">Scraping Opportunities</h3>
-          <p className="text-gray-300 mb-4">Finding the best matches for your profile...</p>
+          <h3 className="text-xl font-bold text-primary mb-2">Scraping Real Opportunities</h3>
+          <p className="text-gray-300 mb-4">Scanning Grants.gov, AngelList, and Fastweb for authentic opportunities...</p>
           
           <Progress 
-            value={45} 
+            value={65} 
             className="w-full mb-4 bg-cyber-dark"
           />
           
-          <p className="text-sm text-gray-400">Processed 127 of 284 sources</p>
+          <div className="text-sm text-gray-400 space-y-1">
+            <p>✓ Grants.gov - Government grants and research funding</p>
+            <p>🔄 AngelList - Startup jobs and internships</p>
+            <p>⏳ Fastweb - Scholarships and educational opportunities</p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

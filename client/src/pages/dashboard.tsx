@@ -138,15 +138,47 @@ export default function Dashboard() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {paginatedOpportunities.map((opportunity) => (
-                  <OpportunityCard
-                    key={opportunity.id}
-                    opportunity={opportunity}
-                    userId={currentUserId}
-                  />
-                ))}
-              </div>
+              {opportunities.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="opportunity-card rounded-xl p-12 max-w-2xl mx-auto">
+                    <div className="w-24 h-24 bg-gradient-to-r from-primary to-[hsl(328,100%,54%)] rounded-full mx-auto mb-6 flex items-center justify-center">
+                      <div className="w-16 h-16 bg-cyber-black rounded-full flex items-center justify-center">
+                        <span className="text-2xl">🚀</span>
+                      </div>
+                    </div>
+                    <h3 className="text-2xl font-bold text-primary mb-4">Ready to Find Opportunities?</h3>
+                    <p className="text-gray-300 mb-8 text-lg">
+                      Start by completing your profile and clicking "Start Scraping" to discover personalized opportunities from across the web.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <Button
+                        onClick={handleStartScraping}
+                        disabled={scrapeMutation.isPending}
+                        className="bg-gradient-to-r from-primary to-[hsl(328,100%,54%)] text-white hover:shadow-lg hover:shadow-primary/50 text-lg px-8 py-3"
+                      >
+                        {scrapeMutation.isPending ? "Scraping..." : "Start Scraping Now"}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => document.getElementById('profile-section')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="border-primary/30 text-primary hover:bg-primary/10 text-lg px-8 py-3"
+                      >
+                        Complete Profile
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {paginatedOpportunities.map((opportunity) => (
+                    <OpportunityCard
+                      key={opportunity.id}
+                      opportunity={opportunity}
+                      userId={currentUserId}
+                    />
+                  ))}
+                </div>
+              )}
 
               {/* Pagination */}
               {totalPages > 1 && (

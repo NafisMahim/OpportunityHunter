@@ -59,175 +59,23 @@ export class MemStorage implements IStorage {
     this.currentApplicationId = 1;
     this.currentActivityId = 1;
     
-    // Initialize with sample data
-    this.initializeSampleData();
+    // Initialize with basic user profile only
+    this.initializeBasicUser();
   }
 
-  private initializeSampleData() {
-    // Create sample user
-    const sampleUser: User = {
+  private initializeBasicUser() {
+    // Create basic user profile for demo
+    const user: User = {
       id: this.currentUserId++,
-      name: "Alex Chen",
-      email: "alex.chen@email.com",
-      location: "San Francisco, CA",
-      experienceLevel: "Mid-Level (3-5 years)",
-      skills: ["React", "TypeScript", "Node.js", "Python", "Machine Learning", "Data Science"],
-      preferences: ["jobs", "internships"],
+      name: "User",
+      email: "user@example.com",
+      location: null,
+      experienceLevel: null,
+      skills: null,
+      preferences: null,
       createdAt: new Date(),
     };
-    this.users.set(sampleUser.id, sampleUser);
-
-    // Create sample opportunities
-    const sampleOpportunities: Opportunity[] = [
-      {
-        id: this.currentOpportunityId++,
-        title: "Senior Full-Stack Developer",
-        description: "Join our cutting-edge fintech startup building the next generation of decentralized payment solutions. We're looking for a senior developer with expertise in React, Node.js, and blockchain technologies.",
-        type: "job",
-        location: "San Francisco, CA",
-        salary: "$120k - $180k",
-        amount: null,
-        prize: null,
-        organization: "TechFlow Inc.",
-        source: "AngelList",
-        deadline: "Dec 15, 2024",
-        url: "https://angel.co/company/techflow/jobs",
-        relevancyScore: 95,
-        requirements: ["React", "Node.js", "5+ years experience"],
-        tags: ["fintech", "blockchain", "remote"],
-        createdAt: new Date(),
-      },
-      {
-        id: this.currentOpportunityId++,
-        title: "NSF AI Innovation Research Grant",
-        description: "National Science Foundation seeks proposals for innovative artificial intelligence research projects focusing on ethical AI development and applications in healthcare and education sectors.",
-        type: "grant",
-        location: "Remote",
-        salary: null,
-        amount: "Up to $500,000",
-        prize: null,
-        organization: "National Science Foundation",
-        source: "Grants.gov",
-        deadline: "Jan 30, 2025",
-        url: "https://grants.gov/view-opportunity.html?oppId=350427",
-        relevancyScore: 78,
-        requirements: ["PhD in CS/AI", "Research experience"],
-        tags: ["AI", "research", "healthcare"],
-        createdAt: new Date(),
-      },
-      {
-        id: this.currentOpportunityId++,
-        title: "ML Engineering Intern - Summer 2025",
-        description: "Join Google's AI research team for a 12-week summer internship focused on developing next-generation machine learning models for natural language processing and computer vision applications.",
-        type: "internship",
-        location: "Mountain View, CA",
-        salary: "$8,500/month",
-        amount: null,
-        prize: null,
-        organization: "Google",
-        source: "Google Careers",
-        deadline: "Feb 1, 2025",
-        url: "https://careers.google.com/jobs/results",
-        relevancyScore: 92,
-        requirements: ["CS student", "ML experience", "Python"],
-        tags: ["ML", "internship", "AI"],
-        createdAt: new Date(),
-      },
-      {
-        id: this.currentOpportunityId++,
-        title: "Tech Women Leaders Scholarship",
-        description: "Supporting women pursuing advanced degrees in computer science, engineering, or related technology fields. Awards up to $10,000 for academic excellence and leadership potential.",
-        type: "scholarship",
-        location: "Remote",
-        salary: null,
-        amount: "Up to $10,000",
-        prize: null,
-        organization: "Women in Tech Foundation",
-        source: "Fastweb",
-        deadline: "Mar 15, 2025",
-        url: "https://fastweb.com/scholarships",
-        relevancyScore: 65,
-        requirements: ["Female", "CS/Engineering student", "3.5+ GPA"],
-        tags: ["scholarship", "women", "STEM"],
-        createdAt: new Date(),
-      },
-      {
-        id: this.currentOpportunityId++,
-        title: "Global AI Innovation Challenge",
-        description: "International competition seeking innovative AI solutions for climate change mitigation. Winners receive funding and mentorship to develop their solutions into scalable products.",
-        type: "competition",
-        location: "Global (Remote)",
-        salary: null,
-        amount: null,
-        prize: "$50,000 Grand Prize",
-        organization: "Climate Innovation Hub",
-        source: "Innovation Hub",
-        deadline: "Apr 1, 2025",
-        url: "https://climateinnovation.org/challenge",
-        relevancyScore: 89,
-        requirements: ["AI/ML expertise", "Climate focus", "Team or individual"],
-        tags: ["competition", "AI", "climate"],
-        createdAt: new Date(),
-      },
-      {
-        id: this.currentOpportunityId++,
-        title: "Data Scientist - Healthcare AI",
-        description: "Join our mission to revolutionize healthcare through AI. We're seeking a data scientist to develop predictive models for early disease detection and personalized treatment recommendations.",
-        type: "job",
-        location: "Boston, MA",
-        salary: "$95k - $140k",
-        amount: null,
-        prize: null,
-        organization: "HealthAI Solutions",
-        source: "HealthTech Jobs",
-        deadline: "Jan 10, 2025",
-        url: "https://healthtech.jobs/data-scientist",
-        relevancyScore: 74,
-        requirements: ["Data Science", "Healthcare exp", "Python/R"],
-        tags: ["healthcare", "AI", "data science"],
-        createdAt: new Date(),
-      },
-    ];
-
-    sampleOpportunities.forEach(opp => {
-      this.opportunities.set(opp.id, opp);
-    });
-
-    // Create sample activities
-    const sampleActivities: Activity[] = [
-      {
-        id: this.currentActivityId++,
-        userId: 1,
-        message: "Successfully scraped 15 new opportunities from Grants.gov",
-        type: "scrape",
-        createdAt: new Date(Date.now() - 2 * 60 * 1000), // 2 minutes ago
-      },
-      {
-        id: this.currentActivityId++,
-        userId: 1,
-        message: "Auto-applied to \"ML Engineering Intern\" at Google",
-        type: "apply",
-        createdAt: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
-      },
-      {
-        id: this.currentActivityId++,
-        userId: 1,
-        message: "Skipped application due to CAPTCHA requirement",
-        type: "error",
-        createdAt: new Date(Date.now() - 8 * 60 * 1000), // 8 minutes ago
-      },
-      {
-        id: this.currentActivityId++,
-        userId: 1,
-        message: "Found 8 new matching opportunities from AngelList",
-        type: "scrape",
-        createdAt: new Date(Date.now() - 12 * 60 * 1000), // 12 minutes ago
-      },
-    ];
-
-    sampleActivities.forEach(activity => {
-      this.activities.set(activity.id, activity);
-    });
+    this.users.set(user.id, user);
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -243,6 +91,10 @@ export class MemStorage implements IStorage {
     const user: User = { 
       ...insertUser, 
       id,
+      location: insertUser.location || null,
+      experienceLevel: insertUser.experienceLevel || null,
+      skills: insertUser.skills || null,
+      preferences: insertUser.preferences || null,
       createdAt: new Date()
     };
     this.users.set(id, user);
@@ -273,6 +125,16 @@ export class MemStorage implements IStorage {
     const opportunity: Opportunity = { 
       ...insertOpportunity, 
       id,
+      location: insertOpportunity.location || null,
+      salary: insertOpportunity.salary || null,
+      amount: insertOpportunity.amount || null,
+      prize: insertOpportunity.prize || null,
+      organization: insertOpportunity.organization || null,
+      deadline: insertOpportunity.deadline || null,
+      url: insertOpportunity.url || null,
+      relevancyScore: insertOpportunity.relevancyScore || null,
+      requirements: insertOpportunity.requirements || null,
+      tags: insertOpportunity.tags || null,
       createdAt: new Date()
     };
     this.opportunities.set(id, opportunity);
@@ -322,6 +184,9 @@ export class MemStorage implements IStorage {
     const application: Application = { 
       ...insertApplication, 
       id,
+      userId: insertApplication.userId || null,
+      opportunityId: insertApplication.opportunityId || null,
+      autoApplied: insertApplication.autoApplied || null,
       appliedAt: new Date()
     };
     this.applications.set(id, application);
@@ -339,6 +204,7 @@ export class MemStorage implements IStorage {
     const activity: Activity = { 
       ...insertActivity, 
       id,
+      userId: insertActivity.userId || null,
       createdAt: new Date()
     };
     this.activities.set(id, activity);

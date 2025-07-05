@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { scrapingService } from "./scrapers";
 import { insertUserSchema, insertOpportunitySchema, insertApplicationSchema, insertActivitySchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -155,30 +156,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Scraping route (simulated)
+  // Real scraping route
   app.post("/api/scrape", async (req, res) => {
     try {
       const { userId } = req.body;
       
-      // Simulate scraping delay
-      setTimeout(async () => {
-        await storage.createActivity({
-          userId,
-          message: "Started scraping opportunities from various sources",
-          type: "scrape",
-        });
-      }, 1000);
-
-      setTimeout(async () => {
-        await storage.createActivity({
-          userId,
-          message: "Successfully scraped 23 new opportunities",
-          type: "scrape",
-        });
-      }, 5000);
+      // Get user profile for personalized scraping
+      const user = await storage.getUser(userId);
+      
+      // Start activity log
+      await storage.createActivity({
+        userId,
+        message: "Started scraping opportunities from multiple sources",
+        type: "scrape",
+      });
 
       res.json({ message: "Scraping started" });
+
+      // Perform scraping in background
+      scrapingService.scrapeAll(user).then(async (opportunities) => {
+        // Save all scraped opportunities
+        let savedCount = 0;
+        for (const opportunity of opportunities) {
+          try {
+            await storage.createOpportunity(opportunity);
+            savedCount++;
+          } catch (error) {
+            console.error('Error saving opportunity:', error);
+          }
+        }
+
+        // Create success activity
+        await storage.createActivity({
+          userId,
+          message: `Successfully scraped and saved ${savedCount} new opportunities`,
+          type: "scrape",
+        });
+      }).catch(async (error) => {
+        console.error('Scraping error:', error);
+        await storage.createActivity({
+          userId,
+          message: "Error occurred during scraping. Some sources may be unavailable.",
+          type: "error",
+        });
+      });
+
     } catch (error) {
+      console.error('Scrape route error:', error);
       res.status(500).json({ message: "Internal server error" });
     }
   });
@@ -204,6 +228,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json(application);
     } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Scrape from specific source
+  app.post("/api/scrape/:source", async (req, res) => {
+    try {
+      const { source } = req.params;
+      const { userId } = req.body;
+      
+      const user = await storage.getUser(userId);
+      
+      await storage.createActivity({
+        userId,
+        message: `Started scraping from ${source}`,
+        type: "scrape",
+      });
+
+      res.json({ message: `Scraping started from ${source}` });
+
+      // Perform scraping from specific source in background
+      scrapingService.scrapeFromSource(source, user).then(async (opportunities) => {
+        let savedCount = 0;
+        for (const opportunity of opportunities) {
+          try {
+            await storage.createOpportunity(opportunity);
+            savedCount++;
+          } catch (error) {
+            console.error('Error saving opportunity:', error);
+          }
+        }
+
+        await storage.createActivity({
+          userId,
+          message: `Found ${savedCount} opportunities from ${source}`,
+          type: "scrape",
+        });
+      }).catch(async (error) => {
+        console.error(`Error scraping ${source}:`, error);
+        await storage.createActivity({
+          userId,
+          message: `Failed to scrape from ${source}. Source may be temporarily unavailable.`,
+          type: "error",
+        });
+      });
+
+    } catch (error) {
+      console.error('Source scrape error:', error);
       res.status(500).json({ message: "Internal server error" });
     }
   });
