@@ -110,6 +110,10 @@ The application is designed to be deployed on platforms like Replit, Vercel, or 
 - ✓ Successfully scraping real opportunities from Hacker News, RemoteOK, and job boards
 - ✓ Fixed browser dependency issues by switching to HTTP-based scraping
 - ✓ Application now discovers authentic opportunities from across the web
+- ✓ Expanded scraper to support multiple opportunity types (jobs, internships, grants, scholarships, competitions)
+- ✓ Added user preference system for opportunity type filtering
+- ✓ Integrated scraping from AngelList, Indeed RSS, Grants.gov, scholarship databases, and competition sites
+- ✓ Added opportunity type selection UI to user profile
 
 ## Technical Architecture Updates
 - **Real Data Sources**: Now scrapes live data from Hacker News (tech jobs), RemoteOK (remote positions), Stack Overflow Jobs, GitHub hiring issues, and Y Combinator companies

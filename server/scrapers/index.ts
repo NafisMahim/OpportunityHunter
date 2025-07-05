@@ -15,20 +15,47 @@ class WebOpportunityScraper implements Scraper {
     const opportunities: InsertOpportunity[] = [];
     
     try {
-      // Scrape HackerNews Who's Hiring thread
-      console.log('Scraping Hacker News opportunities...');
-      const hnJobs = await this.scrapeHackerNewsJobs(userProfile);
-      opportunities.push(...hnJobs);
-
-      // Scrape RemoteOK
-      console.log('Scraping RemoteOK opportunities...');
-      const remoteJobs = await this.scrapeRemoteOK(userProfile);
-      opportunities.push(...remoteJobs);
-
-      // Scrape GitHub Jobs alternative sites
-      console.log('Scraping job boards...');
-      const jobBoardJobs = await this.scrapeJobBoards(userProfile);
-      opportunities.push(...jobBoardJobs);
+      // Get user preferences for opportunity types
+      const preferredTypes = userProfile?.opportunityTypes || ['job', 'internship', 'grant', 'scholarship', 'competition'];
+      
+      // Scrape jobs if requested
+      if (preferredTypes.includes('job')) {
+        console.log('Scraping job opportunities...');
+        const hnJobs = await this.scrapeHackerNewsJobs(userProfile);
+        const remoteJobs = await this.scrapeRemoteOK(userProfile);
+        const jobBoards = await this.scrapeJobBoards(userProfile);
+        const angelJobs = await this.scrapeAngelList(userProfile);
+        const indeedJobs = await this.scrapeIndeedRSS(userProfile);
+        opportunities.push(...hnJobs, ...remoteJobs, ...jobBoards, ...angelJobs, ...indeedJobs);
+      }
+      
+      // Scrape internships if requested
+      if (preferredTypes.includes('internship')) {
+        console.log('Scraping internship opportunities...');
+        const internships = await this.scrapeInternships(userProfile);
+        opportunities.push(...internships);
+      }
+      
+      // Scrape grants if requested
+      if (preferredTypes.includes('grant')) {
+        console.log('Scraping grant opportunities...');
+        const grants = await this.scrapeGrants(userProfile);
+        opportunities.push(...grants);
+      }
+      
+      // Scrape scholarships if requested
+      if (preferredTypes.includes('scholarship')) {
+        console.log('Scraping scholarship opportunities...');
+        const scholarships = await this.scrapeScholarships(userProfile);
+        opportunities.push(...scholarships);
+      }
+      
+      // Scrape competitions if requested
+      if (preferredTypes.includes('competition')) {
+        console.log('Scraping competition opportunities...');
+        const competitions = await this.scrapeCompetitions(userProfile);
+        opportunities.push(...competitions);
+      }
 
     } catch (error) {
       console.error('Web scraping error:', error);
@@ -354,6 +381,387 @@ class WebOpportunityScraper implements Scraper {
       const match = text.match(pattern);
       if (match) {
         return match[1] || match[0];
+      }
+    }
+
+    return null;
+  }
+
+  private async scrapeAngelList(userProfile?: any): Promise<InsertOpportunity[]> {
+    const opportunities: InsertOpportunity[] = [];
+    
+    try {
+      // AngelList job search API alternative - scrape their job listings
+      const response = await axios.get('https://angel.co/jobs', {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; OpportunityBot/1.0)',
+          'Accept': 'text/html'
+        }
+      });
+
+      const $ = cheerio.load(response.data);
+      
+      // Extract job listings from AngelList
+      $('.job-listing, .startup-job').each((index, element) => {
+        if (index >= 15) return false;
+        
+        const $job = $(element);
+        const title = $job.find('.job-title, h3').first().text().trim();
+        const company = $job.find('.startup-name, .company-name').text().trim();
+        const description = $job.find('.job-description, .description').text().trim();
+        const location = $job.find('.location').text().trim();
+        const link = $job.find('a').attr('href');
+        
+        if (title && company) {
+          opportunities.push({
+            type: 'job',
+            title: title.substring(0, 100),
+            description: description.substring(0, 500),
+            source: 'AngelList',
+            organization: company,
+            location: location || 'Startup',
+            url: link ? `https://angel.co${link}` : 'https://angel.co/jobs',
+            relevancyScore: this.calculateRelevancyScore(title + ' ' + description, userProfile),
+            requirements: this.extractRequirements(description),
+            tags: ['startup', 'angellist', 'job'],
+            salary: this.extractSalary(description),
+            deadline: null,
+            amount: null,
+            prize: null
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error scraping AngelList:', error);
+    }
+
+    return opportunities;
+  }
+
+  private async scrapeIndeedRSS(userProfile?: any): Promise<InsertOpportunity[]> {
+    const opportunities: InsertOpportunity[] = [];
+    
+    try {
+      // Use Indeed RSS feeds for job listings
+      const keywords = userProfile?.skills?.join('+') || 'software+engineer';
+      const response = await axios.get(`https://www.indeed.com/rss?q=${keywords}`, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; OpportunityBot/1.0)',
+          'Accept': 'application/rss+xml'
+        }
+      });
+
+      const $ = cheerio.load(response.data, { xmlMode: true });
+      
+      $('item').each((index, element) => {
+        if (index >= 15) return false;
+        
+        const $item = $(element);
+        const title = $item.find('title').text().trim();
+        const description = $item.find('description').text().trim();
+        const link = $item.find('link').text().trim();
+        const pubDate = $item.find('pubDate').text().trim();
+        
+        if (title && description) {
+          opportunities.push({
+            type: 'job',
+            title: title.substring(0, 100),
+            description: description.substring(0, 500),
+            source: 'Indeed',
+            organization: this.extractCompanyFromDescription(description),
+            location: this.extractLocation(description) || 'Various',
+            url: link,
+            relevancyScore: this.calculateRelevancyScore(title + ' ' + description, userProfile),
+            requirements: this.extractRequirements(description),
+            tags: this.generateTags(title + ' ' + description, 'job'),
+            salary: this.extractSalary(description),
+            deadline: null,
+            amount: null,
+            prize: null
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error scraping Indeed RSS:', error);
+    }
+
+    return opportunities;
+  }
+
+  private async scrapeInternships(userProfile?: any): Promise<InsertOpportunity[]> {
+    const opportunities: InsertOpportunity[] = [];
+    
+    try {
+      // Scrape internship sites
+      const sites = [
+        'https://www.internships.com/rss',
+        'https://www.wayup.com/internships'
+      ];
+
+      for (const site of sites) {
+        try {
+          const response = await axios.get(site, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; OpportunityBot/1.0)',
+              'Accept': 'text/html, application/rss+xml'
+            }
+          });
+
+          const $ = cheerio.load(response.data);
+          
+          // Extract internship listings
+          $('.internship-listing, .job-listing, .opportunity').each((index, element) => {
+            if (index >= 10) return false;
+            
+            const $item = $(element);
+            const title = $item.find('.title, h3, h2').first().text().trim();
+            const company = $item.find('.company, .organization').text().trim();
+            const description = $item.find('.description, .summary').text().trim();
+            const location = $item.find('.location').text().trim();
+            const link = $item.find('a').attr('href');
+            
+            if (title && title.toLowerCase().includes('intern')) {
+              opportunities.push({
+                type: 'internship',
+                title: title.substring(0, 100),
+                description: description.substring(0, 500),
+                source: 'Internship Sites',
+                organization: company || 'Company',
+                location: location || 'Various',
+                url: link || site,
+                relevancyScore: this.calculateRelevancyScore(title + ' ' + description, userProfile),
+                requirements: this.extractRequirements(description),
+                tags: ['internship', 'student', 'entry-level'],
+                salary: this.extractSalary(description),
+                deadline: null,
+                amount: null,
+                prize: null
+              });
+            }
+          });
+        } catch (error) {
+          console.error(`Error scraping ${site}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Error scraping internships:', error);
+    }
+
+    return opportunities;
+  }
+
+  private async scrapeGrants(userProfile?: any): Promise<InsertOpportunity[]> {
+    const opportunities: InsertOpportunity[] = [];
+    
+    try {
+      // Scrape grants.gov and foundation sites
+      const grantSites = [
+        'https://www.grants.gov/search-grants.html',
+        'https://foundationcenter.org/find-funding'
+      ];
+
+      // Use RSS feeds for grant opportunities
+      const response = await axios.get('https://www.grants.gov/rss/GG_NewOpportunities.xml', {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; OpportunityBot/1.0)',
+          'Accept': 'application/rss+xml'
+        }
+      });
+
+      const $ = cheerio.load(response.data, { xmlMode: true });
+      
+      $('item').each((index, element) => {
+        if (index >= 10) return false;
+        
+        const $item = $(element);
+        const title = $item.find('title').text().trim();
+        const description = $item.find('description').text().trim();
+        const link = $item.find('link').text().trim();
+        const pubDate = $item.find('pubDate').text().trim();
+        
+        if (title && description) {
+          opportunities.push({
+            type: 'grant',
+            title: title.substring(0, 100),
+            description: description.substring(0, 500),
+            source: 'Grants.gov',
+            organization: 'Federal Government',
+            location: 'United States',
+            url: link,
+            relevancyScore: this.calculateRelevancyScore(title + ' ' + description, userProfile),
+            requirements: this.extractRequirements(description),
+            tags: ['grant', 'government', 'funding'],
+            salary: null,
+            deadline: null,
+            amount: this.extractFundingAmount(description),
+            prize: null
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error scraping grants:', error);
+    }
+
+    return opportunities;
+  }
+
+  private async scrapeScholarships(userProfile?: any): Promise<InsertOpportunity[]> {
+    const opportunities: InsertOpportunity[] = [];
+    
+    try {
+      // Scrape scholarship databases
+      const scholarshipSites = [
+        'https://www.scholarships.com/rss',
+        'https://www.fastweb.com/scholarships'
+      ];
+
+      for (const site of scholarshipSites) {
+        try {
+          const response = await axios.get(site, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; OpportunityBot/1.0)',
+              'Accept': 'text/html, application/rss+xml'
+            }
+          });
+
+          const $ = cheerio.load(response.data);
+          
+          // Extract scholarship listings
+          $('.scholarship, .award, .opportunity').each((index, element) => {
+            if (index >= 10) return false;
+            
+            const $item = $(element);
+            const title = $item.find('.title, h3, h2').first().text().trim();
+            const organization = $item.find('.sponsor, .organization').text().trim();
+            const description = $item.find('.description, .summary').text().trim();
+            const amount = $item.find('.amount, .award-amount').text().trim();
+            const deadline = $item.find('.deadline').text().trim();
+            const link = $item.find('a').attr('href');
+            
+            if (title && title.toLowerCase().includes('scholarship')) {
+              opportunities.push({
+                type: 'scholarship',
+                title: title.substring(0, 100),
+                description: description.substring(0, 500),
+                source: 'Scholarship Database',
+                organization: organization || 'Foundation',
+                location: 'Various',
+                url: link || site,
+                relevancyScore: this.calculateRelevancyScore(title + ' ' + description, userProfile),
+                requirements: this.extractRequirements(description),
+                tags: ['scholarship', 'education', 'funding'],
+                salary: null,
+                deadline: deadline || null,
+                amount: amount || this.extractFundingAmount(description),
+                prize: null
+              });
+            }
+          });
+        } catch (error) {
+          console.error(`Error scraping ${site}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Error scraping scholarships:', error);
+    }
+
+    return opportunities;
+  }
+
+  private async scrapeCompetitions(userProfile?: any): Promise<InsertOpportunity[]> {
+    const opportunities: InsertOpportunity[] = [];
+    
+    try {
+      // Scrape competition sites like hackathons, coding contests
+      const competitionSites = [
+        'https://devpost.com/hackathons',
+        'https://www.kaggle.com/competitions',
+        'https://www.hackerearth.com/challenges/'
+      ];
+
+      for (const site of competitionSites) {
+        try {
+          const response = await axios.get(site, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; OpportunityBot/1.0)',
+              'Accept': 'text/html'
+            }
+          });
+
+          const $ = cheerio.load(response.data);
+          
+          // Extract competition listings
+          $('.competition, .hackathon, .challenge').each((index, element) => {
+            if (index >= 10) return false;
+            
+            const $item = $(element);
+            const title = $item.find('.title, h3, h2').first().text().trim();
+            const organization = $item.find('.sponsor, .host').text().trim();
+            const description = $item.find('.description, .summary').text().trim();
+            const prize = $item.find('.prize, .award').text().trim();
+            const deadline = $item.find('.deadline, .end-date').text().trim();
+            const link = $item.find('a').attr('href');
+            
+            if (title) {
+              opportunities.push({
+                type: 'competition',
+                title: title.substring(0, 100),
+                description: description.substring(0, 500),
+                source: 'Competition Sites',
+                organization: organization || 'Platform',
+                location: 'Online',
+                url: link || site,
+                relevancyScore: this.calculateRelevancyScore(title + ' ' + description, userProfile),
+                requirements: this.extractRequirements(description),
+                tags: ['competition', 'hackathon', 'contest'],
+                salary: null,
+                deadline: deadline || null,
+                amount: null,
+                prize: prize || this.extractPrizeAmount(description)
+              });
+            }
+          });
+        } catch (error) {
+          console.error(`Error scraping ${site}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Error scraping competitions:', error);
+    }
+
+    return opportunities;
+  }
+
+  private extractFundingAmount(text: string): string | null {
+    const amountPatterns = [
+      /\$[\d,]+/,
+      /up to \$[\d,]+/i,
+      /award[:\s]*\$[\d,]+/i,
+      /funding[:\s]*\$[\d,]+/i
+    ];
+
+    for (const pattern of amountPatterns) {
+      const match = text.match(pattern);
+      if (match) {
+        return match[0];
+      }
+    }
+
+    return null;
+  }
+
+  private extractPrizeAmount(text: string): string | null {
+    const prizePatterns = [
+      /prize[:\s]*\$[\d,]+/i,
+      /\$[\d,]+\s*prize/i,
+      /win[:\s]*\$[\d,]+/i,
+      /cash[:\s]*\$[\d,]+/i
+    ];
+
+    for (const pattern of prizePatterns) {
+      const match = text.match(pattern);
+      if (match) {
+        return match[0];
       }
     }
 

@@ -25,6 +25,7 @@ export default function UserProfile({ user, onStartScraping, isScrapingLoading }
     experienceLevel: user?.experienceLevel || "",
     skills: user?.skills || [],
     preferences: user?.preferences || [],
+    opportunityTypes: user?.opportunityTypes || ['job', 'internship', 'grant', 'scholarship', 'competition'],
   });
   const [newSkill, setNewSkill] = useState("");
 
@@ -187,6 +188,39 @@ export default function UserProfile({ user, onStartScraping, isScrapingLoading }
               >
                 Add
               </Button>
+            </div>
+          </div>
+
+          {/* Opportunity Types Preferences */}
+          <div className="mt-6">
+            <Label className="text-gray-300 mb-3 block">Opportunity Types</Label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {[
+                { type: 'job', label: 'Jobs', icon: '💼' },
+                { type: 'internship', label: 'Internships', icon: '🎓' },
+                { type: 'grant', label: 'Grants', icon: '💰' },
+                { type: 'scholarship', label: 'Scholarships', icon: '🏆' },
+                { type: 'competition', label: 'Competitions', icon: '🚀' }
+              ].map(({ type, label, icon }) => (
+                <div key={type} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={type}
+                    checked={profileData.opportunityTypes.includes(type)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        handleInputChange('opportunityTypes', [...profileData.opportunityTypes, type]);
+                      } else {
+                        handleInputChange('opportunityTypes', profileData.opportunityTypes.filter(t => t !== type));
+                      }
+                    }}
+                    className="border-primary/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  />
+                  <Label htmlFor={type} className="text-gray-300 flex items-center gap-2 cursor-pointer">
+                    <span>{icon}</span>
+                    {label}
+                  </Label>
+                </div>
+              ))}
             </div>
           </div>
 

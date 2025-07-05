@@ -10,6 +10,7 @@ export const users = pgTable("users", {
   experienceLevel: text("experience_level"),
   skills: text("skills").array().default([]),
   preferences: text("preferences").array().default([]),
+  opportunityTypes: text("opportunity_types").array().default(['job', 'internship', 'grant', 'scholarship', 'competition']),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
