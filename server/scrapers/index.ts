@@ -167,79 +167,197 @@ class WebOpportunityScraper implements Scraper {
     const opportunities: InsertOpportunity[] = [];
     
     try {
-      // Use a job aggregation API or scrape job boards
-      const sites = [
-        'https://www.ycombinator.com/companies',
-        'https://jobs.lever.co/',
-        'https://boards.greenhouse.io/'
-      ];
-
-      // For now, create representative opportunities from known patterns
-      const skills = userProfile?.skills || ['software engineering', 'technology'];
-      const location = userProfile?.location || 'United States';
-
-      // Generate realistic job opportunities based on current market
-      for (let i = 0; i < 5; i++) {
-        const skill = skills[i % skills.length] || 'technology';
-        opportunities.push({
-          type: 'job',
-          title: `${skill} Engineer`,
-          description: `Exciting opportunity for a ${skill} engineer to join our growing team. We're looking for someone passionate about technology and innovation.`,
-          source: 'Job Boards',
-          organization: `Tech Company ${i + 1}`,
-          location: location,
-          url: `https://jobs.example.com/position-${i}`,
-          relevancyScore: 70 + (i * 5),
-          requirements: ['Bachelor\'s degree or equivalent', '2+ years experience', skill],
-          tags: [skill.toLowerCase().replace(' ', '-'), 'full-time', 'tech'],
-          salary: `$${70000 + (i * 10000)} - $${90000 + (i * 15000)}`,
-          deadline: null,
-          amount: null,
-          prize: null
-        });
-      }
-
-      // Add scholarship opportunities
-      opportunities.push({
-        type: 'scholarship',
-        title: 'STEM Excellence Scholarship',
-        description: 'Scholarship for outstanding students pursuing STEM degrees. Merit-based award supporting academic excellence.',
-        source: 'Education Foundation',
-        organization: 'National STEM Foundation',
-        location: 'United States',
-        url: 'https://stemscho larships.org/apply',
-        relevancyScore: 85,
-        requirements: ['3.5+ GPA', 'STEM major', 'US citizen or permanent resident'],
-        tags: ['scholarship', 'stem', 'education', 'merit-based'],
-        salary: null,
-        deadline: null,
-        amount: '$5,000 per year',
-        prize: null
-      });
-
-      // Add grant opportunities
-      opportunities.push({
-        type: 'grant',
-        title: 'Innovation Research Grant',
-        description: 'Funding for innovative research projects in technology and engineering. Supports early-stage research and development.',
-        source: 'Research Foundation',
-        organization: 'Innovation Research Institute',
-        location: 'United States',
-        url: 'https://grants.innovation.org',
-        relevancyScore: 80,
-        requirements: ['Research proposal', 'Academic affiliation', 'Project timeline'],
-        tags: ['grant', 'research', 'innovation', 'funding'],
-        salary: null,
-        deadline: null,
-        amount: 'Up to $50,000',
-        prize: null
-      });
-
+      // Scrape actual job sites using RSS feeds and APIs
+      await this.scrapeStackOverflowJobs(opportunities, userProfile);
+      await this.scrapeYCombinatorJobs(opportunities, userProfile);
+      await this.scrapeGitHubIssues(opportunities, userProfile);
+      
     } catch (error) {
       console.error('Error scraping job boards:', error);
     }
 
     return opportunities;
+  }
+
+  private async scrapeStackOverflowJobs(opportunities: InsertOpportunity[], userProfile?: any): Promise<void> {
+    try {
+      // Use StackOverflow RSS feed for jobs
+      const response = await axios.get('https://stackoverflow.com/jobs/feed', {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; OpportunityBot/1.0)',
+          'Accept': 'application/rss+xml, application/xml, text/xml'
+        }
+      });
+
+      const $ = cheerio.load(response.data, { xmlMode: true });
+      
+      $('item').each((index, element) => {
+        if (index >= 10) return false; // Limit results
+        
+        const $item = $(element);
+        const title = $item.find('title').text().trim();
+        const description = $item.find('description').text().trim();
+        const link = $item.find('link').text().trim();
+        const pubDate = $item.find('pubDate').text().trim();
+        
+        if (title && description) {
+          opportunities.push({
+            type: 'job',
+            title: title.substring(0, 100),
+            description: description.substring(0, 500),
+            source: 'Stack Overflow Jobs',
+            organization: this.extractCompanyFromDescription(description),
+            location: this.extractLocation(description) || 'Not specified',
+            url: link,
+            relevancyScore: this.calculateRelevancyScore(title + ' ' + description, userProfile),
+            requirements: this.extractRequirements(description),
+            tags: this.generateTags(title + ' ' + description, 'job'),
+            salary: this.extractSalary(description),
+            deadline: null,
+            amount: null,
+            prize: null
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error scraping Stack Overflow Jobs:', error);
+    }
+  }
+
+  private async scrapeYCombinatorJobs(opportunities: InsertOpportunity[], userProfile?: any): Promise<void> {
+    try {
+      // Scrape YC startup directory
+      const response = await axios.get('https://www.ycombinator.com/companies', {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; OpportunityBot/1.0)',
+          'Accept': 'text/html'
+        }
+      });
+
+      const $ = cheerio.load(response.data);
+      
+      $('[data-company]').each((index, element) => {
+        if (index >= 15) return false;
+        
+        const $company = $(element);
+        const companyName = $company.find('.company-name, h3').first().text().trim();
+        const description = $company.find('.company-description, p').first().text().trim();
+        const location = $company.find('.company-location').text().trim();
+        const link = $company.find('a').attr('href');
+        
+        if (companyName && description) {
+          opportunities.push({
+            type: 'job',
+            title: `Software Engineer at ${companyName}`,
+            description: description.substring(0, 500),
+            source: 'Y Combinator',
+            organization: companyName,
+            location: location || 'Startup',
+            url: link ? `https://www.ycombinator.com${link}` : 'https://www.ycombinator.com/companies',
+            relevancyScore: this.calculateRelevancyScore(description, userProfile),
+            requirements: ['Startup experience preferred'],
+            tags: ['startup', 'job', 'yc'],
+            salary: null,
+            deadline: null,
+            amount: null,
+            prize: null
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error scraping Y Combinator:', error);
+    }
+  }
+
+  private async scrapeGitHubIssues(opportunities: InsertOpportunity[], userProfile?: any): Promise<void> {
+    try {
+      // Use GitHub API to find job-related issues
+      const response = await axios.get('https://api.github.com/search/issues', {
+        params: {
+          q: 'label:hiring OR label:job OR label:career in:title',
+          sort: 'updated',
+          per_page: 10
+        },
+        headers: {
+          'User-Agent': 'OpportunityBot/1.0',
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      const issues = response.data.items || [];
+      
+      for (const issue of issues) {
+        if (issue.title && issue.body) {
+          opportunities.push({
+            type: 'job',
+            title: issue.title.substring(0, 100),
+            description: (issue.body || '').substring(0, 500),
+            source: 'GitHub Jobs',
+            organization: this.extractOrgFromUrl(issue.html_url),
+            location: this.extractLocation(issue.body) || 'Remote',
+            url: issue.html_url,
+            relevancyScore: this.calculateRelevancyScore(issue.title + ' ' + issue.body, userProfile),
+            requirements: this.extractRequirements(issue.body || ''),
+            tags: this.generateTags(issue.title + ' ' + issue.body, 'job'),
+            salary: this.extractSalary(issue.body || ''),
+            deadline: null,
+            amount: null,
+            prize: null
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error scraping GitHub issues:', error);
+    }
+  }
+
+  private extractCompanyFromDescription(description: string): string {
+    // Try to extract company name from job description
+    const patterns = [
+      /at ([A-Z][a-zA-Z\s]+?) is/,
+      /join ([A-Z][a-zA-Z\s]+?) as/,
+      /([A-Z][a-zA-Z\s]+?) is hiring/,
+      /work at ([A-Z][a-zA-Z\s]+)/
+    ];
+
+    for (const pattern of patterns) {
+      const match = description.match(pattern);
+      if (match) {
+        return match[1].trim().substring(0, 50);
+      }
+    }
+
+    return 'Company';
+  }
+
+  private extractOrgFromUrl(url: string): string {
+    try {
+      const parts = url.split('/');
+      return parts[4] || 'GitHub Org';
+    } catch {
+      return 'GitHub Org';
+    }
+  }
+
+  private extractLocation(text: string): string | null {
+    // Extract location patterns from job descriptions
+    const locationPatterns = [
+      /location[:\s]+([^,\n]+)/i,
+      /based in ([^,\n]+)/i,
+      /([A-Z][a-z]+,\s*[A-Z]{2})/,
+      /(remote|hybrid|on-site)/i,
+      /([A-Z][a-z]+\s+[A-Z][a-z]+,\s*[A-Z]{2,3})/,
+      /\b([A-Z][a-z]+),\s*([A-Z]{2})\b/,
+    ];
+
+    for (const pattern of locationPatterns) {
+      const match = text.match(pattern);
+      if (match) {
+        return match[1] || match[0];
+      }
+    }
+
+    return null;
   }
 
   private calculateRelevancyScore(content: string, userProfile?: any): number {

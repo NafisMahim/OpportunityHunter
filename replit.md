@@ -112,11 +112,12 @@ The application is designed to be deployed on platforms like Replit, Vercel, or 
 - ✓ Application now discovers authentic opportunities from across the web
 
 ## Technical Architecture Updates
-- **Real Data Sources**: Now scrapes live data from Grants.gov (federal grants), AngelList (startup jobs), and Fastweb (scholarships)
-- **Anti-Detection**: Uses Puppeteer Extra with Stealth plugin for reliable scraping
-- **Personalization**: Relevancy scores calculated based on user skills and preferences
+- **Real Data Sources**: Now scrapes live data from Hacker News (tech jobs), RemoteOK (remote positions), Stack Overflow Jobs, GitHub hiring issues, and Y Combinator companies
+- **HTTP-Based Scraping**: Uses axios and cheerio for reliable data extraction without browser dependencies
+- **Personalization**: Relevancy scores calculated based on user skills and preferences  
 - **Scalability**: Modular scraper design allows easy addition of new sources
 - **Error Resilience**: Graceful handling of failed scrapes with user feedback
+- **Authentic Data Only**: All mock/sample data removed - system only displays real scraped opportunities
 
 ## User Preferences
 
