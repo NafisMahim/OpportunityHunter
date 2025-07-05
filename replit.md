@@ -1,0 +1,95 @@
+# Opportunity Finder Application
+
+## Overview
+
+This is a full-stack web application that helps users discover and manage career opportunities including jobs, internships, grants, scholarships, and competitions. The system features automated opportunity scraping, intelligent matching, and application tracking capabilities with a cyberpunk-themed user interface.
+
+## System Architecture
+
+The application follows a modern full-stack architecture with clear separation between client and server components:
+
+- **Frontend**: React-based SPA with TypeScript, built using Vite
+- **Backend**: Express.js REST API with TypeScript
+- **Database**: PostgreSQL with Drizzle ORM
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **State Management**: TanStack Query for server state management
+
+## Key Components
+
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript and Vite for fast development
+- **UI Library**: shadcn/ui components built on Radix UI primitives
+- **Styling**: Tailwind CSS with custom cyberpunk theme variables
+- **Routing**: Wouter for lightweight client-side routing
+- **State Management**: TanStack Query for API state with aggressive caching
+
+### Backend Architecture
+- **Server**: Express.js with TypeScript for type safety
+- **Database Layer**: Drizzle ORM with PostgreSQL for data persistence
+- **API Design**: RESTful endpoints with proper error handling
+- **Middleware**: Request logging, JSON parsing, and error handling
+
+### Database Schema
+The application uses four main entities:
+- **Users**: Profile information, skills, preferences, and experience level
+- **Opportunities**: Job listings, internships, grants, etc. with metadata
+- **Applications**: User application tracking with status management
+- **Activities**: Real-time activity feed for user actions
+
+### Authentication & Authorization
+Currently uses a simplified approach with hardcoded user ID for demonstration. The architecture supports future integration of proper authentication mechanisms.
+
+## Data Flow
+
+1. **User Registration/Profile Setup**: Users create profiles with skills and preferences
+2. **Opportunity Discovery**: System scrapes opportunities from various sources
+3. **Intelligent Matching**: Opportunities are scored based on user preferences and skills
+4. **Application Management**: Users can apply manually or enable auto-apply functionality
+5. **Activity Tracking**: All actions are logged for real-time feedback
+
+## External Dependencies
+
+### Core Dependencies
+- **@neondatabase/serverless**: PostgreSQL connection for Neon database
+- **drizzle-orm & drizzle-kit**: Modern TypeScript ORM with schema migrations
+- **@tanstack/react-query**: Server state management with caching
+- **wouter**: Lightweight routing library
+- **date-fns**: Date manipulation utilities
+
+### UI Dependencies
+- **@radix-ui/***: Headless UI components for accessibility
+- **tailwindcss**: Utility-first CSS framework
+- **class-variance-authority**: Component variant management
+- **react-hook-form**: Form state management
+
+### Development Dependencies
+- **vite**: Fast build tool and development server
+- **typescript**: Type safety and enhanced developer experience
+- **esbuild**: Fast JavaScript bundler for production builds
+
+## Deployment Strategy
+
+### Development Environment
+- Uses Vite dev server with HMR for fast development cycles
+- Express server runs in development mode with request logging
+- Database migrations handled via Drizzle Kit
+
+### Production Build Process
+1. **Frontend Build**: Vite builds React app to `dist/public`
+2. **Backend Build**: esbuild bundles Express server to `dist/index.js`
+3. **Static Serving**: Express serves built frontend assets in production
+4. **Database**: Expects PostgreSQL connection via `DATABASE_URL` environment variable
+
+### Environment Configuration
+- **Development**: NODE_ENV=development with local database
+- **Production**: NODE_ENV=production with optimized builds
+- **Database**: PostgreSQL via connection string in DATABASE_URL
+
+The application is designed to be deployed on platforms like Replit, Vercel, or similar with built-in PostgreSQL support.
+
+## Changelog
+- July 05, 2025. Initial setup
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
