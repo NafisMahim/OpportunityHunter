@@ -4,6 +4,26 @@ import type { InsertOpportunity } from '@shared/schema';
 
 puppeteer.use(StealthPlugin());
 
+const getBrowserConfig = () => ({
+  headless: true,
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-accelerated-2d-canvas',
+    '--no-first-run',
+    '--no-zygote',
+    '--single-process',
+    '--disable-gpu',
+    '--disable-extensions',
+    '--disable-background-timer-throttling',
+    '--disable-backgrounding-occluded-windows',
+    '--disable-renderer-backgrounding',
+    '--disable-web-security',
+    '--disable-features=VizDisplayCompositor'
+  ]
+});
+
 export interface Scraper {
   name: string;
   scrape(userProfile?: any): Promise<InsertOpportunity[]>;
@@ -13,19 +33,7 @@ class GrantsGovScraper implements Scraper {
   name = 'Grants.gov';
 
   async scrape(userProfile?: any): Promise<InsertOpportunity[]> {
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--no-first-run',
-        '--no-zygote',
-        '--single-process',
-        '--disable-gpu'
-      ]
-    });
+    const browser = await puppeteer.launch(getBrowserConfig());
 
     try {
       const page = await browser.newPage();
@@ -139,19 +147,7 @@ class AngelListScraper implements Scraper {
   name = 'AngelList';
 
   async scrape(userProfile?: any): Promise<InsertOpportunity[]> {
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--no-first-run',
-        '--no-zygote',
-        '--single-process',
-        '--disable-gpu'
-      ]
-    });
+    const browser = await puppeteer.launch(getBrowserConfig());
 
     try {
       const page = await browser.newPage();
@@ -267,19 +263,7 @@ class FastwebScraper implements Scraper {
   name = 'Fastweb';
 
   async scrape(userProfile?: any): Promise<InsertOpportunity[]> {
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--no-first-run',
-        '--no-zygote',
-        '--single-process',
-        '--disable-gpu'
-      ]
-    });
+    const browser = await puppeteer.launch(getBrowserConfig());
 
     try {
       const page = await browser.newPage();
@@ -415,7 +399,13 @@ export class ScrapingService {
         console.log(`Scraped ${opportunities.length} opportunities from ${scraper.name}`);
       } catch (error) {
         console.error(`Error scraping from ${scraper.name}:`, error);
+        // Continue with other scrapers instead of failing completely
       }
+    }
+    
+    // If scraping fails due to technical issues, log the problem
+    if (allOpportunities.length === 0) {
+      console.log('No opportunities scraped. Check browser configuration and network connectivity.');
     }
     
     return allOpportunities;
