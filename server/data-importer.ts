@@ -3043,7 +3043,7 @@ export class DataImporter {
           if (title.length > 5 && url.startsWith('http')) {
             const scholarship: InsertOpportunity = {
               title,
-              link: url,
+              url: url,
               description: `${title} - A scholarship opportunity for high school students. Apply early as deadlines vary. Check the official website for detailed eligibility requirements, application procedures, and deadline information.`,
               type: 'scholarship',
               organization: this.extractOrganization(title),
@@ -3076,7 +3076,7 @@ export class DataImporter {
           if (title.length > 5 && !scholarships.some(s => s.title === title)) {
             const scholarship: InsertOpportunity = {
               title,
-              link: `https://www.google.com/search?q=${encodeURIComponent(title)}`,
+              url: `https://www.google.com/search?q=${encodeURIComponent(title)}`,
               description: `${title} - A scholarship opportunity for high school students. Research this scholarship online for official application details, requirements, and deadlines. Verify eligibility criteria and application procedures on the official website.`,
               type: 'scholarship',
               organization: this.extractOrganization(title),
@@ -3109,7 +3109,7 @@ export class DataImporter {
           if (title.length > 10 && title.length < 200 && !scholarships.some(s => s.title === title)) {
             const scholarship: InsertOpportunity = {
               title,
-              link: `https://www.google.com/search?q=${encodeURIComponent(title)}`,
+              url: `https://www.google.com/search?q=${encodeURIComponent(title)}`,
               description: `${title} - A scholarship opportunity for high school students. Research this scholarship online for official application details, requirements, and deadlines. Verify eligibility criteria and application procedures on the official website.`,
               type: 'scholarship',
               organization: this.extractOrganization(title),
@@ -3142,7 +3142,7 @@ export class DataImporter {
           if (title.length > 5 && title.length < 150 && !scholarships.some(s => s.title === title)) {
             const scholarship: InsertOpportunity = {
               title,
-              link: `https://www.google.com/search?q=${encodeURIComponent(title)}`,
+              url: `https://www.google.com/search?q=${encodeURIComponent(title)}`,
               description: `${title} - A scholarship opportunity for high school students. Research this scholarship online for official application details, requirements, and deadlines. Verify eligibility criteria and application procedures on the official website.`,
               type: 'scholarship',
               organization: this.extractOrganization(title),
