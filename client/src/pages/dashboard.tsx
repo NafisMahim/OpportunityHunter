@@ -106,6 +106,19 @@ export default function Dashboard() {
     },
   });
 
+  // New Stuyvesant import mutation (899 opportunities)
+  const newStuyvesantImportMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("POST", "/api/import-new-stuyvesant", { userId: currentUserId });
+    },
+    onSuccess: () => {
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["/api/opportunities"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/users/1/activities"] });
+      }, 8000); // Longer timeout for large import
+    },
+  });
+
   const handleStartImport = () => {
     importMutation.mutate();
   };
@@ -133,6 +146,8 @@ export default function Dashboard() {
           onExport={handleExport}
           resultCount={opportunities.length}
           newCount={23} // Mock new count
+          onImportNewStuyvesant={() => newStuyvesantImportMutation.mutate()}
+          isImportingNewStuyvesant={newStuyvesantImportMutation.isPending}
         />
 
         {/* Opportunities Grid */}

@@ -13,6 +13,8 @@ interface SearchFiltersProps {
   onExport: (format: "csv" | "json") => void;
   resultCount: number;
   newCount: number;
+  onImportNewStuyvesant?: () => void;
+  isImportingNewStuyvesant?: boolean;
 }
 
 export default function SearchFilters({
@@ -21,6 +23,8 @@ export default function SearchFilters({
   onExport,
   resultCount,
   newCount,
+  onImportNewStuyvesant,
+  isImportingNewStuyvesant,
 }: SearchFiltersProps) {
   const [autoApply, setAutoApply] = useState(false);
 
@@ -85,6 +89,18 @@ export default function SearchFilters({
                 <SelectItem value="deadline">Deadline: Soonest First</SelectItem>
               </SelectContent>
             </Select>
+            
+            {/* Import New Stuyvesant Button */}
+            {onImportNewStuyvesant && (
+              <Button
+                variant="outline"
+                onClick={onImportNewStuyvesant}
+                disabled={isImportingNewStuyvesant}
+                className="bg-primary/20 border-primary/30 text-primary hover:bg-primary/20 hover:shadow-lg hover:shadow-primary/30"
+              >
+                🏫 {isImportingNewStuyvesant ? "Importing..." : "Import 899 New Opportunities"}
+              </Button>
+            )}
             
             {/* Export Button */}
             <Button

@@ -384,6 +384,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // New Stuyvesant Bulletin Import Route (899 opportunities)
+  app.post("/api/import-new-stuyvesant", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      await storage.createActivity({
+        userId,
+        message: "📄 Started importing NEW Stuyvesant bulletins with 899 additional opportunities",
+        type: "import",
+      });
+
+      res.json({ message: "New Stuyvesant import started - processing 31 additional bulletin files" });
+
+      // Import new Stuyvesant opportunities in background
+      import('./data-importer').then(({ dataImporter }) => {
+        return dataImporter.importNewStuyvesantBulletins();
+      }).then(async () => {
+        await storage.createActivity({
+          userId,
+          message: "🎉 Successfully imported 899 NEW Stuyvesant opportunities! Database expanded significantly.",
+          type: "import",
+        });
+      }).catch(async (error) => {
+        console.error('New Stuyvesant import error:', error);
+        await storage.createActivity({
+          userId,
+          message: "New Stuyvesant import encountered an error. Check if opportunities were extracted first.",
+          type: "error",
+        });
+      });
+
+    } catch (error) {
+      console.error('New Stuyvesant import route error:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
   // Auto-apply route
   app.post("/api/auto-apply", async (req, res) => {
     try {

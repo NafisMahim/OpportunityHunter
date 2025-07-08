@@ -3521,6 +3521,147 @@ export class DataImporter {
     return '2025';
   }
 
+  async importNewStuyvesantBulletins(): Promise<void> {
+    console.log('📄 Importing NEW Stuyvesant Bulletin Opportunities (899 extracted)...');
+    
+    try {
+      // Load the extracted opportunities
+      const jsonPath = './extracted_new_stuyvesant_opportunities.json';
+      if (!fs.existsSync(jsonPath)) {
+        console.error('❌ Extracted opportunities file not found. Run parse-new-stuyvesant-bulletins.cjs first.');
+        return;
+      }
+      
+      const opportunitiesData = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+      console.log(`📊 Found ${opportunitiesData.length} opportunities to import`);
+      
+      let importCount = 0;
+      
+      for (const oppData of opportunitiesData) {
+        try {
+          const opportunity: InsertOpportunity = {
+            title: oppData.title || 'Untitled Opportunity',
+            url: oppData.link || `https://www.google.com/search?q=${encodeURIComponent(oppData.title)}`,
+            description: this.formatStuyvesantDescription(oppData),
+            type: this.determineStuyvesantType(oppData.title, oppData.description),
+            organization: this.extractOrganization(oppData.title),
+            location: oppData.location || 'See details',
+            deadline: oppData.deadline || 'See details',
+            cost: oppData.cost || 'See details',
+            requirements: [oppData.eligible || 'High school students'],
+            tags: this.generateStuyvesantTags(oppData),
+            isActive: true,
+            source: oppData.source || 'Stuyvesant Bulletin',
+            scrapedAt: new Date(),
+            relevancyScore: 85,
+            amount: null,
+            salary: null
+          };
+          
+          await storage.createOpportunity(opportunity);
+          importCount++;
+          
+          if (importCount % 50 === 0) {
+            console.log(`📈 Progress: ${importCount} opportunities imported...`);
+          }
+          
+        } catch (error) {
+          // Skip duplicates silently
+          if (!error.message?.includes('duplicate')) {
+            console.log(`⚠️ Skipped: ${oppData.title} - ${error.message}`);
+          }
+        }
+      }
+      
+      console.log(`🎉 Successfully imported ${importCount} NEW Stuyvesant opportunities!`);
+      console.log(`📊 Total opportunities processed: ${opportunitiesData.length}`);
+      
+    } catch (error) {
+      console.error('❌ Error importing new Stuyvesant bulletins:', error.message);
+    }
+  }
+
+  private formatStuyvesantDescription(oppData: any): string {
+    let description = oppData.description || oppData.title || 'Student opportunity';
+    
+    // Add structured information
+    const details = [];
+    if (oppData.eligible && oppData.eligible !== 'High school students') {
+      details.push(`Eligible: ${oppData.eligible}`);
+    }
+    if (oppData.date && oppData.date !== 'See details') {
+      details.push(`Date: ${oppData.date}`);
+    }
+    if (oppData.location && oppData.location !== 'See details') {
+      details.push(`Location: ${oppData.location}`);
+    }
+    if (oppData.cost && oppData.cost !== 'See details') {
+      details.push(`Cost: ${oppData.cost}`);
+    }
+    if (oppData.deadline && oppData.deadline !== 'See details') {
+      details.push(`Application Deadline: ${oppData.deadline}`);
+    }
+    
+    if (details.length > 0) {
+      description += '. ' + details.join('. ');
+    }
+    
+    return description;
+  }
+
+  private determineStuyvesantType(title: string, description: string): 'job' | 'internship' | 'grant' | 'scholarship' | 'competition' {
+    const text = (title + ' ' + description).toLowerCase();
+    
+    if (text.includes('scholarship') || text.includes('financial aid')) return 'scholarship';
+    if (text.includes('contest') || text.includes('competition') || text.includes('prize')) return 'competition';
+    if (text.includes('internship') || text.includes('apprentice')) return 'internship';
+    if (text.includes('grant') || text.includes('funding')) return 'grant';
+    
+    return 'internship'; // Default for student opportunities
+  }
+
+  private generateStuyvesantTags(oppData: any): string[] {
+    const tags = [];
+    const text = (oppData.title + ' ' + oppData.description).toLowerCase();
+    
+    // Category tags
+    if (text.includes('stem') || text.includes('science') || text.includes('engineering') || text.includes('math')) {
+      tags.push('STEM');
+    }
+    if (text.includes('art') || text.includes('museum') || text.includes('creative')) {
+      tags.push('arts');
+    }
+    if (text.includes('business') || text.includes('finance') || text.includes('entrepreneur')) {
+      tags.push('business');
+    }
+    if (text.includes('leadership') || text.includes('government') || text.includes('law')) {
+      tags.push('leadership');
+    }
+    if (text.includes('volunteer') || text.includes('service') || text.includes('community')) {
+      tags.push('community-service');
+    }
+    if (text.includes('writing') || text.includes('journalism') || text.includes('media')) {
+      tags.push('writing');
+    }
+    if (text.includes('college') || text.includes('university') || text.includes('academic')) {
+      tags.push('college-prep');
+    }
+    
+    // Format tags
+    if (text.includes('virtual') || text.includes('online')) {
+      tags.push('virtual');
+    }
+    if (text.includes('summer')) {
+      tags.push('summer');
+    }
+    if (text.includes('free') || oppData.cost?.toLowerCase().includes('free')) {
+      tags.push('free');
+    }
+    
+    tags.push('stuyvesant', 'high-school');
+    
+    return [...new Set(tags)]; // Remove duplicates
+  }
 }
 
 export const dataImporter = new DataImporter();
