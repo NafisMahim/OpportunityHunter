@@ -423,6 +423,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Enhanced Import for 18 Specific Files
+  app.post("/api/import-18-files", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      await storage.createActivity({
+        userId,
+        message: "🎯 Starting enhanced import of 18 specific CSV files with comprehensive parsing",
+        type: "import",
+      });
+
+      res.json({ message: "Enhanced import started for 18 specific files" });
+
+      // Import with enhanced parsing in background
+      import('./data-importer').then(({ dataImporter }) => {
+        return dataImporter.importSpecific18Files();
+      }).then(async () => {
+        await storage.createActivity({
+          userId,
+          message: "✅ Enhanced import complete! All opportunities from 18 files successfully extracted.",
+          type: "import",
+        });
+      }).catch(async (error) => {
+        console.error('Enhanced import error:', error);
+        await storage.createActivity({
+          userId,
+          message: "❌ Enhanced import encountered an error. Check file processing logs.",
+          type: "error",
+        });
+      });
+
+    } catch (error) {
+      console.error('Enhanced import route error:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
   // Auto-apply route
   app.post("/api/auto-apply", async (req, res) => {
     try {

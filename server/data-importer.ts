@@ -3668,6 +3668,231 @@ export class DataImporter {
     
     return [...new Set(tags)]; // Remove duplicates
   }
+
+  // Enhanced parser for comprehensive opportunity extraction
+  private parseStuyvesantContentEnhanced(content: string, fileName: string): InsertOpportunity[] {
+    const opportunities: InsertOpportunity[] = [];
+    const lines = content.split('\n');
+    
+    let currentOpp: any = null;
+    let collectingDescription = false;
+    let currentSection = 'General Opportunities';
+    let lineIndex = 0;
+    
+    console.log(`🔍 Enhanced parsing for ${fileName} with ${lines.length} lines`);
+    
+    while (lineIndex < lines.length) {
+      const cleanLine = lines[lineIndex].replace(/"/g, '').trim();
+      
+      if (!cleanLine) {
+        lineIndex++;
+        continue;
+      }
+      
+      // Detect section headers
+      if (cleanLine.includes('EVENTS OF INTEREST') || cleanLine.includes('ACADEMIC PROGRAMS') ||
+          cleanLine.includes('BUSINESS & JOBS') || cleanLine.includes('COMMUNITY SERVICE') ||
+          cleanLine.includes('COLLEGE PREP') || cleanLine.includes('LEADERSHIP, GOVERNMENT') ||
+          cleanLine.includes('MUSEUMS & ART') || cleanLine.includes('PARKS/NATURE') ||
+          cleanLine.includes('STEM OPPORTUNITIES') || cleanLine.includes('THEATER, WRITING, MUSIC') ||
+          cleanLine.includes('CONTESTS & COMPETITIONS') || cleanLine.includes('SCHOLARSHIPS') ||
+          cleanLine.includes('OPPORTUNITY LISTS')) {
+        currentSection = cleanLine;
+        lineIndex++;
+        continue;
+      }
+      
+      // Enhanced opportunity detection - look for various patterns
+      const isNewOpportunity = cleanLine.toLowerCase().startsWith('new:') || 
+                              cleanLine.toLowerCase().startsWith('deadline approaching:') ||
+                              cleanLine.toLowerCase().startsWith('some deadlines approaching:') ||
+                              cleanLine.toLowerCase().startsWith('updated:') ||
+                              cleanLine.toLowerCase().startsWith('reminder:') ||
+                              (cleanLine.includes('Event Approaching') && cleanLine.includes(':')) ||
+                              (cleanLine.length > 20 && cleanLine.includes('Program') && !cleanLine.includes('Eligible:') && !cleanLine.includes('Date:') && !cleanLine.includes('Location:'));
+      
+      if (isNewOpportunity) {
+        // Save previous opportunity if exists
+        if (currentOpp && currentOpp.title && currentOpp.title.length > 3) {
+          opportunities.push(this.createStuyvesantOpportunity(currentOpp, currentSection, fileName));
+        }
+        
+        // Start new opportunity - clean up title
+        let title = cleanLine.replace(/^(new:|deadline approaching:|some deadlines approaching:|updated:|reminder:|event approaching:)/i, '').trim();
+        
+        // Look ahead for multi-line titles
+        let nextLineIndex = lineIndex + 1;
+        while (nextLineIndex < lines.length && nextLineIndex < lineIndex + 3) {
+          const nextLine = lines[nextLineIndex].replace(/"/g, '').trim();
+          if (nextLine && !nextLine.toLowerCase().startsWith('eligible:') && 
+              !nextLine.toLowerCase().startsWith('date:') && 
+              !nextLine.toLowerCase().startsWith('location:') &&
+              !nextLine.startsWith('http') &&
+              nextLine.length > 0) {
+            title += ' ' + nextLine;
+            nextLineIndex++;
+          } else {
+            break;
+          }
+        }
+        
+        currentOpp = {
+          title: title.substring(0, 200),
+          description: '',
+          links: [],
+          eligible: '',
+          dates: '',
+          location: '',
+          cost: '',
+          deadline: ''
+        };
+        collectingDescription = true;
+        lineIndex = nextLineIndex;
+        continue;
+      }
+      
+      if (!currentOpp) {
+        lineIndex++;
+        continue;
+      }
+      
+      // Parse specific fields with enhanced detection
+      if (cleanLine.toLowerCase().startsWith('eligible:')) {
+        currentOpp.eligible = cleanLine.replace(/^eligible:/i, '').trim();
+        collectingDescription = false;
+        lineIndex++;
+        continue;
+      }
+      
+      if (cleanLine.toLowerCase().startsWith('date:') || cleanLine.toLowerCase().startsWith('dates:')) {
+        currentOpp.dates = cleanLine.replace(/^dates?:/i, '').trim();
+        collectingDescription = false;
+        lineIndex++;
+        continue;
+      }
+      
+      if (cleanLine.toLowerCase().startsWith('location:')) {
+        currentOpp.location = cleanLine.replace(/^location:/i, '').trim();
+        collectingDescription = false;
+        lineIndex++;
+        continue;
+      }
+      
+      if (cleanLine.toLowerCase().startsWith('cost:')) {
+        currentOpp.cost = cleanLine.replace(/^cost:/i, '').trim();
+        collectingDescription = false;
+        lineIndex++;
+        continue;
+      }
+      
+      if (cleanLine.toLowerCase().startsWith('application deadline:') || cleanLine.toLowerCase().startsWith('deadline:')) {
+        currentOpp.deadline = cleanLine.replace(/^(application )?deadline:/i, '').trim();
+        collectingDescription = false;
+        lineIndex++;
+        continue;
+      }
+      
+      // Enhanced link detection
+      if (cleanLine.toLowerCase().startsWith('link:') || cleanLine.toLowerCase().startsWith('links:')) {
+        const linkLine = cleanLine.replace(/^links?:/i, '').trim();
+        if (linkLine.startsWith('http')) {
+          currentOpp.links.push(linkLine);
+        }
+        collectingDescription = false;
+        lineIndex++;
+        continue;
+      }
+      
+      // Standalone URLs
+      if (cleanLine.startsWith('http')) {
+        currentOpp.links.push(cleanLine);
+        collectingDescription = false;
+        lineIndex++;
+        continue;
+      }
+      
+      // Add to description if we're collecting it
+      if (collectingDescription && cleanLine.length > 0 && 
+          !cleanLine.toLowerCase().includes('return to top') &&
+          !cleanLine.toLowerCase().includes('------') &&
+          cleanLine.length < 500) {
+        currentOpp.description += (currentOpp.description ? ' ' : '') + cleanLine;
+      }
+      
+      lineIndex++;
+    }
+    
+    // Don't forget the last opportunity
+    if (currentOpp && currentOpp.title && currentOpp.title.length > 3) {
+      opportunities.push(this.createStuyvesantOpportunity(currentOpp, currentSection, fileName));
+    }
+    
+    console.log(`✅ Enhanced parser found ${opportunities.length} opportunities in ${fileName}`);
+    return opportunities;
+  }
+
+  // Targeted import for 18 specific files
+  async importSpecific18Files(): Promise<void> {
+    console.log('🎯 TARGETED IMPORT: Processing the 18 specific new CSV files with enhanced parsing...');
+    
+    const targetFiles = [
+      'SOB-16L-December-22_-2023_1751996204633.csv',
+      'SOB-19L-January-19_-2024_1751996204638.csv',
+      'SOB-20L-January-26_-2024_1751996204638.csv',
+      'SOB-21L-February-2_-2024_1751996204638.csv',
+      'SOB-22L-February-9_-2024_1751996204638.csv',
+      'SOB-23L-February-16_-2024-_1__1751996204638.csv',
+      'SOB-24L-March-1_-2024_1751996204638.csv',
+      'SOB-25L-March-8_-2024_1751996204638.csv',
+      'SOB-27L-March-22_-2024_1751996204638.csv',
+      'SOB-28L-March-29_-2024_1751996204639.csv',
+      'SOB-29L-April-5_-2024_1751996204639.csv',
+      'SOB-30L-April-12_-2024_1751996204639.csv',
+      'SOB-31L-April-19_-2024_1751996204639.csv',
+      'SOB-32L-May-3_-2024-_1__1751996204639.csv',
+      'SOB-33L-May-10_-2024-_1__1751996204639.csv',
+      'SOB-34L-May-17_-2024_1751996204639.csv',
+      'SOB-35L-May-24_-2024_1751996204640.csv',
+      'SOB-36L-May-31_-2024_1751996204640.csv'
+    ];
+    
+    try {
+      const attachedAssetsDir = path.join(__dirname, '../attached_assets');
+      let totalOpportunities = 0;
+      
+      for (const fileName of targetFiles) {
+        const filePath = path.join(attachedAssetsDir, fileName);
+        console.log(`\n📄 Processing: ${fileName}`);
+        
+        try {
+          const content = await fsPromises.readFile(filePath, 'utf-8');
+          const opportunities = this.parseStuyvesantContentEnhanced(content, fileName);
+          
+          let importCount = 0;
+          for (const opp of opportunities) {
+            try {
+              await storage.createOpportunity(opp);
+              importCount++;
+              totalOpportunities++;
+              console.log(`✓ Imported: ${opp.title}`);
+            } catch (error) {
+              console.log(`Duplicate opportunity skipped: ${opp.title}`);
+            }
+          }
+          
+          console.log(`✅ Imported ${importCount} opportunities from ${fileName}`);
+          
+        } catch (error) {
+          console.error(`❌ Error processing ${fileName}:`, error);
+        }
+      }
+      
+      console.log(`\n🎯 TARGETED IMPORT COMPLETE: Successfully imported ${totalOpportunities} opportunities from ${targetFiles.length} specific files!`);
+      
+    } catch (error) {
+      console.error('Error in targeted import:', error);
+    }
+  }
 }
 
 export const dataImporter = new DataImporter();
