@@ -3452,12 +3452,20 @@ export class DataImporter {
           collectingDescription = false;
         } else if (cleanLine.startsWith('Links:') || cleanLine.startsWith('Link:')) {
           const linkText = cleanLine.replace(/^Links?:/, '').trim();
-          if (linkText) currentOpp.links.push(linkText);
+          if (linkText) {
+            currentOpp.links.push(linkText);
+          }
           collectingDescription = false;
         } else if (cleanLine.startsWith('http')) {
           // Standalone URL
           currentOpp.links.push(cleanLine);
           collectingDescription = false;
+        } else if (!collectingDescription && cleanLine.includes('://')) {
+          // Handle URLs that might be embedded in other text
+          const urlMatch = cleanLine.match(/(https?:\/\/[^\s]+)/);
+          if (urlMatch && currentOpp.links) {
+            currentOpp.links.push(urlMatch[1]);
+          }
         } else if (collectingDescription && cleanLine.length > 15 && 
                   !cleanLine.includes('Questions, suggestions') && 
                   !cleanLine.includes('CATEGORY TABLE') &&
@@ -3494,8 +3502,9 @@ export class DataImporter {
     if (oppData.cost) fullDescription += `. Cost: ${oppData.cost}`;
     if (oppData.deadline) fullDescription += `. Application deadline: ${oppData.deadline}`;
     
-    // Get primary link
-    const primaryLink = oppData.links && oppData.links.length > 0 ? oppData.links[0] : '#';
+    // Get primary link with Google search fallback
+    const primaryLink = oppData.links && oppData.links.length > 0 ? oppData.links[0] : 
+      `https://www.google.com/search?q=${encodeURIComponent(oppData.title)}`;
     
     return {
       title: oppData.title.substring(0, 200),
