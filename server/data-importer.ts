@@ -3332,6 +3332,195 @@ export class DataImporter {
     }
   }
 
+  async importStuyvesantOpportunities(): Promise<void> {
+    console.log('🏫 STUYVESANT IMPORT: Parsing massive Student Opportunity Bulletin files...');
+    
+    try {
+      const attachedAssetsDir = path.join(__dirname, '../attached_assets');
+      const files = await fs.readdir(attachedAssetsDir);
+      
+      // Filter for Stuyvesant SOB files
+      const sobFiles = files.filter(file => 
+        file.toLowerCase().includes('sob-') && file.toLowerCase().endsWith('.csv')
+      );
+      
+      console.log(`Found ${sobFiles.length} Stuyvesant Opportunity Bulletin files`);
+      
+      let totalOpportunities = 0;
+      
+      for (const fileName of sobFiles) {
+        const filePath = path.join(attachedAssetsDir, fileName);
+        console.log(`\n📄 Processing: ${fileName}`);
+        
+        try {
+          const content = await fs.readFile(filePath, 'utf-8');
+          const opportunities = this.parseStuyvesantContent(content, fileName);
+          
+          let importCount = 0;
+          for (const opp of opportunities) {
+            try {
+              await storage.createOpportunity(opp);
+              importCount++;
+              totalOpportunities++;
+              console.log(`✓ Imported: ${opp.title}`);
+            } catch (error) {
+              console.log(`Duplicate skipped: ${opp.title}`);
+            }
+          }
+          
+          console.log(`✅ Imported ${importCount} opportunities from ${fileName}`);
+          
+        } catch (error) {
+          console.error(`❌ Error processing ${fileName}:`, error);
+        }
+      }
+      
+      console.log(`\n🎯 STUYVESANT IMPORT COMPLETE: Successfully imported ${totalOpportunities} opportunities from ${sobFiles.length} bulletin files!`);
+      
+    } catch (error) {
+      console.error('Error in Stuyvesant import:', error);
+    }
+  }
+
+  private parseStuyvesantContent(content: string, fileName: string): InsertOpportunity[] {
+    const opportunities: InsertOpportunity[] = [];
+    const lines = content.split('\n');
+    
+    let currentOpp: any = null;
+    let collectingDescription = false;
+    let currentSection = 'General Opportunities';
+    
+    for (let i = 0; i < lines.length; i++) {
+      const cleanLine = lines[i].replace(/"/g, '').trim();
+      
+      if (!cleanLine) continue;
+      
+      // Detect section headers - these appear throughout the document
+      if (cleanLine.includes('EVENTS OF INTEREST') || cleanLine.includes('ACADEMIC PROGRAMS') ||
+          cleanLine.includes('BUSINESS & JOBS') || cleanLine.includes('COMMUNITY SERVICE') ||
+          cleanLine.includes('COLLEGE PREP') || cleanLine.includes('LEADERSHIP, GOVERNMENT') ||
+          cleanLine.includes('MUSEUMS & ART') || cleanLine.includes('PARKS/NATURE') ||
+          cleanLine.includes('STEM OPPORTUNITIES') || cleanLine.includes('THEATER, WRITING, MUSIC') ||
+          cleanLine.includes('CONTESTS & COMPETITIONS') || cleanLine.includes('SCHOLARSHIPS') ||
+          cleanLine.includes('OPPORTUNITY LISTS')) {
+        currentSection = cleanLine;
+        continue;
+      }
+      
+      // Look for "New:" OR "Deadline Approaching:" to start new opportunity
+      if (cleanLine.startsWith('New:') || cleanLine.startsWith('Deadline Approaching:')) {
+        // Save previous opportunity
+        if (currentOpp && currentOpp.title && currentOpp.title.length > 3) {
+          opportunities.push(this.createStuyvesantOpportunity(currentOpp, currentSection, fileName));
+        }
+        
+        // Extract title from "New: XYZ" or "Deadline Approaching: XYZ"
+        let title = cleanLine.replace(/^(New:|Deadline Approaching:)\s*/, '').trim();
+        
+        // Start new opportunity
+        currentOpp = {
+          title: title,
+          description: '',
+          eligible: '',
+          dates: '',
+          location: '',
+          cost: '',
+          deadline: '',
+          links: []
+        };
+        collectingDescription = true;
+        continue;
+      }
+      
+      // Parse structured fields for current opportunity
+      if (currentOpp) {
+        if (cleanLine.startsWith('Eligible:')) {
+          currentOpp.eligible = cleanLine.replace('Eligible:', '').trim();
+          collectingDescription = false;
+        } else if (cleanLine.startsWith('Dates:') || cleanLine.startsWith('Date:')) {
+          currentOpp.dates = cleanLine.replace(/^(Dates?:)/, '').trim();
+          collectingDescription = false;
+        } else if (cleanLine.startsWith('Location:')) {
+          currentOpp.location = cleanLine.replace('Location:', '').trim();
+          collectingDescription = false;
+        } else if (cleanLine.startsWith('Cost:') || cleanLine.startsWith('Costs:')) {
+          currentOpp.cost = cleanLine.replace(/^(Costs?:)/, '').trim();
+          collectingDescription = false;
+        } else if (cleanLine.startsWith('Application Deadline:') || cleanLine.startsWith('Application Deadlines:')) {
+          currentOpp.deadline = cleanLine.replace(/^Application Deadlines?:/, '').trim();
+          collectingDescription = false;
+        } else if (cleanLine.startsWith('Links:') || cleanLine.startsWith('Link:')) {
+          const linkText = cleanLine.replace(/^Links?:/, '').trim();
+          if (linkText) currentOpp.links.push(linkText);
+          collectingDescription = false;
+        } else if (cleanLine.startsWith('http')) {
+          // Standalone URL
+          currentOpp.links.push(cleanLine);
+          collectingDescription = false;
+        } else if (collectingDescription && cleanLine.length > 15 && 
+                  !cleanLine.includes('Questions, suggestions') && 
+                  !cleanLine.includes('CATEGORY TABLE') &&
+                  !cleanLine.includes('TomorrowToday') &&
+                  !cleanLine.includes('Stuyvesant Student Opportunity Bulletin')) {
+          // Add to description if we're still collecting content
+          if (currentOpp.description) {
+            currentOpp.description += ' ' + cleanLine;
+          } else {
+            currentOpp.description = cleanLine;
+          }
+        }
+      }
+    }
+    
+    // Add final opportunity
+    if (currentOpp && currentOpp.title && currentOpp.title.length > 3) {
+      opportunities.push(this.createStuyvesantOpportunity(currentOpp, currentSection, fileName));
+    }
+    
+    console.log(`Parsed ${opportunities.length} opportunities from ${fileName}`);
+    return opportunities;
+  }
+
+  private createStuyvesantOpportunity(oppData: any, section: string, fileName: string): InsertOpportunity {
+    const bulletinNumber = fileName.match(/SOB-(\d+)/i)?.[1] || 'Unknown';
+    const bulletinDate = this.extractDateFromStuyvesantFilename(fileName);
+    
+    // Create comprehensive description in the exact format requested
+    let fullDescription = oppData.description || oppData.title;
+    if (oppData.eligible) fullDescription += `. Eligible: ${oppData.eligible}`;
+    if (oppData.dates) fullDescription += `. Date: ${oppData.dates}`;
+    if (oppData.location) fullDescription += `. Location: ${oppData.location}`;
+    if (oppData.cost) fullDescription += `. Cost: ${oppData.cost}`;
+    if (oppData.deadline) fullDescription += `. Application deadline: ${oppData.deadline}`;
+    
+    // Get primary link
+    const primaryLink = oppData.links && oppData.links.length > 0 ? oppData.links[0] : '#';
+    
+    return {
+      title: oppData.title.substring(0, 200),
+      description: fullDescription,
+      organization: this.extractOrganization(oppData.title),
+      type: this.determineOpportunityType(oppData.title, oppData.description),
+      source: `Stuyvesant Student Opportunity Bulletin #${bulletinNumber} (${bulletinDate})`,
+      url: primaryLink,
+      deadline: oppData.deadline || 'Check bulletin for details',
+      requirements: this.parseRequirements(oppData.eligible),
+      tags: [...this.generateTags(oppData.title, section, oppData.description), 'Stuyvesant', 'NYC', 'High School', 'Student Opportunities'],
+      relevancyScore: 95,
+      amount: oppData.cost || null,
+      location: oppData.location || 'New York City area',
+      salary: null
+    };
+  }
+
+  private extractDateFromStuyvesantFilename(filename: string): string {
+    const match = filename.match(/(\w+)-(\d+)_-(\d{4})/);
+    if (match) {
+      return `${match[1]} ${match[2]}, ${match[3]}`;
+    }
+    return '2025';
+  }
+
 }
 
 export const dataImporter = new DataImporter();

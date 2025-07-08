@@ -345,6 +345,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Stuyvesant Opportunity Bulletin Import Route
+  app.post("/api/import-stuyvesant", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      await storage.createActivity({
+        userId,
+        message: "🏫 Started importing massive Stuyvesant Student Opportunity Bulletin collection",
+        type: "import",
+      });
+
+      res.json({ message: "Stuyvesant import started - processing 15+ bulletin files" });
+
+      // Import Stuyvesant opportunities in background
+      import('./data-importer').then(({ dataImporter }) => {
+        return dataImporter.importStuyvesantOpportunities();
+      }).then(async () => {
+        await storage.createActivity({
+          userId,
+          message: "🎯 Successfully imported all Stuyvesant opportunities from bulletin files",
+          type: "import",
+        });
+      }).catch(async (error) => {
+        console.error('Stuyvesant import error:', error);
+        await storage.createActivity({
+          userId,
+          message: "Stuyvesant import encountered an error. Check file format.",
+          type: "error",
+        });
+      });
+
+    } catch (error) {
+      console.error('Stuyvesant import route error:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
   // Auto-apply route
   app.post("/api/auto-apply", async (req, res) => {
     try {
