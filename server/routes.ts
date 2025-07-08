@@ -78,8 +78,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`Starting AI matching for user with major: ${user.major}, minor: ${user.minor}`);
           console.log(`Total opportunities to match: ${opportunities.length}`);
           
+          // Remove duplicates from database results first
+          const uniqueOpportunities = opportunities.filter((opp, index, self) => 
+            index === self.findIndex(o => o.title.toLowerCase() === opp.title.toLowerCase() && 
+                                         o.organization.toLowerCase() === opp.organization.toLowerCase())
+          );
+          
+          console.log(`After removing duplicates: ${uniqueOpportunities.length} unique opportunities`);
+          
           const { aiMatcher } = await import('./ai-matcher');
-          const matchResults = await aiMatcher.matchOpportunitiesToUser(user, opportunities);
+          const matchResults = await aiMatcher.matchOpportunitiesToUser(user, uniqueOpportunities);
           
           console.log(`AI matching completed, found ${matchResults.length} matches`);
           
@@ -95,7 +103,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Get the matched opportunities in sorted order
           const matchedOpportunities = sortedMatches.map(match => {
-            const opp = opportunities.find(o => o.id === match.opportunityId);
+            const opp = uniqueOpportunities.find(o => o.id === match.opportunityId);
             return opp ? {
               ...opp,
               relevancyScore: match.relevancyScore,
@@ -103,7 +111,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             } : null;
           }).filter(Boolean);
           
-          console.log(`Returning ${matchedOpportunities.length} matched opportunities for Biology major`);
+          console.log(`Returning ${matchedOpportunities.length} matched opportunities for ${user.major}`);
           return res.json(matchedOpportunities);
         } else {
           console.log(`User has no major/minor set, returning empty array`);

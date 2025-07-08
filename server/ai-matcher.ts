@@ -44,15 +44,20 @@ export class AIOpportunityMatcher {
   }
 
   private async analyzeOpportunityBatch(user: User, opportunities: Opportunity[]): Promise<MatchingResult[]> {
-    const systemPrompt = `You are an expert academic advisor. Analyze each opportunity for relevance to the student's academic field.
+    const systemPrompt = `You are an expert academic advisor. Analyze each opportunity for relevance to the student's specific academic field.
 
 Student Profile:
 - Major: ${user.major || "Not specified"}
 - Minor: ${user.minor || "Not specified"}
 
-For each opportunity, provide:
-1. Relevancy score (0-100) - Be STRICT. Only score 70+ if truly relevant to their academic field
-2. Unique explanation of why it matches (or doesn't match) their academic interests
+IMPORTANT INSTRUCTIONS:
+1. Be STRICT with scoring - Only score 70+ if the opportunity is truly relevant to their specific academic field
+2. Consider ANY academic field the student enters, not just common majors
+3. Look for direct connections between the opportunity and their field of study
+4. For creative fields (art, design, etc.), look for creative/visual elements
+5. For technical fields, look for technical/analytical components
+6. For business fields, look for leadership/entrepreneurship aspects
+7. For humanities, look for research/writing/cultural elements
 
 Respond with JSON:
 {
@@ -60,7 +65,7 @@ Respond with JSON:
     {
       "opportunityId": number,
       "relevancyScore": number,
-      "matchReason": "specific explanation of academic relevance"
+      "matchReason": "specific explanation of how this opportunity relates to [major/minor] field"
     }
   ]
 }`;

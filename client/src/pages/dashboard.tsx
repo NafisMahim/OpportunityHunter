@@ -36,7 +36,7 @@ export default function Dashboard() {
 
   // Fetch opportunities with AI matching and filters
   const { data: opportunities = [], isLoading: opportunitiesLoading } = useQuery<Opportunity[]>({
-    queryKey: ["/api/opportunities", searchFilters, currentUserId],
+    queryKey: ["/api/opportunities", searchFilters, currentUserId, user?.major, user?.minor],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (searchFilters.query) params.append("search", searchFilters.query);
