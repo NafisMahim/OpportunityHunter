@@ -1,4 +1,5 @@
-import * as fs from 'fs/promises';
+import * as fs from 'fs';
+import * as fsPromises from 'fs/promises';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -2752,7 +2753,7 @@ export class DataImporter {
     console.log('Importing from scholarship HTML 2024...');
     
     try {
-      const htmlContent = await fs.readFile('attached_assets/Available Scholarships for High School Students - Google Drive_1751958894115.html', 'utf-8');
+      const htmlContent = await fsPromises.readFile('attached_assets/Available Scholarships for High School Students - Google Drive_1751958894115.html', 'utf-8');
       
       // Parse the HTML to extract scholarship data
       const scholarships = this.parseScholarshipHTML(htmlContent);
@@ -2781,7 +2782,7 @@ export class DataImporter {
     console.log('Importing from scholarship text file...');
     
     try {
-      const textContent = await fs.readFile('attached_assets/Pasted--DOCTYPE-html-saved-from-url-0092-https-docs-google-com-spreadsheets-d-1QHFusWlsG0ltQ7wY9S-1751959030516_1751959030521.txt', 'utf-8');
+      const textContent = await fsPromises.readFile('attached_assets/Pasted--DOCTYPE-html-saved-from-url-0092-https-docs-google-com-spreadsheets-d-1QHFusWlsG0ltQ7wY9S-1751959030516_1751959030521.txt', 'utf-8');
       
       // Parse the text content to extract scholarship data
       const scholarships = this.parseScholarshipHTML(textContent);
@@ -2812,7 +2813,7 @@ export class DataImporter {
     const filePath = path.join(__dirname, '../extracted-scholarships.json');
     
     try {
-      const scholarshipList = JSON.parse(await fs.readFile(filePath, 'utf-8'));
+      const scholarshipList = JSON.parse(await fsPromises.readFile(filePath, 'utf-8'));
       console.log(`Found ${scholarshipList.length} extracted scholarships`);
       
       let importCount = 0;
@@ -2873,7 +2874,7 @@ export class DataImporter {
     for (const filePath of batchFiles) {
       try {
         console.log(`\n📄 Processing: ${filePath}`);
-        const csvContent = await fs.readFile(filePath, 'utf-8');
+        const csvContent = await fsPromises.readFile(filePath, 'utf-8');
         const records = parse(csvContent, {
           columns: true,
           skip_empty_lines: true,
@@ -2925,7 +2926,7 @@ export class DataImporter {
     console.log(`🏙️ MASSIVE NYC IMPORT: Processing ${filePath} for NYC-based opportunities...`);
     
     try {
-      const csvContent = await fs.readFile(filePath, 'utf-8');
+      const csvContent = await fsPromises.readFile(filePath, 'utf-8');
       
       // Parse the CSV content looking for the format: "New:", "Eligible:", "Date:", etc.
       const opportunities = this.parseNYCOpportunityFormat(csvContent);
@@ -3198,7 +3199,7 @@ export class DataImporter {
     
     try {
       const attachedAssetsDir = path.join(__dirname, '../attached_assets');
-      const files = await fs.readdir(attachedAssetsDir);
+      const files = await fsPromises.readdir(attachedAssetsDir);
       
       // Filter for CSV files that might contain NYC opportunities
       const csvFiles = files.filter(file => 
@@ -3272,7 +3273,7 @@ export class DataImporter {
 
   private async tryNYCFormatParsing(filePath: string): Promise<InsertOpportunity[]> {
     try {
-      const csvContent = await fs.readFile(filePath, 'utf-8');
+      const csvContent = await fsPromises.readFile(filePath, 'utf-8');
       
       // Check if content has NYC format indicators
       if (csvContent.toLowerCase().includes('new:') || 
@@ -3289,7 +3290,7 @@ export class DataImporter {
 
   private async tryStandardCSVParsing(filePath: string): Promise<InsertOpportunity[]> {
     try {
-      const csvContent = await fs.readFile(filePath, 'utf-8');
+      const csvContent = await fsPromises.readFile(filePath, 'utf-8');
       const records = parse(csvContent, {
         columns: true,
         skip_empty_lines: true,
@@ -3337,7 +3338,7 @@ export class DataImporter {
     
     try {
       const attachedAssetsDir = path.join(__dirname, '../attached_assets');
-      const files = await fs.readdir(attachedAssetsDir);
+      const files = await fsPromises.readdir(attachedAssetsDir);
       
       // Filter for Stuyvesant SOB files
       const sobFiles = files.filter(file => 
@@ -3353,7 +3354,7 @@ export class DataImporter {
         console.log(`\n📄 Processing: ${fileName}`);
         
         try {
-          const content = await fs.readFile(filePath, 'utf-8');
+          const content = await fsPromises.readFile(filePath, 'utf-8');
           const opportunities = this.parseStuyvesantContent(content, fileName);
           
           let importCount = 0;
@@ -3522,62 +3523,67 @@ export class DataImporter {
   }
 
   async importNewStuyvesantBulletins(): Promise<void> {
-    console.log('📄 Importing NEW Stuyvesant Bulletin Opportunities (899 extracted)...');
+    console.log('📄 Importing NEW Stuyvesant Bulletin Opportunities using proven method...');
     
     try {
-      // Load the extracted opportunities
-      const jsonPath = './extracted_new_stuyvesant_opportunities.json';
-      if (!fs.existsSync(jsonPath)) {
-        console.error('❌ Extracted opportunities file not found. Run parse-new-stuyvesant-bulletins.cjs first.');
-        return;
-      }
+      const attachedAssetsDir = path.join(__dirname, '../attached_assets');
       
-      const opportunitiesData = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
-      console.log(`📊 Found ${opportunitiesData.length} opportunities to import`);
+      // List of new CSV files to process using the SAME method as before
+      const newCsvFiles = [
+        'SOB 18L January 10, 2025 (3) (1)_1751994702524.csv',
+        'SOB 18L January 10, 2025 (3)_1751994702525.csv',
+        'SOB_1_September_6_2024_1_1751994702525.csv',
+        'SOB-4L-September-27_-2024-_1__1751994702525.csv',
+        'SOB-5L-October-2_-2024_1751994702525.csv',
+        'SOB-6L-October-11_-2024_1751994702525.csv',
+        'SOB-7L-October-18_-2024_1751994702525.csv',
+        'SOB-8L-October-25_-2024_1751994702525.csv',
+        'SOB-10L-November-8_-2024_1751994702526.csv',
+        'SOB-13L-November-27_-2024_1751994702526.csv',
+        'SOB-14L-December-6_-2024_1751994702526.csv',
+        'SOB-15L-December-13_-2024_1751994702526.csv',
+        'SOB-16L-December-20_-2024-_1__1751994702526.csv',
+        'SOB-17L-January-3_-2025_1751994702526.csv',
+        'SOB-37L-June-7_-2024-_1__1751994702526.csv',
+        'SOB-38L-June-14_-2024_1751994702526.csv'
+      ];
+
+      let totalImported = 0;
       
-      let importCount = 0;
-      
-      for (const oppData of opportunitiesData) {
+      for (const fileName of newCsvFiles) {
+        const filePath = path.join(attachedAssetsDir, fileName);
+        console.log(`\n📄 Processing: ${fileName}`);
+        
         try {
-          const opportunity: InsertOpportunity = {
-            title: oppData.title || 'Untitled Opportunity',
-            url: oppData.link || `https://www.google.com/search?q=${encodeURIComponent(oppData.title)}`,
-            description: this.formatStuyvesantDescription(oppData),
-            type: this.determineStuyvesantType(oppData.title, oppData.description),
-            organization: this.extractOrganization(oppData.title),
-            location: oppData.location || 'See details',
-            deadline: oppData.deadline || 'See details',
-            cost: oppData.cost || 'See details',
-            requirements: [oppData.eligible || 'High school students'],
-            tags: this.generateStuyvesantTags(oppData),
-            isActive: true,
-            source: oppData.source || 'Stuyvesant Bulletin',
-            scrapedAt: new Date(),
-            relevancyScore: 85,
-            amount: null,
-            salary: null
-          };
+          // Use the EXACT SAME async file reading pattern as the working method
+          const content = await fsPromises.readFile(filePath, 'utf-8');
           
-          await storage.createOpportunity(opportunity);
-          importCount++;
+          // Use the EXACT SAME method that works for previous Stuyvesant bulletins
+          const opportunities = this.parseStuyvesantContent(content, fileName);
           
-          if (importCount % 50 === 0) {
-            console.log(`📈 Progress: ${importCount} opportunities imported...`);
+          let importCount = 0;
+          for (const opp of opportunities) {
+            try {
+              await storage.createOpportunity(opp);
+              importCount++;
+              totalImported++;
+              console.log(`✓ Imported: ${opp.title}`);
+            } catch (error) {
+              console.log(`Duplicate skipped: ${opp.title}`);
+            }
           }
+          
+          console.log(`✅ Imported ${importCount} opportunities from ${fileName}`);
           
         } catch (error) {
-          // Skip duplicates silently
-          if (!error.message?.includes('duplicate')) {
-            console.log(`⚠️ Skipped: ${oppData.title} - ${error.message}`);
-          }
+          console.error(`❌ Error processing ${fileName}:`, error);
         }
       }
       
-      console.log(`🎉 Successfully imported ${importCount} NEW Stuyvesant opportunities!`);
-      console.log(`📊 Total opportunities processed: ${opportunitiesData.length}`);
+      console.log(`\n🎯 NEW STUYVESANT IMPORT COMPLETE: Successfully imported ${totalImported} opportunities from ${newCsvFiles.length} bulletin files!`);
       
     } catch (error) {
-      console.error('❌ Error importing new Stuyvesant bulletins:', error.message);
+      console.error('Error in NEW Stuyvesant import:', error);
     }
   }
 
