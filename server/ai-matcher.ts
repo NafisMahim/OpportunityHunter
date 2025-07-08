@@ -18,14 +18,29 @@ export class AIOpportunityMatcher {
     try {
       console.log(`Using AI to match ${opportunities.length} opportunities for ${user.major || user.minor}`);
       
+      // For large datasets, use fallback matching to avoid rate limits
+      if (opportunities.length > 50) {
+        console.log(`Large dataset (${opportunities.length} opportunities), using enhanced fallback matching`);
+        return this.strictFallbackMatching(user, opportunities);
+      }
+
       // Process opportunities in smaller batches to avoid timeouts
-      const batchSize = 10;
+      const batchSize = 8;
       const allResults: MatchingResult[] = [];
       
       for (let i = 0; i < opportunities.length; i += batchSize) {
         const batch = opportunities.slice(i, i + batchSize);
-        const batchResults = await this.analyzeOpportunityBatch(user, batch);
-        allResults.push(...batchResults);
+        try {
+          const batchResults = await this.analyzeOpportunityBatch(user, batch);
+          allResults.push(...batchResults);
+          // Add delay between batches to avoid rate limits
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        } catch (error) {
+          console.log(`Batch ${i / batchSize + 1} failed, using fallback for remaining opportunities`);
+          const fallbackResults = this.strictFallbackMatching(user, opportunities.slice(i));
+          allResults.push(...fallbackResults);
+          break;
+        }
       }
       
       // Remove duplicates and filter results (MUCH MORE AGGRESSIVE)
