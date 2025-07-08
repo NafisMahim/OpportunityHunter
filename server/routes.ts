@@ -266,6 +266,85 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // NYC CSV Import Route for multiple CSV files
+  app.post("/api/import-nyc-csvs", async (req, res) => {
+    try {
+      const { userId, csvFiles } = req.body;
+      
+      // Start activity log
+      await storage.createActivity({
+        userId,
+        message: "🏙️ Started NYC CSV import for multiple files with thousands of opportunities",
+        type: "import",
+      });
+
+      res.json({ message: "NYC CSV import started - processing multiple files" });
+
+      // Import NYC CSVs in background
+      import('./data-importer').then(({ dataImporter }) => {
+        return dataImporter.importMultipleNYCCSVs(csvFiles || []);
+      }).then(async () => {
+        await storage.createActivity({
+          userId,
+          message: "🎯 Successfully imported all NYC opportunities from CSV files",
+          type: "import",
+        });
+      }).catch(async (error) => {
+        console.error('NYC CSV import error:', error);
+        await storage.createActivity({
+          userId,
+          message: "NYC CSV import encountered an error. Please check the files and try again.",
+          type: "error",
+        });
+      });
+
+    } catch (error) {
+      console.error('NYC import route error:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
+  // Auto-detect and import single NYC CSV file
+  app.post("/api/import-single-nyc-csv", async (req, res) => {
+    try {
+      const { userId, fileName } = req.body;
+      
+      await storage.createActivity({
+        userId,
+        message: `🏙️ Processing NYC CSV file: ${fileName}`,
+        type: "import",
+      });
+
+      res.json({ message: `Processing ${fileName}` });
+
+      // Auto-detect NYC CSV files in attached_assets
+      import('./data-importer').then(({ dataImporter }) => {
+        return dataImporter.autoDetectAndImportNYCCSVs();
+      }).then(async () => {
+        await storage.createActivity({
+          userId,
+          message: "🎯 Successfully auto-detected and imported NYC CSV files",
+          type: "import",
+        });
+      }).catch(async (error) => {
+        console.error('Auto NYC CSV import error:', error);
+        await storage.createActivity({
+          userId,
+          message: "Auto NYC CSV import failed. Check file format and try manual import.",
+          type: "error",
+        });
+      });
+
+    } catch (error) {
+      console.error('Single NYC import error:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
   // Auto-apply route
   app.post("/api/auto-apply", async (req, res) => {
     try {

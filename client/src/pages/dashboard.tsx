@@ -93,6 +93,19 @@ export default function Dashboard() {
     },
   });
 
+  // NYC CSV import mutation
+  const nycImportMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("POST", "/api/import-single-nyc-csv", { userId: currentUserId });
+    },
+    onSuccess: () => {
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["/api/opportunities"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/users/1/activities"] });
+      }, 5000);
+    },
+  });
+
   const handleStartImport = () => {
     importMutation.mutate();
   };

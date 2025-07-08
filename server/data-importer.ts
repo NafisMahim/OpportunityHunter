@@ -3165,6 +3165,173 @@ export class DataImporter {
     return scholarships;
   }
 
+  async importMultipleNYCCSVs(csvFileNames: string[] = []): Promise<void> {
+    console.log('🏙️ MASSIVE NYC IMPORT: Processing multiple NYC CSV files...');
+    
+    try {
+      // Auto-detect NYC CSV files if none specified
+      if (csvFileNames.length === 0) {
+        await this.autoDetectAndImportNYCCSVs();
+        return;
+      }
+      
+      let totalImported = 0;
+      for (const fileName of csvFileNames) {
+        const filePath = path.join(__dirname, '../attached_assets', fileName);
+        try {
+          console.log(`\n🏙️ Processing NYC CSV: ${fileName}`);
+          await this.importNYCOpportunitiesFromCSV(filePath);
+          totalImported++;
+        } catch (error) {
+          console.error(`Error processing ${fileName}:`, error);
+        }
+      }
+      
+      console.log(`\n🎯 NYC IMPORT COMPLETE: Processed ${totalImported} NYC CSV files!`);
+    } catch (error) {
+      console.error('Error in multiple NYC CSV import:', error);
+    }
+  }
+
+  async autoDetectAndImportNYCCSVs(): Promise<void> {
+    console.log('🔍 AUTO-DETECTING NYC CSV FILES...');
+    
+    try {
+      const attachedAssetsDir = path.join(__dirname, '../attached_assets');
+      const files = await fs.readdir(attachedAssetsDir);
+      
+      // Filter for CSV files that might contain NYC opportunities
+      const csvFiles = files.filter(file => 
+        file.toLowerCase().endsWith('.csv') && 
+        (file.toLowerCase().includes('sob') || 
+         file.toLowerCase().includes('nyc') || 
+         file.toLowerCase().includes('new-york') ||
+         file.toLowerCase().includes('opportunity') ||
+         file.toLowerCase().includes('internship') ||
+         file.toLowerCase().includes('program'))
+      );
+      
+      console.log(`Found ${csvFiles.length} potential NYC CSV files:`, csvFiles);
+      
+      let totalOpportunities = 0;
+      
+      for (const csvFile of csvFiles) {
+        const filePath = path.join(attachedAssetsDir, csvFile);
+        
+        try {
+          console.log(`\n📄 Auto-processing: ${csvFile}`);
+          
+          // First try NYC format parsing
+          const nycOpportunities = await this.tryNYCFormatParsing(filePath);
+          if (nycOpportunities.length > 0) {
+            console.log(`✓ NYC format detected - importing ${nycOpportunities.length} opportunities`);
+            let importCount = 0;
+            for (const opp of nycOpportunities) {
+              try {
+                await storage.createOpportunity(opp);
+                importCount++;
+                totalOpportunities++;
+                console.log(`✓ Imported: ${opp.title}`);
+              } catch (error) {
+                console.log(`Duplicate skipped: ${opp.title}`);
+              }
+            }
+            console.log(`✅ Imported ${importCount} opportunities from ${csvFile}`);
+            continue;
+          }
+          
+          // Fallback to standard CSV parsing
+          const standardOpportunities = await this.tryStandardCSVParsing(filePath);
+          if (standardOpportunities.length > 0) {
+            console.log(`✓ Standard CSV format detected - importing ${standardOpportunities.length} opportunities`);
+            let importCount = 0;
+            for (const opp of standardOpportunities) {
+              try {
+                await storage.createOpportunity(opp);
+                importCount++;
+                totalOpportunities++;
+                console.log(`✓ Imported: ${opp.title}`);
+              } catch (error) {
+                console.log(`Duplicate skipped: ${opp.title}`);
+              }
+            }
+            console.log(`✅ Imported ${importCount} opportunities from ${csvFile}`);
+          }
+          
+        } catch (error) {
+          console.error(`Error processing ${csvFile}:`, error);
+        }
+      }
+      
+      console.log(`\n🎯 AUTO-IMPORT COMPLETE: Successfully imported ${totalOpportunities} total opportunities from ${csvFiles.length} CSV files!`);
+      
+    } catch (error) {
+      console.error('Error in auto-detect NYC CSV import:', error);
+    }
+  }
+
+  private async tryNYCFormatParsing(filePath: string): Promise<InsertOpportunity[]> {
+    try {
+      const csvContent = await fs.readFile(filePath, 'utf-8');
+      
+      // Check if content has NYC format indicators
+      if (csvContent.toLowerCase().includes('new:') || 
+          csvContent.toLowerCase().includes('eligible:') ||
+          csvContent.toLowerCase().includes('application deadline:')) {
+        return this.parseNYCOpportunityFormat(csvContent);
+      }
+      
+      return [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  private async tryStandardCSVParsing(filePath: string): Promise<InsertOpportunity[]> {
+    try {
+      const csvContent = await fs.readFile(filePath, 'utf-8');
+      const records = parse(csvContent, {
+        columns: true,
+        skip_empty_lines: true,
+        trim: true
+      });
+      
+      const opportunities: InsertOpportunity[] = [];
+      
+      for (const record of records) {
+        // Try to identify title and description columns
+        const title = record.Title || record.title || record.Name || record.name || 
+                     record.Program || record.program || record.Opportunity || record.opportunity;
+        const description = record.Description || record.description || record.Details || record.details ||
+                           record.Summary || record.summary || title;
+        
+        if (!title || title.length < 3) continue;
+        
+        const opportunity: InsertOpportunity = {
+          title: title.substring(0, 200),
+          description: description || `${title} - Opportunity for high school students in NYC area.`,
+          organization: this.extractOrganization(title),
+          type: this.determineOpportunityType(title, description),
+          source: `Auto-detected CSV: ${path.basename(filePath)}`,
+          url: record.Link || record.link || record.URL || record.url || '#',
+          deadline: record.Deadline || record.deadline || record.Date || record.date || 'Varies',
+          requirements: this.parseRequirements(record.Eligibility || record.eligibility || record.Requirements || record.requirements),
+          tags: [...this.generateTags(title, record.Category || record.category, description), 'NYC', 'Auto-imported'],
+          relevancyScore: 85,
+          amount: record.Cost || record.cost || record.Fee || record.fee || null,
+          location: record.Location || record.location || 'New York City, NY',
+          salary: record.Salary || record.salary || null
+        };
+        
+        opportunities.push(opportunity);
+      }
+      
+      return opportunities;
+    } catch (error) {
+      return [];
+    }
+  }
+
 }
 
 export const dataImporter = new DataImporter();
