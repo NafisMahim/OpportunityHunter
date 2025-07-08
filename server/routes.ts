@@ -78,10 +78,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`Starting AI matching for user with major: ${user.major}, minor: ${user.minor}`);
           console.log(`Total opportunities to match: ${opportunities.length}`);
           
-          // Remove duplicates from database results first
+          // Helper function to check title similarity
+          function areTitlesSimilar(title1: string, title2: string): boolean {
+            const clean1 = title1.toLowerCase().replace(/[^\w\s]/g, '').trim();
+            const clean2 = title2.toLowerCase().replace(/[^\w\s]/g, '').trim();
+            
+            // Exact match
+            if (clean1 === clean2) return true;
+            
+            // Check if one title contains the other (for variations)
+            if (clean1.includes(clean2) || clean2.includes(clean1)) return true;
+            
+            // Check if they share most words (>70% similarity)
+            const words1 = clean1.split(/\s+/);
+            const words2 = clean2.split(/\s+/);
+            const intersection = words1.filter(word => words2.includes(word));
+            const similarity = intersection.length / Math.max(words1.length, words2.length);
+            
+            return similarity > 0.7;
+          }
+          
+          // Remove duplicates from database results first with aggressive matching
           const uniqueOpportunities = opportunities.filter((opp, index, self) => 
-            index === self.findIndex(o => o.title.toLowerCase() === opp.title.toLowerCase() && 
-                                         o.organization.toLowerCase() === opp.organization.toLowerCase())
+            index === self.findIndex(o => {
+              const titleSimilar = areTitlesSimilar(o.title, opp.title);
+              const orgSimilar = o.organization.toLowerCase() === opp.organization.toLowerCase();
+              return titleSimilar && orgSimilar;
+            })
           );
           
           console.log(`After removing duplicates: ${uniqueOpportunities.length} unique opportunities`);

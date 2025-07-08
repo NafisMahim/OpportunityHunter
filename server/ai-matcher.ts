@@ -28,8 +28,8 @@ export class AIOpportunityMatcher {
         allResults.push(...batchResults);
       }
       
-      // Remove duplicates and filter results
-      const uniqueResults = this.removeDuplicates(allResults);
+      // Remove duplicates and filter results (MUCH MORE AGGRESSIVE)
+      const uniqueResults = this.removeDuplicatesByTitle(allResults, opportunities);
       const filteredResults = uniqueResults
         .filter(result => result.relevancyScore >= 70)
         .sort((a, b) => b.relevancyScore - a.relevancyScore);
@@ -225,13 +225,91 @@ Tags: ${opp.tags.join(', ')}
 
   private removeDuplicates(results: MatchingResult[]): MatchingResult[] {
     const seen = new Set<number>();
+    const seenTitles = new Map<string, number>();
+    
     return results.filter(result => {
+      // Remove exact duplicates by ID
       if (seen.has(result.opportunityId)) {
         return false;
       }
+      
+      // Remove similar titles (aggressive duplicate detection)
+      const cleanTitle = result.opportunityId.toString(); // We'll check against actual opportunities
+      for (const [existingTitle, existingScore] of seenTitles.entries()) {
+        if (this.areTitlesSimilar(existingTitle, cleanTitle)) {
+          // Keep the one with higher score
+          if (result.relevancyScore > existingScore) {
+            // Remove the previous one and add this one
+            seenTitles.delete(existingTitle);
+            seenTitles.set(cleanTitle, result.relevancyScore);
+            seen.add(result.opportunityId);
+            return true;
+          } else {
+            return false; // Skip this duplicate
+          }
+        }
+      }
+      
       seen.add(result.opportunityId);
+      seenTitles.set(cleanTitle, result.relevancyScore);
       return true;
     });
+  }
+  
+  private removeDuplicatesByTitle(results: MatchingResult[], opportunities: Opportunity[]): MatchingResult[] {
+    const seen = new Set<number>();
+    const seenTitlePatterns = new Set<string>();
+    
+    return results.filter(result => {
+      // Skip if we've already seen this exact opportunity ID
+      if (seen.has(result.opportunityId)) {
+        return false;
+      }
+      
+      // Find the actual opportunity
+      const opportunity = opportunities.find(o => o.id === result.opportunityId);
+      if (!opportunity) return false;
+      
+      // Create a normalized pattern for the title
+      const normalizedTitle = this.normalizeTitle(opportunity.title);
+      const titlePattern = `${normalizedTitle}|${opportunity.organization.toLowerCase()}`;
+      
+      // Check if we've seen a similar title pattern
+      for (const existingPattern of seenTitlePatterns) {
+        if (this.arePatternsSimlar(titlePattern, existingPattern)) {
+          console.log(`DUPLICATE DETECTED: "${opportunity.title}" matches existing pattern`);
+          return false; // Skip this duplicate
+        }
+      }
+      
+      seen.add(result.opportunityId);
+      seenTitlePatterns.add(titlePattern);
+      return true;
+    });
+  }
+  
+  private normalizeTitle(title: string): string {
+    return title
+      .toLowerCase()
+      .replace(/[^\w\s]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+  
+  private arePatternsSimlar(pattern1: string, pattern2: string): boolean {
+    const [title1, org1] = pattern1.split('|');
+    const [title2, org2] = pattern2.split('|');
+    
+    // Same organization and similar titles = duplicate
+    if (org1 === org2) {
+      const words1 = title1.split(/\s+/);
+      const words2 = title2.split(/\s+/);
+      const intersection = words1.filter(word => words2.includes(word));
+      const similarity = intersection.length / Math.max(words1.length, words2.length);
+      return similarity > 0.6; // 60% word overlap = duplicate
+    }
+    
+    return false;
   }
 
 
