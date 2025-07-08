@@ -2,7 +2,6 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { scrapingService } from "./scrapers";
-import { dataImporter } from "./data-importer";
 import { insertUserSchema, insertOpportunitySchema, insertApplicationSchema, insertActivitySchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -376,23 +375,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
-    }
-  });
-
-  // Massive NYC opportunity extraction endpoint
-  app.post('/api/import-nyc-opportunities', async (req, res) => {
-    try {
-      await dataImporter.importMassiveNYCOpportunities();
-      res.json({ 
-        success: true, 
-        message: 'Massive NYC opportunity extraction completed!' 
-      });
-    } catch (error) {
-      console.error('Massive NYC opportunity extraction failed:', error);
-      res.status(500).json({ 
-        success: false, 
-        error: 'Failed to extract NYC opportunities' 
-      });
     }
   });
 
