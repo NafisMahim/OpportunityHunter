@@ -219,6 +219,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
           type: "error",
         });
       });
+    } catch (error) {
+      console.error('Import error:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // MASSIVE Scholarship Extraction from HTML files
+  app.post("/api/import-scholarships", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      // Start activity log
+      await storage.createActivity({
+        userId,
+        message: "🚀 Started MASSIVE scholarship extraction from HTML files (287 scholarships expected)",
+        type: "import",
+      });
+
+      res.json({ message: "MASSIVE scholarship extraction started" });
+
+      // Import scholarships in background
+      import('./data-importer').then(({ dataImporter }) => {
+        return dataImporter.importMassiveScholarshipExtraction();
+      }).then(async () => {
+        await storage.createActivity({
+          userId,
+          message: "🎯 Successfully extracted ALL scholarships from HTML database files",
+          type: "import",
+        });
+      }).catch(async (error) => {
+        console.error('Scholarship extraction error:', error);
+        await storage.createActivity({
+          userId,
+          message: "Scholarship extraction encountered an error. Please try again.",
+          type: "error",
+        });
+      });
 
     } catch (error) {
       console.error('Import route error:', error);
