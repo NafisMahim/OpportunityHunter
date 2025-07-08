@@ -57,10 +57,10 @@ export default function Dashboard() {
     currentPage * itemsPerPage
   );
 
-  // Start scraping mutation
-  const scrapeMutation = useMutation({
+  // Start import mutation
+  const importMutation = useMutation({
     mutationFn: async () => {
-      return apiRequest("POST", "/api/scrape", { userId: currentUserId });
+      return apiRequest("POST", "/api/import", { userId: currentUserId });
     },
     onSuccess: () => {
       setIsScrapingModalOpen(true);
@@ -68,7 +68,7 @@ export default function Dashboard() {
         setIsScrapingModalOpen(false);
         queryClient.invalidateQueries({ queryKey: ["/api/opportunities"] });
         queryClient.invalidateQueries({ queryKey: ["/api/users/1/activities"] });
-      }, 5000);
+      }, 3000);
     },
   });
 
@@ -90,8 +90,8 @@ export default function Dashboard() {
     },
   });
 
-  const handleStartScraping = () => {
-    scrapeMutation.mutate();
+  const handleStartImport = () => {
+    importMutation.mutate();
   };
 
   const handleExport = (format: "csv" | "json") => {
@@ -106,8 +106,8 @@ export default function Dashboard() {
         {/* User Profile Section */}
         <UserProfile 
           user={user} 
-          onStartScraping={handleStartScraping}
-          isScrapingLoading={scrapeMutation.isPending}
+          onStartImport={handleStartImport}
+          isImportLoading={importMutation.isPending}
         />
 
         {/* Search and Filter Section */}
@@ -148,15 +148,15 @@ export default function Dashboard() {
                     </div>
                     <h3 className="text-2xl font-bold text-primary mb-4">Ready to Find Opportunities?</h3>
                     <p className="text-gray-300 mb-8 text-lg">
-                      Start by completing your profile and clicking "Start Scraping" to discover personalized opportunities from across the web.
+                      Complete your profile and load our curated database of verified high school programs, internships, and scholarships.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <Button
-                        onClick={handleStartScraping}
-                        disabled={scrapeMutation.isPending}
+                        onClick={handleStartImport}
+                        disabled={importMutation.isPending}
                         className="bg-gradient-to-r from-primary to-[hsl(328,100%,54%)] text-white hover:shadow-lg hover:shadow-primary/50 text-lg px-8 py-3"
                       >
-                        {scrapeMutation.isPending ? "Scraping..." : "Start Scraping Now"}
+                        {importMutation.isPending ? "Loading Programs..." : "Load High School Programs"}
                       </Button>
                       <Button
                         variant="outline"
@@ -245,9 +245,9 @@ export default function Dashboard() {
       {/* Floating Action Button */}
       <div className="fixed bottom-8 right-8 z-50">
         <Button
-          onClick={handleStartScraping}
+          onClick={handleStartImport}
           className="w-14 h-14 rounded-full bg-gradient-to-r from-primary to-[hsl(328,100%,54%)] shadow-lg hover:shadow-xl hover:shadow-primary/50 animate-float"
-          disabled={scrapeMutation.isPending}
+          disabled={importMutation.isPending}
         >
           <Plus className="w-6 h-6" />
         </Button>

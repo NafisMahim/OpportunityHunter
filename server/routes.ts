@@ -156,53 +156,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Real scraping route
-  app.post("/api/scrape", async (req, res) => {
+  // Import authentic opportunity data
+  app.post("/api/import", async (req, res) => {
     try {
       const { userId } = req.body;
-      
-      // Get user profile for personalized scraping
-      const user = await storage.getUser(userId);
       
       // Start activity log
       await storage.createActivity({
         userId,
-        message: "Started scraping opportunities from multiple sources",
-        type: "scrape",
+        message: "Started importing verified high school programs and opportunities",
+        type: "import",
       });
 
-      res.json({ message: "Scraping started" });
+      res.json({ message: "Data import started" });
 
-      // Perform scraping in background
-      scrapingService.scrapeAll(user).then(async (opportunities) => {
-        // Save all scraped opportunities
-        let savedCount = 0;
-        for (const opportunity of opportunities) {
-          try {
-            await storage.createOpportunity(opportunity);
-            savedCount++;
-          } catch (error) {
-            console.error('Error saving opportunity:', error);
-          }
-        }
-
-        // Create success activity
+      // Import data in background
+      const { dataImporter } = await import('./data-importer');
+      
+      dataImporter.importAllData().then(async () => {
         await storage.createActivity({
           userId,
-          message: `Successfully scraped and saved ${savedCount} new opportunities`,
-          type: "scrape",
+          message: "Successfully imported authentic high school opportunities from curated databases",
+          type: "import",
         });
       }).catch(async (error) => {
-        console.error('Scraping error:', error);
+        console.error('Import error:', error);
         await storage.createActivity({
           userId,
-          message: "Error occurred during scraping. Some sources may be unavailable.",
+          message: "Data import encountered an error. Please try again.",
           type: "error",
         });
       });
 
     } catch (error) {
-      console.error('Scrape route error:', error);
+      console.error('Import route error:', error);
       res.status(500).json({ message: "Internal server error" });
     }
   });

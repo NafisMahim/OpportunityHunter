@@ -13,11 +13,11 @@ import { OPPORTUNITY_TYPE_ICONS } from "@/lib/types";
 
 interface UserProfileProps {
   user?: User;
-  onStartScraping: () => void;
-  isScrapingLoading: boolean;
+  onStartImport: () => void;
+  isImportLoading: boolean;
 }
 
-export default function UserProfile({ user, onStartScraping, isScrapingLoading }: UserProfileProps) {
+export default function UserProfile({ user, onStartImport, isImportLoading }: UserProfileProps) {
   const [profileData, setProfileData] = useState({
     name: user?.name || "",
     email: user?.email || "",
@@ -259,13 +259,13 @@ export default function UserProfile({ user, onStartScraping, isScrapingLoading }
           
           {/* Scraping Controls */}
           <div className="mt-8 pt-6 border-t border-primary/30">
-            <h4 className="text-lg font-semibold text-[hsl(120,100%,50%)] mb-4">Auto-Scraping</h4>
+            <h4 className="text-lg font-semibold text-[hsl(120,100%,50%)] mb-4">Program Database</h4>
             <Button
-              onClick={onStartScraping}
-              disabled={isScrapingLoading}
+              onClick={onStartImport}
+              disabled={isImportLoading}
               className="w-full bg-gradient-to-r from-primary to-[hsl(328,100%,54%)] text-white hover:shadow-lg hover:shadow-primary/50 neon-glow"
             >
-              {isScrapingLoading ? "Scraping..." : "Start Scraping"}
+              {isImportLoading ? "Loading Programs..." : "Load High School Programs"}
             </Button>
             <p className="text-xs text-gray-400 mt-2 text-center">Last scan: 2 hours ago</p>
           </div>
