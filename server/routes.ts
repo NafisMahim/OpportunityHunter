@@ -396,23 +396,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Comprehensive Stuyvesant bulletin extraction endpoint
-  app.post('/api/import-comprehensive-bulletins', async (req, res) => {
-    try {
-      await dataImporter.importComprehensiveStuyvesantBulletins();
-      res.json({ 
-        success: true, 
-        message: 'Comprehensive Stuyvesant bulletin extraction completed!' 
-      });
-    } catch (error) {
-      console.error('Comprehensive bulletin extraction failed:', error);
-      res.status(500).json({ 
-        success: false, 
-        error: 'Failed to extract comprehensive opportunities' 
-      });
-    }
-  });
-
   const httpServer = createServer(app);
   return httpServer;
 }
