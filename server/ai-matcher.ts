@@ -28,8 +28,9 @@ export class AIOpportunityMatcher {
         allResults.push(...batchResults);
       }
       
-      // Filter and sort results
-      const filteredResults = allResults
+      // Remove duplicates and filter results
+      const uniqueResults = this.removeDuplicates(allResults);
+      const filteredResults = uniqueResults
         .filter(result => result.relevancyScore >= 70)
         .sort((a, b) => b.relevancyScore - a.relevancyScore);
         
@@ -215,6 +216,17 @@ Tags: ${opp.tags.join(', ')}
 
     // Remove duplicates and filter out very short words
     return [...new Set(baseKeywords)].filter(keyword => keyword.length > 2);
+  }
+
+  private removeDuplicates(results: MatchingResult[]): MatchingResult[] {
+    const seen = new Set<number>();
+    return results.filter(result => {
+      if (seen.has(result.opportunityId)) {
+        return false;
+      }
+      seen.add(result.opportunityId);
+      return true;
+    });
   }
 
 

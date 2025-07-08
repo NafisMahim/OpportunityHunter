@@ -13,7 +13,7 @@ import {
   type InsertActivity
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, like, or, desc } from "drizzle-orm";
+import { eq, and, like, or, desc, sql } from "drizzle-orm";
 
 export interface IStorage {
   // Users

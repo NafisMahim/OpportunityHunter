@@ -29,7 +29,9 @@ export default function UserProfile({ user, onStartImport, isImportLoading }: Us
       return apiRequest("PUT", `/api/users/${user?.id}`, data);
     },
     onSuccess: () => {
+      // Invalidate both user profile and opportunities to refresh AI matching results
       queryClient.invalidateQueries({ queryKey: ["/api/users/1"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/opportunities"] });
     },
   });
 
