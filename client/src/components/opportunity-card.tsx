@@ -4,12 +4,12 @@ import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MapPin, DollarSign, Calendar, Building } from "lucide-react";
+import { Heart, MapPin, DollarSign, Calendar, Building, Brain, Sparkles } from "lucide-react";
 import type { Opportunity } from "@shared/schema";
 import { OPPORTUNITY_TYPE_COLORS, getRelevancyLevel, RELEVANCY_COLORS } from "@/lib/types";
 
 interface OpportunityCardProps {
-  opportunity: Opportunity;
+  opportunity: Opportunity & { matchReason?: string };
   userId: number;
 }
 
@@ -66,9 +66,12 @@ export default function OpportunityCard({ opportunity, userId }: OpportunityCard
           <Badge className={typeColors}>
             {opportunity.type}
           </Badge>
-          <span className={`text-xs font-medium ${RELEVANCY_COLORS[relevancyLevel]}`}>
-            {opportunity.relevancyScore}% Match
-          </span>
+          <div className="flex items-center gap-1">
+            <Brain className="w-3 h-3 text-primary" />
+            <span className={`text-xs font-medium ${RELEVANCY_COLORS[relevancyLevel]}`}>
+              {opportunity.relevancyScore}% Match
+            </span>
+          </div>
         </div>
         <Button
           variant="ghost"
@@ -85,9 +88,20 @@ export default function OpportunityCard({ opportunity, userId }: OpportunityCard
       <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-primary transition-colors line-clamp-2">
         {opportunity.title}
       </h3>
-      <p className="text-gray-300 text-sm mb-4 line-clamp-3">
+      <p className="text-gray-300 text-sm mb-3 line-clamp-3">
         {opportunity.description}
       </p>
+
+      {/* AI Match Reason */}
+      {opportunity.matchReason && (
+        <div className="mb-4 p-2 bg-primary/10 border border-primary/20 rounded-lg">
+          <div className="flex items-center gap-2 mb-1">
+            <Sparkles className="w-3 h-3 text-primary" />
+            <span className="text-xs font-medium text-primary">AI Match</span>
+          </div>
+          <p className="text-xs text-gray-300">{opportunity.matchReason}</p>
+        </div>
+      )}
       
       <div className="space-y-2 mb-4">
         {opportunity.location && (

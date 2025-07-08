@@ -4,12 +4,9 @@ import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { Brain, GraduationCap } from "lucide-react";
 import type { User } from "@shared/schema";
-import { OPPORTUNITY_TYPE_ICONS } from "@/lib/types";
 
 interface UserProfileProps {
   user?: User;
@@ -21,13 +18,9 @@ export default function UserProfile({ user, onStartImport, isImportLoading }: Us
   const [profileData, setProfileData] = useState({
     name: user?.name || "",
     email: user?.email || "",
-    location: user?.location || "",
-    experienceLevel: user?.experienceLevel || "",
-    skills: user?.skills || [],
-    preferences: user?.preferences || [],
-    opportunityTypes: user?.opportunityTypes || ['job', 'internship', 'grant', 'scholarship', 'competition'],
+    major: user?.major || "",
+    minor: user?.minor || "",
   });
-  const [newSkill, setNewSkill] = useState("");
 
   const queryClient = useQueryClient();
 
@@ -44,26 +37,6 @@ export default function UserProfile({ user, onStartImport, isImportLoading }: Us
     setProfileData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleAddSkill = () => {
-    if (newSkill.trim() && !profileData.skills.includes(newSkill.trim())) {
-      const updatedSkills = [...profileData.skills, newSkill.trim()];
-      setProfileData(prev => ({ ...prev, skills: updatedSkills }));
-      setNewSkill("");
-    }
-  };
-
-  const handleRemoveSkill = (skillToRemove: string) => {
-    const updatedSkills = profileData.skills.filter(skill => skill !== skillToRemove);
-    setProfileData(prev => ({ ...prev, skills: updatedSkills }));
-  };
-
-  const handlePreferenceChange = (preference: string, checked: boolean) => {
-    const updatedPreferences = checked
-      ? [...profileData.preferences, preference]
-      : profileData.preferences.filter(p => p !== preference);
-    setProfileData(prev => ({ ...prev, preferences: updatedPreferences }));
-  };
-
   const handleSaveProfile = () => {
     updateProfileMutation.mutate(profileData);
   };
@@ -72,22 +45,12 @@ export default function UserProfile({ user, onStartImport, isImportLoading }: Us
     const fields = [
       profileData.name,
       profileData.email,
-      profileData.location,
-      profileData.experienceLevel,
-      profileData.skills.length > 0,
-      profileData.preferences.length > 0,
+      profileData.major,
+      profileData.minor,
     ];
     const completedFields = fields.filter(Boolean).length;
     return Math.round((completedFields / fields.length) * 100);
   };
-
-  const opportunityTypes = [
-    { id: "jobs", label: "Jobs", icon: "💼" },
-    { id: "internships", label: "Internships", icon: "🎓" },
-    { id: "grants", label: "Grants", icon: "💰" },
-    { id: "scholarships", label: "Scholarships", icon: "🏆" },
-    { id: "competitions", label: "Competitions", icon: "🎯" },
-  ];
 
   return (
     <section id="profile-section" className="mb-12">
@@ -95,7 +58,15 @@ export default function UserProfile({ user, onStartImport, isImportLoading }: Us
         {/* Profile Information Card */}
         <div className="lg:col-span-2 opportunity-card rounded-xl p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-primary">Profile Setup</h2>
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-r from-primary to-[hsl(328,100%,54%)] rounded-full flex items-center justify-center">
+                <Brain className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-primary">Academic Profile</h2>
+                <p className="text-sm text-gray-400">Tell us your major and minor for AI-powered matching</p>
+              </div>
+            </div>
             <Badge 
               variant="outline" 
               className="bg-[hsl(120,100%,50%)]/20 text-[hsl(120,100%,50%)] border-[hsl(120,100%,50%)]/30"
@@ -111,6 +82,7 @@ export default function UserProfile({ user, onStartImport, isImportLoading }: Us
                 value={profileData.name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
                 className="bg-cyber-dark border-primary/30 text-white focus:border-primary focus:ring-primary"
+                placeholder="Enter your full name"
               />
             </div>
             
@@ -121,153 +93,105 @@ export default function UserProfile({ user, onStartImport, isImportLoading }: Us
                 value={profileData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
                 className="bg-cyber-dark border-primary/30 text-white focus:border-primary focus:ring-primary"
+                placeholder="Enter your email"
               />
             </div>
             
             <div>
-              <Label className="text-gray-300">Location</Label>
+              <Label className="text-gray-300 flex items-center gap-2">
+                <GraduationCap className="w-4 h-4" />
+                Major Field of Study
+              </Label>
               <Input
-                value={profileData.location}
-                onChange={(e) => handleInputChange("location", e.target.value)}
+                value={profileData.major}
+                onChange={(e) => handleInputChange("major", e.target.value)}
                 className="bg-cyber-dark border-primary/30 text-white focus:border-primary focus:ring-primary"
+                placeholder="e.g., Computer Science, Biology, Business"
               />
+              <p className="text-xs text-gray-500 mt-1">What you're planning to study in college</p>
             </div>
             
             <div>
-              <Label className="text-gray-300">Experience Level</Label>
-              <Select 
-                value={profileData.experienceLevel} 
-                onValueChange={(value) => handleInputChange("experienceLevel", value)}
-              >
-                <SelectTrigger className="bg-cyber-dark border-primary/30 text-white focus:border-primary focus:ring-primary">
-                  <SelectValue placeholder="Select experience level" />
-                </SelectTrigger>
-                <SelectContent className="bg-cyber-dark border-primary/30">
-                  <SelectItem value="Entry Level (0-2 years)">Entry Level (0-2 years)</SelectItem>
-                  <SelectItem value="Mid-Level (3-5 years)">Mid-Level (3-5 years)</SelectItem>
-                  <SelectItem value="Senior Level (5+ years)">Senior Level (5+ years)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          
-          {/* Skills Section */}
-          <div className="mt-6">
-            <Label className="text-gray-300 mb-3 block">Skills & Technologies</Label>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {profileData.skills.map((skill) => (
-                <Badge
-                  key={skill}
-                  variant="outline"
-                  className="bg-primary/20 text-primary border-primary/30 flex items-center gap-1"
-                >
-                  {skill}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-4 w-4 p-0 hover:bg-transparent"
-                    onClick={() => handleRemoveSkill(skill)}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                </Badge>
-              ))}
-            </div>
-            <div className="flex gap-2">
+              <Label className="text-gray-300 flex items-center gap-2">
+                <GraduationCap className="w-4 h-4" />
+                Minor Field of Study (Optional)
+              </Label>
               <Input
-                placeholder="Add a skill..."
-                value={newSkill}
-                onChange={(e) => setNewSkill(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleAddSkill()}
+                value={profileData.minor}
+                onChange={(e) => handleInputChange("minor", e.target.value)}
                 className="bg-cyber-dark border-primary/30 text-white focus:border-primary focus:ring-primary"
+                placeholder="e.g., Mathematics, Psychology, Art"
               />
-              <Button 
-                onClick={handleAddSkill}
-                variant="outline"
-                className="border-primary/30 text-primary hover:bg-primary/10"
-              >
-                Add
-              </Button>
+              <p className="text-xs text-gray-500 mt-1">Secondary area of interest</p>
             </div>
           </div>
 
-          {/* Opportunity Types Preferences */}
-          <div className="mt-6">
-            <Label className="text-gray-300 mb-3 block">Opportunity Types</Label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {[
-                { type: 'job', label: 'Jobs', icon: '💼' },
-                { type: 'internship', label: 'Internships', icon: '🎓' },
-                { type: 'grant', label: 'Grants', icon: '💰' },
-                { type: 'scholarship', label: 'Scholarships', icon: '🏆' },
-                { type: 'competition', label: 'Competitions', icon: '🚀' }
-              ].map(({ type, label, icon }) => (
-                <div key={type} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={type}
-                    checked={profileData.opportunityTypes.includes(type)}
-                    onCheckedChange={(checked) => {
-                      if (checked) {
-                        handleInputChange('opportunityTypes', [...profileData.opportunityTypes, type]);
-                      } else {
-                        handleInputChange('opportunityTypes', profileData.opportunityTypes.filter(t => t !== type));
-                      }
-                    }}
-                    className="border-primary/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                  />
-                  <Label htmlFor={type} className="text-gray-300 flex items-center gap-2 cursor-pointer">
-                    <span>{icon}</span>
-                    {label}
-                  </Label>
-                </div>
-              ))}
+          <div className="mt-8 p-4 bg-primary/10 border border-primary/30 rounded-lg">
+            <div className="flex items-center gap-3 mb-2">
+              <Brain className="w-5 h-5 text-primary" />
+              <h4 className="font-semibold text-primary">AI-Powered Matching</h4>
             </div>
+            <p className="text-sm text-gray-300">
+              Our AI analyzes your academic interests and finds opportunities perfectly tailored to your major and minor. 
+              The more specific you are, the better your matches will be.
+            </p>
           </div>
 
           <div className="mt-6">
             <Button 
               onClick={handleSaveProfile}
               disabled={updateProfileMutation.isPending}
-              className="bg-gradient-to-r from-primary to-[hsl(328,100%,54%)] text-white hover:shadow-lg hover:shadow-primary/30"
+              className="bg-gradient-to-r from-primary to-[hsl(328,100%,54%)] text-white hover:shadow-lg hover:shadow-primary/30 text-lg px-8 py-3"
             >
-              {updateProfileMutation.isPending ? "Saving..." : "Save Profile"}
+              {updateProfileMutation.isPending ? "Saving..." : "Save Academic Profile"}
             </Button>
           </div>
         </div>
         
-        {/* Opportunity Preferences */}
+        {/* AI Matching Controls */}
         <div className="opportunity-card rounded-xl p-6">
-          <h3 className="text-xl font-bold text-[hsl(328,100%,54%)] mb-6">Opportunity Preferences</h3>
-          
-          <div className="space-y-4">
-            {opportunityTypes.map((type) => (
-              <label key={type.id} className="flex items-center space-x-3 cursor-pointer group">
-                <Checkbox
-                  checked={profileData.preferences.includes(type.id)}
-                  onCheckedChange={(checked) => handlePreferenceChange(type.id, checked as boolean)}
-                  className="border-primary/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                />
-                <div className="flex items-center space-x-2">
-                  <span className="text-2xl">{type.icon}</span>
-                  <span className="text-white group-hover:text-primary transition-colors">
-                    {type.label}
-                  </span>
-                </div>
-              </label>
-            ))}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-gradient-to-r from-[hsl(328,100%,54%)] to-primary rounded-full flex items-center justify-center">
+              <Brain className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-[hsl(328,100%,54%)]">Smart Discovery</h3>
           </div>
           
-          {/* Scraping Controls */}
+          <div className="space-y-4 mb-6">
+            <div className="p-3 bg-cyber-dark/50 rounded-lg border border-primary/20">
+              <h4 className="font-medium text-gray-300 mb-1">Academic Matching</h4>
+              <p className="text-sm text-gray-400">AI finds opportunities related to your major and minor</p>
+            </div>
+            <div className="p-3 bg-cyber-dark/50 rounded-lg border border-primary/20">
+              <h4 className="font-medium text-gray-300 mb-1">Relevancy Scoring</h4>
+              <p className="text-sm text-gray-400">Each opportunity gets a personalized match score</p>
+            </div>
+            <div className="p-3 bg-cyber-dark/50 rounded-lg border border-primary/20">
+              <h4 className="font-medium text-gray-300 mb-1">Smart Filtering</h4>
+              <p className="text-sm text-gray-400">Only see opportunities that matter to you</p>
+            </div>
+          </div>
+          
+          {/* Load Programs Button */}
           <div className="mt-8 pt-6 border-t border-primary/30">
-            <h4 className="text-lg font-semibold text-[hsl(120,100%,50%)] mb-4">Program Database</h4>
             <Button
               onClick={onStartImport}
               disabled={isImportLoading}
-              className="w-full bg-gradient-to-r from-primary to-[hsl(328,100%,54%)] text-white hover:shadow-lg hover:shadow-primary/50 neon-glow"
+              className="w-full bg-gradient-to-r from-primary to-[hsl(328,100%,54%)] text-white hover:shadow-lg hover:shadow-primary/50 neon-glow text-lg py-3"
             >
-              {isImportLoading ? "Loading Programs..." : "Load High School Programs"}
+              {isImportLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                  Loading Programs...
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Brain className="w-5 h-5" />
+                  Find My Opportunities
+                </div>
+              )}
             </Button>
-            <p className="text-xs text-gray-400 mt-2 text-center">Last scan: 2 hours ago</p>
+            <p className="text-xs text-gray-400 mt-2 text-center">AI will analyze opportunities for your academic interests</p>
           </div>
         </div>
       </div>

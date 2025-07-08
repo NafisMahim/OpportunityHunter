@@ -97,11 +97,20 @@ The application is designed to be deployed on platforms like Replit, Vercel, or 
   - Implemented modular scraper architecture for easy source expansion
 
 ## Recent Changes
+- ✓ MAJOR AI OVERHAUL: Completely rebuilt user profile system for academic focus
+- ✓ Simplified user profile to ONLY major and minor fields (removed skills/technologies)
+- ✓ Integrated Gemini AI for intelligent opportunity matching based on academic interests
+- ✓ AI analyzes entire database and shows only relevant opportunities to user's major/minor
+- ✓ Added personalized relevancy scoring with AI-generated match reasons
+- ✓ Updated database schema to remove skills/preferences - now academic-focused
+- ✓ Enhanced opportunity cards to display AI match explanations
+- ✓ Implemented smart filtering - only shows opportunities 60%+ relevant
+- ✓ Added AI-powered fallback matching for improved user experience
+- ✓ Updated UI messaging to emphasize AI-driven personalization
 - ✓ Removed sample data completely - application starts with empty state
 - ✓ Implemented real HTTP-based scrapers for authentic data sources
 - ✓ Added real-time activity feed showing actual scraping progress
 - ✓ Enhanced UI with empty state guidance for new users
-- ✓ Integrated user profile data with personalized relevancy scoring
 - ✓ Added background scraping with proper error handling
 - ✓ Migrated from in-memory storage to PostgreSQL database
 - ✓ Implemented DatabaseStorage class with full CRUD operations
@@ -117,9 +126,13 @@ The application is designed to be deployed on platforms like Replit, Vercel, or 
 - ✓ Focus on entry-level jobs suitable for students with flexible schedules
 
 ## Technical Architecture Updates
+- **AI-Powered Matching**: Gemini AI analyzes opportunities against user's major/minor for personalized results
+- **Academic-Focused Schema**: Database stores only major/minor - removed skills/technologies complexity
+- **Smart Filtering**: AI relevancy scoring filters out irrelevant opportunities (60%+ threshold)
+- **Match Explanations**: AI provides reasons why each opportunity matches user's academic interests
+- **Fallback Matching**: Keyword-based backup system ensures consistent user experience
 - **Real Data Sources**: Now scrapes live data from Hacker News (tech jobs), RemoteOK (remote positions), Stack Overflow Jobs, GitHub hiring issues, and Y Combinator companies
 - **HTTP-Based Scraping**: Uses axios and cheerio for reliable data extraction without browser dependencies
-- **Personalization**: Relevancy scores calculated based on user skills and preferences  
 - **Scalability**: Modular scraper design allows easy addition of new sources
 - **Error Resilience**: Graceful handling of failed scrapes with user feedback
 - **Authentic Data Only**: All mock/sample data removed - system only displays real scraped opportunities

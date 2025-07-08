@@ -50,13 +50,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Opportunity routes
+  // Opportunity routes with AI matching
   app.get("/api/opportunities", async (req, res) => {
     try {
-      const { search, type, source, location } = req.query;
+      const { search, type, source, location, userId } = req.query;
       
+      let opportunities;
       if (search || type || source || location) {
-        const opportunities = await storage.searchOpportunities(
+        opportunities = await storage.searchOpportunities(
           search as string || "",
           {
             type: type as string,
@@ -64,12 +65,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
             location: location as string,
           }
         );
-        return res.json(opportunities);
+      } else {
+        opportunities = await storage.getOpportunities();
+      }
+
+      // If userId is provided, apply AI matching
+      if (userId) {
+        const user = await storage.getUser(parseInt(userId as string));
+        if (user && (user.major || user.minor)) {
+          const { aiMatcher } = await import('./ai-matcher');
+          const matchResults = await aiMatcher.matchOpportunitiesToUser(user, opportunities);
+          
+          // Sort opportunities by AI relevancy score and filter low scores
+          const sortedMatches = matchResults
+            .filter(match => match.relevancyScore >= 60) // Only show relevant opportunities
+            .sort((a, b) => b.relevancyScore - a.relevancyScore);
+          
+          // Get the matched opportunities in sorted order
+          const matchedOpportunities = sortedMatches.map(match => {
+            const opp = opportunities.find(o => o.id === match.opportunityId);
+            return opp ? {
+              ...opp,
+              relevancyScore: match.relevancyScore,
+              matchReason: match.matchReason
+            } : null;
+          }).filter(Boolean);
+          
+          return res.json(matchedOpportunities);
+        }
       }
       
-      const opportunities = await storage.getOpportunities();
       res.json(opportunities);
     } catch (error) {
+      console.error('Opportunities route error:', error);
       res.status(500).json({ message: "Internal server error" });
     }
   });

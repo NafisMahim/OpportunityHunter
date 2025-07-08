@@ -34,15 +34,18 @@ export default function Dashboard() {
     queryKey: ["/api/users/1"],
   });
 
-  // Fetch opportunities with search and filters
+  // Fetch opportunities with AI matching and filters
   const { data: opportunities = [], isLoading: opportunitiesLoading } = useQuery<Opportunity[]>({
-    queryKey: ["/api/opportunities", searchFilters],
+    queryKey: ["/api/opportunities", searchFilters, currentUserId],
     queryFn: async () => {
       const params = new URLSearchParams();
       if (searchFilters.query) params.append("search", searchFilters.query);
       if (searchFilters.type !== "all") params.append("type", searchFilters.type);
       if (searchFilters.source !== "all") params.append("source", searchFilters.source);
       if (searchFilters.location) params.append("location", searchFilters.location);
+      
+      // Add userId for AI matching
+      params.append("userId", currentUserId.toString());
       
       const response = await fetch(`/api/opportunities?${params.toString()}`);
       if (!response.ok) throw new Error("Failed to fetch opportunities");
@@ -146,9 +149,10 @@ export default function Dashboard() {
                         <span className="text-2xl">🚀</span>
                       </div>
                     </div>
-                    <h3 className="text-2xl font-bold text-primary mb-4">Ready to Find Opportunities?</h3>
+                    <h3 className="text-2xl font-bold text-primary mb-4">Ready to Find Your Perfect Opportunities?</h3>
                     <p className="text-gray-300 mb-8 text-lg">
-                      Complete your profile and load our curated database of verified high school programs, internships, and scholarships.
+                      Tell us your major and minor, and our AI will find opportunities perfectly tailored to your academic interests. 
+                      No more scrolling through irrelevant listings - only see what matters to you.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <Button
@@ -156,14 +160,14 @@ export default function Dashboard() {
                         disabled={importMutation.isPending}
                         className="bg-gradient-to-r from-primary to-[hsl(328,100%,54%)] text-white hover:shadow-lg hover:shadow-primary/50 text-lg px-8 py-3"
                       >
-                        {importMutation.isPending ? "Loading Programs..." : "Load High School Programs"}
+                        {importMutation.isPending ? "Finding Your Matches..." : "Find My Opportunities"}
                       </Button>
                       <Button
                         variant="outline"
                         onClick={() => document.getElementById('profile-section')?.scrollIntoView({ behavior: 'smooth' })}
                         className="border-primary/30 text-primary hover:bg-primary/10 text-lg px-8 py-3"
                       >
-                        Complete Profile
+                        Add My Major
                       </Button>
                     </div>
                   </div>
