@@ -69,80 +69,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         opportunities = await storage.getOpportunities();
       }
 
-      // If userId is provided, apply AI matching
-      if (userId) {
-        const user = await storage.getUser(parseInt(userId as string));
-        console.log(`User data for matching:`, { major: user?.major, minor: user?.minor });
+      // Helper function to check title similarity for duplicate removal
+      function areTitlesSimilar(title1: string, title2: string): boolean {
+        const clean1 = title1.toLowerCase().replace(/[^\w\s]/g, '').trim();
+        const clean2 = title2.toLowerCase().replace(/[^\w\s]/g, '').trim();
         
-        if (user && (user.major || user.minor)) {
-          console.log(`Starting AI matching for user with major: ${user.major}, minor: ${user.minor}`);
-          console.log(`Total opportunities to match: ${opportunities.length}`);
-          
-          // Helper function to check title similarity
-          function areTitlesSimilar(title1: string, title2: string): boolean {
-            const clean1 = title1.toLowerCase().replace(/[^\w\s]/g, '').trim();
-            const clean2 = title2.toLowerCase().replace(/[^\w\s]/g, '').trim();
-            
-            // Exact match
-            if (clean1 === clean2) return true;
-            
-            // Check if one title contains the other (for variations)
-            if (clean1.includes(clean2) || clean2.includes(clean1)) return true;
-            
-            // Check if they share most words (>70% similarity)
-            const words1 = clean1.split(/\s+/);
-            const words2 = clean2.split(/\s+/);
-            const intersection = words1.filter(word => words2.includes(word));
-            const similarity = intersection.length / Math.max(words1.length, words2.length);
-            
-            return similarity > 0.7;
-          }
-          
-          // Remove duplicates from database results first with aggressive matching
-          const uniqueOpportunities = opportunities.filter((opp, index, self) => 
-            index === self.findIndex(o => {
-              const titleSimilar = areTitlesSimilar(o.title, opp.title);
-              const orgSimilar = o.organization.toLowerCase() === opp.organization.toLowerCase();
-              return titleSimilar && orgSimilar;
-            })
-          );
-          
-          console.log(`After removing duplicates: ${uniqueOpportunities.length} unique opportunities`);
-          
-          const { aiMatcher } = await import('./ai-matcher');
-          const matchResults = await aiMatcher.matchOpportunitiesToUser(user, uniqueOpportunities);
-          
-          console.log(`AI matching completed, found ${matchResults.length} matches`);
-          
-          // Sort opportunities by AI relevancy score and filter low scores
-          const sortedMatches = matchResults
-            .filter(match => match.relevancyScore >= 70) // Much stricter filtering
-            .sort((a, b) => b.relevancyScore - a.relevancyScore);
-          
-          console.log(`After filtering (70+ score): ${sortedMatches.length} opportunities`);
-          if (sortedMatches.length > 0) {
-            console.log(`Top matches:`, sortedMatches.slice(0, 3).map(m => ({ score: m.relevancyScore, reason: m.matchReason })));
-          }
-          
-          // Get the matched opportunities in sorted order
-          const matchedOpportunities = sortedMatches.map(match => {
-            const opp = uniqueOpportunities.find(o => o.id === match.opportunityId);
-            return opp ? {
-              ...opp,
-              relevancyScore: match.relevancyScore,
-              matchReason: match.matchReason
-            } : null;
-          }).filter(Boolean);
-          
-          console.log(`Returning ${matchedOpportunities.length} matched opportunities for ${user.major}`);
-          return res.json(matchedOpportunities);
-        } else {
-          console.log(`User has no major/minor set, returning empty array`);
-          return res.json([]);
-        }
+        // Exact match
+        if (clean1 === clean2) return true;
+        
+        // Check if one title contains the other (for variations)
+        if (clean1.includes(clean2) || clean2.includes(clean1)) return true;
+        
+        // Check if they share most words (>70% similarity)
+        const words1 = clean1.split(/\s+/);
+        const words2 = clean2.split(/\s+/);
+        const intersection = words1.filter(word => words2.includes(word));
+        const similarity = intersection.length / Math.max(words1.length, words2.length);
+        
+        return similarity > 0.7;
       }
       
-      res.json(opportunities);
+      // Remove duplicates from database results only
+      const uniqueOpportunities = opportunities.filter((opp, index, self) => 
+        index === self.findIndex(o => {
+          const titleSimilar = areTitlesSimilar(o.title, opp.title);
+          const orgSimilar = o.organization.toLowerCase() === opp.organization.toLowerCase();
+          return titleSimilar && orgSimilar;
+        })
+      );
+      
+      console.log(`Returning ALL ${uniqueOpportunities.length} unique opportunities for ALL majors`);
+      return res.json(uniqueOpportunities);
     } catch (error) {
       console.error('Opportunities route error:', error);
       res.status(500).json({ message: "Internal server error" });
