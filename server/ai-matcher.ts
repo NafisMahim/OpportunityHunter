@@ -20,25 +20,9 @@ export class AIOpportunityMatcher {
   }
 
   private strictFallbackMatching(user: User, opportunities: Opportunity[]): MatchingResult[] {
-    const userMajor = (user.major || "").toLowerCase();
-    const userMinor = (user.minor || "").toLowerCase();
+    const userMajor = (user.major || "").toLowerCase().trim();
+    const userMinor = (user.minor || "").toLowerCase().trim();
     
-    // Create specific keywords for different majors
-    const fieldKeywords: { [key: string]: string[] } = {
-      biology: ['biology', 'biological', 'biomedical', 'life sciences', 'genetics', 'molecular', 'cellular', 'ecology', 'evolution', 'microbiology', 'biochemistry', 'biotechnology', 'medical', 'health', 'anatomy', 'physiology', 'pre-med', 'research', 'lab', 'science'],
-      chemistry: ['chemistry', 'chemical', 'organic', 'inorganic', 'analytical', 'physical chemistry', 'materials', 'pharmaceutical', 'drug', 'molecule', 'synthesis', 'lab', 'research', 'science'],
-      physics: ['physics', 'physical', 'quantum', 'mechanics', 'thermodynamics', 'optics', 'astronomy', 'astrophysics', 'engineering', 'materials', 'research', 'science'],
-      mathematics: ['mathematics', 'math', 'statistics', 'calculus', 'algebra', 'geometry', 'data science', 'analytics', 'actuarial', 'quantitative', 'finance', 'economics'],
-      'computer science': ['computer', 'programming', 'coding', 'software', 'tech', 'technology', 'ai', 'artificial intelligence', 'machine learning', 'cybersecurity', 'web development', 'app development', 'data science', 'engineering'],
-      engineering: ['engineering', 'mechanical', 'electrical', 'civil', 'chemical engineering', 'aerospace', 'biomedical engineering', 'robotics', 'automation', 'design', 'manufacturing'],
-      psychology: ['psychology', 'psychological', 'mental health', 'behavioral', 'cognitive', 'therapy', 'counseling', 'social work', 'research'],
-      business: ['business', 'entrepreneurship', 'marketing', 'finance', 'economics', 'management', 'consulting', 'startup', 'leadership'],
-      english: ['english', 'literature', 'writing', 'journalism', 'communications', 'media', 'publishing', 'creative writing', 'humanities'],
-      art: ['art', 'design', 'creative', 'visual', 'graphic design', 'painting', 'sculpture', 'digital art', 'photography', 'animation'],
-      history: ['history', 'historical', 'archaeology', 'anthropology', 'humanities', 'cultural', 'museum', 'archives'],
-      political_science: ['political science', 'politics', 'government', 'policy', 'international relations', 'law', 'legal', 'public service', 'diplomacy']
-    };
-
     const results: MatchingResult[] = [];
 
     for (const opp of opportunities) {
@@ -46,43 +30,44 @@ export class AIOpportunityMatcher {
       
       let maxScore = 0;
       let bestReason = "";
+      let matchedTerms: string[] = [];
       
-      // Check major match
+      // Check major match - use direct keyword matching and related terms
       if (userMajor) {
-        const majorKey = this.findMatchingFieldKey(userMajor, fieldKeywords);
-        if (majorKey && fieldKeywords[majorKey]) {
-          const matchedKeywords = fieldKeywords[majorKey].filter(keyword => oppText.includes(keyword));
-          if (matchedKeywords.length > 0) {
-            const score = Math.min(95, 70 + (matchedKeywords.length * 5));
-            if (score > maxScore) {
-              maxScore = score;
-              bestReason = `Directly relevant to ${user.major} - mentions ${matchedKeywords.slice(0, 3).join(', ')}`;
-            }
+        const majorKeywords = this.generateKeywordsForField(userMajor);
+        const matchedKeywords = majorKeywords.filter(keyword => oppText.includes(keyword));
+        
+        if (matchedKeywords.length > 0) {
+          const score = Math.min(95, 75 + (matchedKeywords.length * 3));
+          if (score > maxScore) {
+            maxScore = score;
+            matchedTerms = matchedKeywords;
+            bestReason = `Directly relevant to ${user.major} - mentions ${matchedKeywords.slice(0, 3).join(', ')}`;
           }
         }
       }
 
       // Check minor match
-      if (userMinor && maxScore < 80) {
-        const minorKey = this.findMatchingFieldKey(userMinor, fieldKeywords);
-        if (minorKey && fieldKeywords[minorKey]) {
-          const matchedKeywords = fieldKeywords[minorKey].filter(keyword => oppText.includes(keyword));
-          if (matchedKeywords.length > 0) {
-            const score = Math.min(80, 60 + (matchedKeywords.length * 4));
-            if (score > maxScore) {
-              maxScore = score;
-              bestReason = `Related to your minor in ${user.minor} - involves ${matchedKeywords.slice(0, 2).join(', ')}`;
-            }
+      if (userMinor && maxScore < 85) {
+        const minorKeywords = this.generateKeywordsForField(userMinor);
+        const matchedKeywords = minorKeywords.filter(keyword => oppText.includes(keyword));
+        
+        if (matchedKeywords.length > 0) {
+          const score = Math.min(85, 70 + (matchedKeywords.length * 2));
+          if (score > maxScore) {
+            maxScore = score;
+            matchedTerms = matchedKeywords;
+            bestReason = `Related to your minor in ${user.minor} - involves ${matchedKeywords.slice(0, 2).join(', ')}`;
           }
         }
       }
 
-      // Only include opportunities with 70+ relevancy (much stricter)
+      // Only include opportunities with 70+ relevancy
       if (maxScore >= 70) {
         results.push({
           opportunityId: opp.id,
           relevancyScore: maxScore,
-          matchReason: bestReason || `Relevant to your academic interests in ${user.major}`
+          matchReason: bestReason || `Relevant to your academic interests in ${user.major || user.minor}`
         });
       }
     }
@@ -90,21 +75,63 @@ export class AIOpportunityMatcher {
     return results.sort((a, b) => b.relevancyScore - a.relevancyScore);
   }
 
-  private findMatchingFieldKey(userField: string, fieldKeywords: { [key: string]: string[] }): string | null {
-    const field = userField.toLowerCase();
+  private generateKeywordsForField(field: string): string[] {
+    const fieldLower = field.toLowerCase();
     
-    // Exact match first
-    if (fieldKeywords[field]) return field;
-    
-    // Partial match
+    // Base keywords - the field itself and common variations
+    const baseKeywords = [
+      fieldLower,
+      fieldLower.replace(/\s+/g, ''), // Remove spaces
+      ...fieldLower.split(' '), // Individual words
+    ];
+
+    // Predefined keyword sets for known fields
+    const fieldKeywords: { [key: string]: string[] } = {
+      'biology': ['biology', 'biological', 'biomedical', 'life sciences', 'genetics', 'molecular', 'cellular', 'ecology', 'microbiology', 'biochemistry', 'biotechnology', 'medical', 'health', 'anatomy', 'physiology', 'pre-med', 'research', 'lab', 'science'],
+      'computer science': ['computer', 'programming', 'coding', 'software', 'tech', 'technology', 'ai', 'artificial intelligence', 'machine learning', 'cybersecurity', 'web development', 'app development', 'data science', 'engineering', 'programming'],
+      'chemistry': ['chemistry', 'chemical', 'organic', 'inorganic', 'analytical', 'pharmaceutical', 'drug', 'molecule', 'synthesis', 'lab', 'research', 'science'],
+      'physics': ['physics', 'physical', 'quantum', 'mechanics', 'astronomy', 'astrophysics', 'engineering', 'research', 'science'],
+      'mathematics': ['mathematics', 'math', 'statistics', 'calculus', 'algebra', 'geometry', 'data science', 'analytics', 'quantitative', 'finance'],
+      'business': ['business', 'entrepreneurship', 'marketing', 'finance', 'economics', 'management', 'consulting', 'startup', 'leadership', 'commerce'],
+      'psychology': ['psychology', 'psychological', 'mental health', 'behavioral', 'cognitive', 'therapy', 'counseling', 'social work', 'research'],
+      'engineering': ['engineering', 'mechanical', 'electrical', 'civil', 'aerospace', 'biomedical engineering', 'robotics', 'automation', 'design', 'manufacturing'],
+      'english': ['english', 'literature', 'writing', 'journalism', 'communications', 'media', 'publishing', 'creative writing', 'humanities'],
+      'art': ['art', 'design', 'creative', 'visual', 'graphic design', 'painting', 'sculpture', 'digital art', 'photography', 'animation'],
+      'history': ['history', 'historical', 'archaeology', 'anthropology', 'humanities', 'cultural', 'museum'],
+      'political science': ['political', 'politics', 'government', 'policy', 'international relations', 'law', 'legal', 'public service'],
+      'economics': ['economics', 'economic', 'finance', 'business', 'market', 'trade', 'policy'],
+      'sociology': ['sociology', 'social', 'society', 'community', 'research', 'humanities'],
+      'philosophy': ['philosophy', 'philosophical', 'ethics', 'logic', 'humanities'],
+      'education': ['education', 'teaching', 'pedagogy', 'curriculum', 'school'],
+      'nursing': ['nursing', 'nurse', 'healthcare', 'medical', 'patient care', 'health'],
+      'medicine': ['medicine', 'medical', 'doctor', 'physician', 'healthcare', 'clinical', 'patient'],
+      'law': ['law', 'legal', 'attorney', 'lawyer', 'court', 'justice', 'policy'],
+      'journalism': ['journalism', 'journalist', 'media', 'news', 'reporting', 'communications'],
+      'music': ['music', 'musical', 'composition', 'performance', 'audio', 'sound'],
+      'theater': ['theater', 'theatre', 'drama', 'performance', 'acting', 'stage'],
+      'film': ['film', 'cinema', 'movie', 'video', 'production', 'media'],
+      'anthropology': ['anthropology', 'anthropological', 'cultural', 'society', 'research'],
+      'architecture': ['architecture', 'architectural', 'design', 'building', 'construction'],
+      'environmental science': ['environmental', 'environment', 'ecology', 'sustainability', 'conservation', 'climate']
+    };
+
+    // Find matching predefined keywords
     for (const [key, keywords] of Object.entries(fieldKeywords)) {
-      if (field.includes(key) || keywords.some(keyword => field.includes(keyword))) {
-        return key;
+      if (fieldLower.includes(key) || key.includes(fieldLower) || 
+          fieldLower.split(' ').some(word => key.includes(word))) {
+        baseKeywords.push(...keywords);
+        break;
       }
     }
-    
-    return null;
+
+    // Add common academic terms
+    baseKeywords.push('research', 'study', 'program', 'academic', 'scholarship', 'education');
+
+    // Remove duplicates and filter out very short words
+    return [...new Set(baseKeywords)].filter(keyword => keyword.length > 2);
   }
+
+
 
   private fallbackMatching(user: User, opportunities: Opportunity[]): MatchingResult[] {
     const userKeywords = [

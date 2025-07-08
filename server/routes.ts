@@ -89,6 +89,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             .sort((a, b) => b.relevancyScore - a.relevancyScore);
           
           console.log(`After filtering (70+ score): ${sortedMatches.length} opportunities`);
+          if (sortedMatches.length > 0) {
+            console.log(`Top matches:`, sortedMatches.slice(0, 3).map(m => ({ score: m.relevancyScore, reason: m.matchReason })));
+          }
           
           // Get the matched opportunities in sorted order
           const matchedOpportunities = sortedMatches.map(match => {
