@@ -12,84 +12,98 @@ interface MatchingResult {
 export class AIOpportunityMatcher {
   async matchOpportunitiesToUser(user: User, opportunities: Opportunity[]): Promise<MatchingResult[]> {
     if (!user.major && !user.minor) {
-      return opportunities.map(opp => ({
-        opportunityId: opp.id,
-        relevancyScore: 50,
-        matchReason: "No academic preferences specified"
-      }));
+      return [];  // Return empty array instead of showing everything
     }
 
-    try {
-      const systemPrompt = `You are an expert academic advisor specializing in matching high school students to relevant opportunities.
+    // Use more aggressive fallback matching for now - AI is too slow
+    return this.strictFallbackMatching(user, opportunities);
+  }
 
-User Profile:
-- Major: ${user.major || "Not specified"}
-- Minor: ${user.minor || "Not specified"}
+  private strictFallbackMatching(user: User, opportunities: Opportunity[]): MatchingResult[] {
+    const userMajor = (user.major || "").toLowerCase();
+    const userMinor = (user.minor || "").toLowerCase();
+    
+    // Create specific keywords for different majors
+    const fieldKeywords: { [key: string]: string[] } = {
+      biology: ['biology', 'biological', 'biomedical', 'life sciences', 'genetics', 'molecular', 'cellular', 'ecology', 'evolution', 'microbiology', 'biochemistry', 'biotechnology', 'medical', 'health', 'anatomy', 'physiology', 'pre-med', 'research', 'lab', 'science'],
+      chemistry: ['chemistry', 'chemical', 'organic', 'inorganic', 'analytical', 'physical chemistry', 'materials', 'pharmaceutical', 'drug', 'molecule', 'synthesis', 'lab', 'research', 'science'],
+      physics: ['physics', 'physical', 'quantum', 'mechanics', 'thermodynamics', 'optics', 'astronomy', 'astrophysics', 'engineering', 'materials', 'research', 'science'],
+      mathematics: ['mathematics', 'math', 'statistics', 'calculus', 'algebra', 'geometry', 'data science', 'analytics', 'actuarial', 'quantitative', 'finance', 'economics'],
+      'computer science': ['computer', 'programming', 'coding', 'software', 'tech', 'technology', 'ai', 'artificial intelligence', 'machine learning', 'cybersecurity', 'web development', 'app development', 'data science', 'engineering'],
+      engineering: ['engineering', 'mechanical', 'electrical', 'civil', 'chemical engineering', 'aerospace', 'biomedical engineering', 'robotics', 'automation', 'design', 'manufacturing'],
+      psychology: ['psychology', 'psychological', 'mental health', 'behavioral', 'cognitive', 'therapy', 'counseling', 'social work', 'research'],
+      business: ['business', 'entrepreneurship', 'marketing', 'finance', 'economics', 'management', 'consulting', 'startup', 'leadership'],
+      english: ['english', 'literature', 'writing', 'journalism', 'communications', 'media', 'publishing', 'creative writing', 'humanities'],
+      art: ['art', 'design', 'creative', 'visual', 'graphic design', 'painting', 'sculpture', 'digital art', 'photography', 'animation'],
+      history: ['history', 'historical', 'archaeology', 'anthropology', 'humanities', 'cultural', 'museum', 'archives'],
+      political_science: ['political science', 'politics', 'government', 'policy', 'international relations', 'law', 'legal', 'public service', 'diplomacy']
+    };
 
-Your task is to analyze each opportunity and determine how relevant it is to this student's academic interests. Consider:
-1. Direct field relevance to major/minor
-2. Transferable skills and knowledge
-3. Career pathway alignment
-4. Academic preparation value
+    const results: MatchingResult[] = [];
 
-For each opportunity, provide a relevancy score (0-100) and a brief reason.
-
-Respond with JSON in this exact format:
-{
-  "matches": [
-    {
-      "opportunityId": number,
-      "relevancyScore": number,
-      "matchReason": "brief explanation"
-    }
-  ]
-}`;
-
-      const opportunitiesText = opportunities.map(opp => 
-        `ID: ${opp.id}
-Title: ${opp.title}
-Type: ${opp.type}
-Organization: ${opp.organization}
-Description: ${opp.description.substring(0, 300)}
-Tags: ${opp.tags.join(', ')}
----`
-      ).join('\n');
-
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-pro",
-        config: {
-          systemInstruction: systemPrompt,
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: "object",
-            properties: {
-              matches: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    opportunityId: { type: "number" },
-                    relevancyScore: { type: "number" },
-                    matchReason: { type: "string" }
-                  },
-                  required: ["opportunityId", "relevancyScore", "matchReason"]
-                }
-              }
-            },
-            required: ["matches"]
-          }
-        },
-        contents: `Analyze these opportunities for the student:\n\n${opportunitiesText}`,
-      });
-
-      const result = JSON.parse(response.text || "{}");
-      return result.matches || [];
+    for (const opp of opportunities) {
+      const oppText = `${opp.title} ${opp.description} ${opp.organization} ${opp.tags.join(' ')}`.toLowerCase();
       
-    } catch (error) {
-      console.error('AI matching error:', error);
-      // Fallback to basic keyword matching
-      return this.fallbackMatching(user, opportunities);
+      let maxScore = 0;
+      let bestReason = "";
+      
+      // Check major match
+      if (userMajor) {
+        const majorKey = this.findMatchingFieldKey(userMajor, fieldKeywords);
+        if (majorKey && fieldKeywords[majorKey]) {
+          const matchedKeywords = fieldKeywords[majorKey].filter(keyword => oppText.includes(keyword));
+          if (matchedKeywords.length > 0) {
+            const score = Math.min(95, 70 + (matchedKeywords.length * 5));
+            if (score > maxScore) {
+              maxScore = score;
+              bestReason = `Directly relevant to ${user.major} - mentions ${matchedKeywords.slice(0, 3).join(', ')}`;
+            }
+          }
+        }
+      }
+
+      // Check minor match
+      if (userMinor && maxScore < 80) {
+        const minorKey = this.findMatchingFieldKey(userMinor, fieldKeywords);
+        if (minorKey && fieldKeywords[minorKey]) {
+          const matchedKeywords = fieldKeywords[minorKey].filter(keyword => oppText.includes(keyword));
+          if (matchedKeywords.length > 0) {
+            const score = Math.min(80, 60 + (matchedKeywords.length * 4));
+            if (score > maxScore) {
+              maxScore = score;
+              bestReason = `Related to your minor in ${user.minor} - involves ${matchedKeywords.slice(0, 2).join(', ')}`;
+            }
+          }
+        }
+      }
+
+      // Only include opportunities with 70+ relevancy (much stricter)
+      if (maxScore >= 70) {
+        results.push({
+          opportunityId: opp.id,
+          relevancyScore: maxScore,
+          matchReason: bestReason || `Relevant to your academic interests in ${user.major}`
+        });
+      }
     }
+
+    return results.sort((a, b) => b.relevancyScore - a.relevancyScore);
+  }
+
+  private findMatchingFieldKey(userField: string, fieldKeywords: { [key: string]: string[] }): string | null {
+    const field = userField.toLowerCase();
+    
+    // Exact match first
+    if (fieldKeywords[field]) return field;
+    
+    // Partial match
+    for (const [key, keywords] of Object.entries(fieldKeywords)) {
+      if (field.includes(key) || keywords.some(keyword => field.includes(keyword))) {
+        return key;
+      }
+    }
+    
+    return null;
   }
 
   private fallbackMatching(user: User, opportunities: Opportunity[]): MatchingResult[] {

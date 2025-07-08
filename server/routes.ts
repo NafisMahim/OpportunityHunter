@@ -72,14 +72,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // If userId is provided, apply AI matching
       if (userId) {
         const user = await storage.getUser(parseInt(userId as string));
+        console.log(`User data for matching:`, { major: user?.major, minor: user?.minor });
+        
         if (user && (user.major || user.minor)) {
+          console.log(`Starting AI matching for user with major: ${user.major}, minor: ${user.minor}`);
+          console.log(`Total opportunities to match: ${opportunities.length}`);
+          
           const { aiMatcher } = await import('./ai-matcher');
           const matchResults = await aiMatcher.matchOpportunitiesToUser(user, opportunities);
           
+          console.log(`AI matching completed, found ${matchResults.length} matches`);
+          
           // Sort opportunities by AI relevancy score and filter low scores
           const sortedMatches = matchResults
-            .filter(match => match.relevancyScore >= 60) // Only show relevant opportunities
+            .filter(match => match.relevancyScore >= 70) // Much stricter filtering
             .sort((a, b) => b.relevancyScore - a.relevancyScore);
+          
+          console.log(`After filtering (70+ score): ${sortedMatches.length} opportunities`);
           
           // Get the matched opportunities in sorted order
           const matchedOpportunities = sortedMatches.map(match => {
@@ -91,7 +100,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             } : null;
           }).filter(Boolean);
           
+          console.log(`Returning ${matchedOpportunities.length} matched opportunities for Biology major`);
           return res.json(matchedOpportunities);
+        } else {
+          console.log(`User has no major/minor set, returning empty array`);
+          return res.json([]);
         }
       }
       
