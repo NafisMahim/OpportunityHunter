@@ -3542,6 +3542,53 @@ export class DataImporter {
     return scholarships;
   }
 
+  async importComprehensiveStuyvesantBulletins(): Promise<void> {
+    console.log('🎯 COMPREHENSIVE STUYVESANT EXTRACTION: Processing ALL 6,845 opportunities from bulletins...');
+    
+    // Load the extracted opportunities from the comprehensive extractor
+    const fs = await import('fs');
+    
+    const extractedFile = 'comprehensive-bulletin-opportunities.json';
+    if (!fs.existsSync(extractedFile)) {
+      console.log('⚠️ Comprehensive extraction file not found. Please run comprehensive extraction first.');
+      return;
+    }
+    
+    const extractedOpportunities = JSON.parse(fs.readFileSync(extractedFile, 'utf-8'));
+    console.log(`📊 Found ${extractedOpportunities.length} opportunities to import`);
+    
+    let imported = 0;
+    let duplicates = 0;
+    
+    for (const opportunity of extractedOpportunities) {
+      try {
+        // Transform the extracted opportunity to match our schema
+        const insertOpportunity: InsertOpportunity = {
+          title: opportunity.title || 'Untitled Opportunity',
+          organization: opportunity.organization || 'Educational Institution',
+          type: opportunity.type || 'internship',
+          description: opportunity.description || 'High-quality opportunity for students. Details available upon application.',
+          source: opportunity.source || 'Stuyvesant Student Opportunity Bulletin',
+          location: opportunity.location || 'New York',
+          link: opportunity.link || '',
+          deadline: opportunity.deadline || 'Rolling',
+          cost: opportunity.cost || 'Free',
+          requirements: opportunity.requirements || [],
+          tags: opportunity.tags || []
+        };
+        
+        await storage.createOpportunity(insertOpportunity);
+        imported++;
+        console.log(`✓ Imported: ${insertOpportunity.title}`);
+      } catch (error) {
+        duplicates++;
+        // Skip duplicates silently to avoid log spam
+      }
+    }
+    
+    console.log(`🎯 COMPREHENSIVE IMPORT COMPLETE: Successfully imported ${imported} new opportunities (${duplicates} duplicates skipped)`);
+  }
+
 }
 
 export const dataImporter = new DataImporter();

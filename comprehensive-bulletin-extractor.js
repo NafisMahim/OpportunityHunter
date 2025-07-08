@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // Comprehensive Stuyvesant Bulletin Extraction System
 class ComprehensiveBulletinExtractor {
@@ -408,18 +408,16 @@ class ComprehensiveBulletinExtractor {
 }
 
 // Export for use
-module.exports = ComprehensiveBulletinExtractor;
+export default ComprehensiveBulletinExtractor;
 
 // Run extraction if called directly
-if (require.main === module) {
-  async function runExtraction() {
-    const extractor = new ComprehensiveBulletinExtractor();
-    const opportunities = await extractor.extractFromAllBulletins();
-    
-    // Save to JSON for review
-    fs.writeFileSync('comprehensive-bulletin-opportunities.json', JSON.stringify(opportunities, null, 2));
-    console.log(`\n🎯 SAVED ${opportunities.length} opportunities to comprehensive-bulletin-opportunities.json`);
-  }
+async function runExtraction() {
+  const extractor = new ComprehensiveBulletinExtractor();
+  const opportunities = await extractor.extractFromAllBulletins();
   
-  runExtraction().catch(console.error);
+  // Save to JSON for review
+  fs.writeFileSync('comprehensive-bulletin-opportunities.json', JSON.stringify(opportunities, null, 2));
+  console.log(`\n🎯 SAVED ${opportunities.length} opportunities to comprehensive-bulletin-opportunities.json`);
 }
+
+runExtraction().catch(console.error);
