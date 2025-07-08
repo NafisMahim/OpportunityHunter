@@ -1,5 +1,9 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import { parse } from 'csv-parse/sync';
 import { storage } from './storage';
 import type { InsertOpportunity } from '../shared/schema';
@@ -2734,6 +2738,9 @@ export class DataImporter {
       // Import from the extracted scholarships JSON file
       await this.importFromExtractedScholarships();
       
+      // Import from all batch CSV files (thousands of opportunities)
+      await this.importAllBatchCSVFiles();
+      
       console.log('🎯 MASSIVE scholarship extraction completed successfully!');
     } catch (error) {
       console.error('Error during MASSIVE scholarship extraction:', error);
@@ -2847,6 +2854,172 @@ export class DataImporter {
     } catch (error) {
       console.error('Error importing extracted scholarships:', error);
     }
+  }
+
+  async importAllBatchCSVFiles(): Promise<void> {
+    console.log('🚀 MASSIVE BATCH IMPORT: Processing ALL batch CSV files with thousands of opportunities...');
+    
+    const batchFiles = [
+      'attached_assets/high_school_opportunities_batch2_1751957388931.csv',
+      'attached_assets/high_school_opportunities_batch3_1751957388931.csv',
+      'attached_assets/high_school_opportunities_batch4_1751957388931.csv',
+      'attached_assets/high_school_opportunities_batch5_1751957388931.csv',
+      'attached_assets/high_school_opportunities_batch6_1751957388932.csv',
+      'attached_assets/high_school_opportunities_batch7_1751957388932.csv'
+    ];
+
+    let totalImported = 0;
+    
+    for (const filePath of batchFiles) {
+      try {
+        console.log(`\n📄 Processing: ${filePath}`);
+        const csvContent = await fs.readFile(filePath, 'utf-8');
+        const records = parse(csvContent, {
+          columns: true,
+          skip_empty_lines: true,
+          trim: true
+        });
+        
+        console.log(`Found ${records.length} opportunities in ${filePath}`);
+        let fileImportCount = 0;
+        
+        for (const record of records) {
+          if (!record.Title || !record.Description) continue;
+          
+          try {
+            const opportunity: InsertOpportunity = {
+              title: record.Title,
+              description: record.Description,
+              organization: this.extractOrganization(record.Title),
+              type: this.determineOpportunityType(record.Title, record.Description, record.Category),
+              source: `Batch CSV: ${path.basename(filePath)}`,
+              url: record.Link || '#',
+              deadline: record.Deadline || 'Varies',
+              requirements: this.parseRequirements(record.Eligibility),
+              tags: this.generateTags(record.Title, record.Category, record.Description),
+              relevancyScore: 85,
+              amount: record.Cost === 'Free' ? null : record.Cost,
+              location: record.Location || 'Various',
+              salary: null
+            };
+            
+            await storage.createOpportunity(opportunity);
+            fileImportCount++;
+            totalImported++;
+            console.log(`✓ Imported: ${record.Title}`);
+          } catch (error) {
+            console.log(`Duplicate skipped: ${record.Title}`);
+          }
+        }
+        
+        console.log(`✅ Imported ${fileImportCount} opportunities from ${path.basename(filePath)}`);
+      } catch (error) {
+        console.error(`Error processing ${filePath}:`, error);
+      }
+    }
+    
+    console.log(`\n🎯 BATCH IMPORT COMPLETE: Successfully imported ${totalImported} opportunities from all batch CSV files!`);
+  }
+
+  async importNYCOpportunitiesFromCSV(filePath: string): Promise<void> {
+    console.log(`🏙️ MASSIVE NYC IMPORT: Processing ${filePath} for NYC-based opportunities...`);
+    
+    try {
+      const csvContent = await fs.readFile(filePath, 'utf-8');
+      
+      // Parse the CSV content looking for the format: "New:", "Eligible:", "Date:", etc.
+      const opportunities = this.parseNYCOpportunityFormat(csvContent);
+      
+      console.log(`Found ${opportunities.length} NYC opportunities`);
+      
+      let importCount = 0;
+      for (const opp of opportunities) {
+        try {
+          await storage.createOpportunity(opp);
+          importCount++;
+          console.log(`✓ Imported NYC opportunity: ${opp.title}`);
+        } catch (error) {
+          console.log(`Duplicate NYC opportunity skipped: ${opp.title}`);
+        }
+      }
+      
+      console.log(`🎯 Successfully imported ${importCount} NYC-based opportunities!`);
+    } catch (error) {
+      console.error('Error importing NYC opportunities:', error);
+    }
+  }
+
+  private parseNYCOpportunityFormat(content: string): InsertOpportunity[] {
+    const opportunities: InsertOpportunity[] = [];
+    
+    // Split content by "New:" to identify each opportunity
+    const sections = content.split(/New:/gi);
+    
+    for (const section of sections) {
+      if (section.trim().length < 10) continue;
+      
+      const lines = section.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+      
+      let title = '';
+      let description = '';
+      let eligible = '';
+      let date = '';
+      let location = '';
+      let cost = '';
+      let deadline = '';
+      let link = '';
+      
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        
+        if (i === 0 && !line.toLowerCase().includes('eligible:')) {
+          title = line.substring(0, 200); // First line after "New:" is usually the title
+        } else if (line.toLowerCase().includes('eligible:')) {
+          eligible = line.replace(/eligible:/gi, '').trim();
+        } else if (line.toLowerCase().includes('date:')) {
+          date = line.replace(/date:/gi, '').trim();
+        } else if (line.toLowerCase().includes('location:')) {
+          location = line.replace(/location:/gi, '').trim();
+        } else if (line.toLowerCase().includes('cost:')) {
+          cost = line.replace(/cost:/gi, '').trim();
+        } else if (line.toLowerCase().includes('application deadline:')) {
+          deadline = line.replace(/application deadline:/gi, '').trim();
+        } else if (line.toLowerCase().includes('link:')) {
+          link = line.replace(/link:/gi, '').trim();
+        } else if (!title && line.length > 5) {
+          title = line.substring(0, 200);
+        } else if (!description && line.length > 10 && !line.includes(':')) {
+          description = line;
+        }
+      }
+      
+      if (title && title.length > 3) {
+        // Clean up the data
+        title = title.replace(/[^\w\s\-\(\)\&\.\,]/g, '').trim();
+        if (!description) description = `${title} - NYC-based opportunity for high school students.`;
+        if (!location) location = 'New York City, NY';
+        
+        const opportunity: InsertOpportunity = {
+          title,
+          description,
+          organization: this.extractOrganization(title),
+          type: this.determineOpportunityType(title, description),
+          source: 'NYC Opportunities CSV',
+          url: link && link.startsWith('http') ? link : '#',
+          deadline: deadline || date || 'Varies',
+          requirements: eligible ? [eligible] : ['High school students'],
+          tags: [...this.generateTags(title, '', description), 'NYC', 'New-York'],
+          relevancyScore: 88,
+          amount: cost || null,
+          location: location,
+          salary: null
+        };
+        
+        opportunities.push(opportunity);
+      }
+    }
+    
+    return opportunities;
   }
 
   private parseScholarshipHTML(htmlContent: string): InsertOpportunity[] {
