@@ -12,11 +12,97 @@ interface MatchingResult {
 export class AIOpportunityMatcher {
   async matchOpportunitiesToUser(user: User, opportunities: Opportunity[]): Promise<MatchingResult[]> {
     if (!user.major && !user.minor) {
-      return [];  // Return empty array instead of showing everything
+      return [];
     }
 
-    // Use more aggressive fallback matching for now - AI is too slow
-    return this.strictFallbackMatching(user, opportunities);
+    try {
+      console.log(`Using AI to match ${opportunities.length} opportunities for ${user.major || user.minor}`);
+      
+      // Process opportunities in smaller batches to avoid timeouts
+      const batchSize = 10;
+      const allResults: MatchingResult[] = [];
+      
+      for (let i = 0; i < opportunities.length; i += batchSize) {
+        const batch = opportunities.slice(i, i + batchSize);
+        const batchResults = await this.analyzeOpportunityBatch(user, batch);
+        allResults.push(...batchResults);
+      }
+      
+      // Filter and sort results
+      const filteredResults = allResults
+        .filter(result => result.relevancyScore >= 70)
+        .sort((a, b) => b.relevancyScore - a.relevancyScore);
+        
+      console.log(`AI analysis complete: ${filteredResults.length} relevant opportunities found`);
+      return filteredResults;
+      
+    } catch (error) {
+      console.error('AI matching failed, using fallback:', error);
+      return this.strictFallbackMatching(user, opportunities);
+    }
+  }
+
+  private async analyzeOpportunityBatch(user: User, opportunities: Opportunity[]): Promise<MatchingResult[]> {
+    const systemPrompt = `You are an expert academic advisor. Analyze each opportunity for relevance to the student's academic field.
+
+Student Profile:
+- Major: ${user.major || "Not specified"}
+- Minor: ${user.minor || "Not specified"}
+
+For each opportunity, provide:
+1. Relevancy score (0-100) - Be STRICT. Only score 70+ if truly relevant to their academic field
+2. Unique explanation of why it matches (or doesn't match) their academic interests
+
+Respond with JSON:
+{
+  "matches": [
+    {
+      "opportunityId": number,
+      "relevancyScore": number,
+      "matchReason": "specific explanation of academic relevance"
+    }
+  ]
+}`;
+
+    const opportunitiesText = opportunities.map(opp => 
+      `ID: ${opp.id}
+Title: ${opp.title}
+Type: ${opp.type}
+Organization: ${opp.organization}
+Description: ${opp.description.substring(0, 400)}
+Tags: ${opp.tags.join(', ')}
+---`
+    ).join('\n\n');
+
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      config: {
+        systemInstruction: systemPrompt,
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: "object",
+          properties: {
+            matches: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  opportunityId: { type: "number" },
+                  relevancyScore: { type: "number" },
+                  matchReason: { type: "string" }
+                },
+                required: ["opportunityId", "relevancyScore", "matchReason"]
+              }
+            }
+          },
+          required: ["matches"]
+        }
+      },
+      contents: `Analyze these opportunities for academic relevance:\n\n${opportunitiesText}`,
+    });
+
+    const result = JSON.parse(response.text || "{}");
+    return result.matches || [];
   }
 
   private strictFallbackMatching(user: User, opportunities: Opportunity[]): MatchingResult[] {

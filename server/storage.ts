@@ -105,6 +105,20 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createOpportunity(insertOpportunity: InsertOpportunity): Promise<Opportunity> {
+    // Check for duplicates based on title and organization
+    const existing = await db.select()
+      .from(opportunities)
+      .where(
+        sql`LOWER(${opportunities.title}) = LOWER(${insertOpportunity.title}) 
+        AND LOWER(${opportunities.organization}) = LOWER(${insertOpportunity.organization})`
+      )
+      .limit(1);
+    
+    if (existing.length > 0) {
+      console.log(`Duplicate opportunity skipped: ${insertOpportunity.title}`);
+      return existing[0];
+    }
+    
     const [opportunity] = await db
       .insert(opportunities)
       .values(insertOpportunity)
