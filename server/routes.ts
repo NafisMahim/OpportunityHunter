@@ -170,10 +170,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ message: "Data import started" });
 
-      // Import data in background
-      const { dataImporter } = await import('./data-importer');
-      
-      dataImporter.importAllData().then(async () => {
+      // Import data in background (don't await, let it run asynchronously)
+      import('./data-importer').then(({ dataImporter }) => {
+        return dataImporter.importAllData();
+      }).then(async () => {
         await storage.createActivity({
           userId,
           message: "Successfully imported authentic high school opportunities from curated databases",
@@ -190,7 +190,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     } catch (error) {
       console.error('Import route error:', error);
-      res.status(500).json({ message: "Internal server error" });
+      // Only send response if headers haven't been sent yet
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Internal server error" });
+      }
     }
   });
 
