@@ -423,6 +423,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Comprehensive Files Import Route
+  app.post("/api/import-comprehensive-files", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      await storage.createActivity({
+        userId,
+        message: "🚀 Started importing comprehensive academic files (9 files: Python, CS, Business, STEM, Research, Medicine, Ocean Sciences)",
+        type: "import",
+      });
+
+      res.json({ message: "Comprehensive files import started - processing 9 academic files" });
+
+      // Import comprehensive files in background
+      import('./data-importer').then(({ dataImporter }) => {
+        return dataImporter.importComprehensiveFiles();
+      }).then(async () => {
+        await storage.createActivity({
+          userId,
+          message: "🎉 Successfully imported comprehensive academic opportunities from all 9 files!",
+          type: "import",
+        });
+      }).catch(async (error) => {
+        console.error('Comprehensive files import error:', error);
+        await storage.createActivity({
+          userId,
+          message: "Comprehensive files import encountered an error. Please check file formats.",
+          type: "error",
+        });
+      });
+
+    } catch (error) {
+      console.error('Comprehensive files import route error:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
   // Auto-apply route
   app.post("/api/auto-apply", async (req, res) => {
     try {
