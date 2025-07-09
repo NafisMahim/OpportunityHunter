@@ -1,164 +1,241 @@
-const { neon } = require('@neondatabase/serverless');
-
-// Database connection
-const sql = neon(process.env.DATABASE_URL);
-
-// Specific fixes for the most problematic URLs
-const CRITICAL_FIXES = [
-  // Fix by ID for exact matches
-  { id: 2493, title: "National Hispanic Youth Initiative Program", url: "https://www.lmm.org/page/nhy-initiative" },
-  { id: 2494, title: "West Point Summer Leaders Seminar", url: "https://www.westpoint.edu/admissions/prospective-students/visit-west-point/summer-leaders-seminar" },
-  
-  // Fix other commonly broken ones by pattern matching
-  { pattern: "MIT Beaver Works", url: "https://beaverworks.ll.mit.edu/CMS/bw/bwsi" },
-  { pattern: "MIT PRIMES", url: "https://math.mit.edu/research/highschool/primes/" },
-  { pattern: "MITES & MOSTEC", url: "https://oeop.mit.edu/programs/mites" },
-  { pattern: "NASA SEES", url: "https://www.csr.utexas.edu/education/sees/" },
-  { pattern: "Princeton SJP", url: "https://www.princeton.edu/meet-princeton/diversity-visits/summer-journalism-program/" },
-  { pattern: "U.S. Senate Page", url: "https://www.senate.gov/reference/reference_index_subjects/Pages_vrd.htm" },
-  { pattern: "Stanford SHTEM", url: "https://compression.stanford.edu/outreach/shtem-summer-internships" },
-  { pattern: "CrEST @ NYU", url: "https://engineering.nyu.edu/academics/programs/k12-stem-education/crest" },
-  { pattern: "Duke University Talent", url: "https://tip.duke.edu/field-studies" },
-  { pattern: "Emory University Preview", url: "https://apply.emory.edu/discover/visit.html" },
-  { pattern: "Johns Hopkins University HOME", url: "https://apply.jhu.edu/visit/diversity-programs/home-program/" },
-  { pattern: "University of Pennsylvania PEEP", url: "https://www.admissions.upenn.edu/visit/overnight-programs" },
-  { pattern: "Weill Cornell Medicine", url: "https://weill.cornell.edu/education/high-school-and-undergraduate-programs" },
-  { pattern: "HK Maker Lab", url: "https://www.engineering.columbia.edu/outreach/hk-maker-lab" },
-  { pattern: "NYU Visionary Studio", url: "https://steinhardt.nyu.edu/programs/media-culture-communication/undergraduate" },
-  { pattern: "Horizons NYC", url: "https://horizonsnyc.org" },
-  { pattern: "Ghetto Film School", url: "https://ghettofilm.org" },
-  { pattern: "PowerPlay NYC", url: "https://powerplaynyc.org" },
-  { pattern: "NYC FIRST STEM", url: "https://www.nycfirst.org" },
-  { pattern: "STEM Kids NYC", url: "https://www.stemkidsnyc.org" },
-  { pattern: "Urban Word NYC", url: "https://urbanwordnyc.org" },
-  { pattern: "YWCA of the City of New York", url: "https://www.ywcanyc.org" },
-  { pattern: "YYGS", url: "https://globalscholars.yale.edu" },
-  { pattern: "Youth Action YouthBuild", url: "https://youthactionnyc.org" },
-  { pattern: "Youth Food Advocates", url: "https://www.schoolfoodnyc.org" },
-  { pattern: "Writopia", url: "https://www.writopia.com" },
-  { pattern: "YC Magazine Teens", url: "https://www.ycmagazine.org" }
-];
-
+// Final manual fix for all identified broken URLs
 async function finalManualFix() {
-  console.log('🚨 FINAL MANUAL EXTRACTION URL FIX - TARGETING SPECIFIC BROKEN URLS...\n');
-  
-  try {
-    let fixedCount = 0;
+    console.log('=== FINAL MANUAL FIX FOR ALL BROKEN URLs ===');
     
-    // Fix by specific ID first
-    for (const fix of CRITICAL_FIXES.filter(f => f.id)) {
-      console.log(`🔧 Fixing by ID: ${fix.title} (ID: ${fix.id})`);
-      console.log(`   New URL: ${fix.url}`);
-      
-      const result = await sql`
-        UPDATE opportunities 
-        SET url = ${fix.url}
-        WHERE id = ${fix.id} AND source = 'manual_extraction'
-      `;
-      
-      if (result.count > 0) {
-        fixedCount++;
-        console.log(`   ✅ Fixed successfully\n`);
-      } else {
-        console.log(`   ❌ No record found\n`);
-      }
-    }
+    // All broken URLs we've identified and their fixes
+    const urgentFixes = [
+        {
+            search: 'americorps.gov/serve/americorps-vista',
+            replace: 'https://www.americorps.gov/serve/americorps-vista',
+            reason: 'AmeriCorps VISTA 403 error fix'
+        },
+        {
+            search: 'nationalhonorsociety.org/students/scholarships',
+            replace: 'https://www.nhs.us/students/scholarships/',
+            reason: 'National Honor Society 404 error fix (user screenshot)'
+        },
+        {
+            search: 'nationalhonorsociety.org',
+            replace: 'https://www.nhs.us/',
+            reason: 'National Honor Society main site fix'
+        },
+        {
+            search: 'restaurant.org/nraef/scholarships',
+            replace: 'https://www.chooserestaurants.org/Scholarships',
+            reason: 'Restaurant Association scholarship fix'
+        },
+        {
+            search: 'nraef.org/scholarships',
+            replace: 'https://www.chooserestaurants.org/Scholarships',
+            reason: 'NRAEF scholarship fix'
+        },
+        {
+            search: 'careers.microsoft.com/students/us/en/ur-scholarships',
+            replace: 'https://careers.microsoft.com/us/en/students',
+            reason: 'Microsoft careers page fix'
+        },
+        {
+            search: 'adobe.com/careers/university/digital-academy',
+            replace: 'https://www.adobe.com/careers/university.html',
+            reason: 'Adobe careers page fix'
+        },
+        {
+            search: 'coca-colascholarsfoundation.org/apply',
+            replace: 'https://www.coca-colascholarsfoundation.org/scholarships/',
+            reason: 'Coca-Cola scholarship fix'
+        },
+        {
+            search: 'arteducators.org/learn-tools/awards-grants',
+            replace: 'https://www.arteducators.org/community/awards-grants',
+            reason: 'Art Educators Association fix'
+        },
+        {
+            search: 'elks.org/scholars/scholarships',
+            replace: 'https://www.elks.org/scholars/',
+            reason: 'Elks Foundation scholarship fix'
+        },
+        {
+            search: 'elks.org/scholars/mvs.cfm',
+            replace: 'https://www.elks.org/scholars/',
+            reason: 'Elks MVS scholarship fix'
+        },
+        {
+            search: 'carsonscholars.org/scholarships',
+            replace: 'https://carsonscholars.org/scholarship-program/',
+            reason: 'Carson Scholars fix'
+        },
+        {
+            search: 'scholars.horatioalger.org/apply',
+            replace: 'https://scholars.horatioalger.org/',
+            reason: 'Horatio Alger scholarship fix'
+        },
+        {
+            search: 'cee.org/programs/research-science-institute',
+            replace: 'https://www.cee.org/research-science-institute',
+            reason: 'Research Science Institute fix'
+        },
+        {
+            search: 'asme.org/students/competitions',
+            replace: 'https://www.asme.org/students-and-faculty/students/competitions',
+            reason: 'ASME competitions fix'
+        },
+        {
+            search: 'aiche.org/community/students/awards-scholarships-competitions',
+            replace: 'https://www.aiche.org/students/awards-scholarships-competitions',
+            reason: 'AIChE awards fix'
+        },
+        {
+            search: 'ieee.org/membership/students/competitions/index.html',
+            replace: 'https://www.ieee.org/membership/students/competitions.html',
+            reason: 'IEEE competitions fix'
+        },
+        {
+            search: 'txstate.edu/mathworks/camps/ssm.html',
+            replace: 'https://www.txstate.edu/academics/mathematics-statistics.html',
+            reason: 'Texas State math program fix'
+        },
+        {
+            search: 'rhodeshouse.ox.ac.uk/scholarships/the-rhodes-scholarship',
+            replace: 'https://www.rhodestrust.com/the-scholarship/',
+            reason: 'Rhodes Scholarship fix'
+        },
+        {
+            search: 'simonsfoundation.org/grant/math-x-investigator-awards',
+            replace: 'https://www.simonsfoundation.org/funding-opportunities/',
+            reason: 'Simons Foundation fix'
+        },
+        {
+            search: 'davidsongifted.org/fellow-program',
+            replace: 'https://www.davidsongifted.org/support-scholars/fellowship-program/',
+            reason: 'Davidson Fellows fix'
+        },
+        {
+            search: 'davidsongifted.org/fellowship-program',
+            replace: 'https://www.davidsongifted.org/support-scholars/fellowship-program/',
+            reason: 'Davidson Fellowship fix'
+        },
+        {
+            search: 'mitadmissions.org/apply/firstyear/mites',
+            replace: 'https://oeop.mit.edu/programs/mites',
+            reason: 'MIT MITES program fix'
+        },
+        {
+            search: 'tellurideassociation.org/programs/high-school-students/tasp',
+            replace: 'https://www.tellurideassociation.org/programs/high-school-students/summer-seminar/',
+            reason: 'Telluride TASP fix'
+        }
+    ];
     
-    // Fix by pattern matching
-    for (const fix of CRITICAL_FIXES.filter(f => f.pattern)) {
-      console.log(`🔧 Fixing by pattern: ${fix.pattern}`);
-      console.log(`   New URL: ${fix.url}`);
-      
-      const result = await sql`
-        UPDATE opportunities 
-        SET url = ${fix.url}
-        WHERE title LIKE ${`%${fix.pattern}%`} AND source = 'manual_extraction'
-      `;
-      
-      if (result.count > 0) {
-        fixedCount += result.count;
-        console.log(`   ✅ Fixed ${result.count} records\n`);
-      } else {
-        console.log(`   ⚠️ No matching records found\n`);
-      }
-    }
+    let totalFixed = 0;
     
-    // Check for any remaining obviously broken URLs
-    const stillBroken = await sql`
-      SELECT id, title, url 
-      FROM opportunities 
-      WHERE source = 'manual_extraction' 
-      AND (
-        url LIKE '%example.%' OR 
-        url LIKE '%test.%' OR 
-        url LIKE '%placeholder%' OR 
-        url LIKE '%$%' OR 
-        url LIKE '%@%' OR 
-        url LIKE '%localhost%' OR 
-        url LIKE '%nshss%' OR
-        url LIKE '%honor-society%' OR
-        LENGTH(url) < 15
-      )
-      LIMIT 20
-    `;
-    
-    if (stillBroken.length > 0) {
-      console.log(`\n⚠️ STILL BROKEN URLs FOUND:`);
-      for (const broken of stillBroken) {
-        console.log(`   ID ${broken.id}: ${broken.title}`);
-        console.log(`   Broken URL: ${broken.url}\n`);
+    // Process each fix one by one
+    for (const fix of urgentFixes) {
+        console.log(`\nProcessing: ${fix.reason}`);
+        console.log(`Looking for URLs containing: ${fix.search}`);
         
-        // Apply generic organization homepage fix
-        let fixedUrl = "https://www.google.com/search?q=" + encodeURIComponent(broken.title);
-        
-        // Try to extract organization name and create better URL
-        if (broken.title.includes("MIT")) {
-          fixedUrl = "https://www.mit.edu";
-        } else if (broken.title.includes("Harvard")) {
-          fixedUrl = "https://www.harvard.edu";
-        } else if (broken.title.includes("Stanford")) {
-          fixedUrl = "https://www.stanford.edu";
-        } else if (broken.title.includes("NASA")) {
-          fixedUrl = "https://www.nasa.gov";
-        } else if (broken.title.includes("Princeton")) {
-          fixedUrl = "https://www.princeton.edu";
-        } else if (broken.title.includes("West Point")) {
-          fixedUrl = "https://www.westpoint.edu";
-        } else if (broken.title.includes("NYC") || broken.title.includes("New York")) {
-          fixedUrl = "https://www.nyc.gov";
+        try {
+            // Get all opportunities
+            const response = await fetch('http://localhost:5000/api/opportunities');
+            const opportunities = await response.json();
+            
+            // Find matching opportunities
+            const matchingOpps = opportunities.filter(opp => 
+                opp.url && opp.url.includes(fix.search)
+            );
+            
+            console.log(`Found ${matchingOpps.length} opportunities to fix`);
+            
+            for (const opp of matchingOpps) {
+                console.log(`Fixing: ${opp.title.substring(0, 40)}...`);
+                console.log(`  OLD: ${opp.url}`);
+                console.log(`  NEW: ${fix.replace}`);
+                
+                const updateResponse = await fetch(`http://localhost:5000/api/opportunities/${opp.id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        url: fix.replace
+                    })
+                });
+                
+                if (updateResponse.ok) {
+                    console.log(`  ✅ FIXED`);
+                    totalFixed++;
+                } else {
+                    console.log(`  ❌ FAILED (${updateResponse.status})`);
+                }
+                
+                // Small delay between requests
+                await new Promise(resolve => setTimeout(resolve, 50));
+            }
+        } catch (error) {
+            console.log(`❌ Error processing ${fix.search}: ${error.message}`);
         }
         
-        await sql`
-          UPDATE opportunities 
-          SET url = ${fixedUrl}
-          WHERE id = ${broken.id}
-        `;
-        
-        fixedCount++;
-        console.log(`   🔧 Emergency fix applied: ${fixedUrl}\n`);
-      }
+        // Delay between different fix patterns
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
     
-    console.log(`\n🎉 FINAL MANUAL FIX COMPLETE!`);
-    console.log(`✅ Total fixes applied: ${fixedCount}`);
-    console.log(`💯 All critical broken URLs have been addressed!`);
+    console.log('\n=== HTTP TO HTTPS UPGRADE ===');
     
-    // Verify the specific URLs the user mentioned
-    const verification = await sql`
-      SELECT id, title, url 
-      FROM opportunities 
-      WHERE id IN (2493, 2494)
-    `;
+    // Fix HTTP to HTTPS
+    try {
+        const response = await fetch('http://localhost:5000/api/opportunities');
+        const opportunities = await response.json();
+        
+        const httpOpps = opportunities.filter(opp => 
+            opp.url && opp.url.startsWith('http://')
+        );
+        
+        console.log(`Found ${httpOpps.length} HTTP URLs to upgrade to HTTPS`);
+        
+        for (const opp of httpOpps) {
+            const newUrl = opp.url.replace('http://', 'https://');
+            
+            console.log(`Upgrading: ${opp.title.substring(0, 40)}...`);
+            console.log(`  OLD: ${opp.url}`);
+            console.log(`  NEW: ${newUrl}`);
+            
+            const updateResponse = await fetch(`http://localhost:5000/api/opportunities/${opp.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: newUrl
+                })
+            });
+            
+            if (updateResponse.ok) {
+                console.log(`  ✅ UPGRADED`);
+                totalFixed++;
+            } else {
+                console.log(`  ❌ FAILED (${updateResponse.status})`);
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 50));
+        }
+    } catch (error) {
+        console.log(`❌ Error upgrading HTTP URLs: ${error.message}`);
+    }
     
-    console.log(`\n🎯 VERIFICATION OF USER'S SPECIFIC EXAMPLES:`);
-    verification.forEach(opp => {
-      console.log(`✅ ID ${opp.id}: ${opp.title}`);
-      console.log(`   URL: ${opp.url}\n`);
-    });
+    console.log('\n=== FINAL MANUAL FIX COMPLETE ===');
+    console.log(`✅ Total URLs fixed: ${totalFixed}`);
     
-  } catch (error) {
-    console.error('❌ Error in final manual fix:', error);
-  }
+    // Save fix report
+    const fs = require('fs');
+    const report = {
+        timestamp: new Date().toISOString(),
+        totalFixed,
+        fixesApplied: urgentFixes.map(f => f.reason)
+    };
+    
+    fs.writeFileSync(`final-fix-report-${Date.now()}.json`, JSON.stringify(report, null, 2));
+    console.log('📄 Fix report saved');
+    
+    return totalFixed;
 }
 
-finalManualFix();
+finalManualFix().catch(console.error);

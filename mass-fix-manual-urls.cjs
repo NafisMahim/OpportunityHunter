@@ -1,295 +1,255 @@
-const { neon } = require('@neondatabase/serverless');
-const fs = require('fs');
-const { parse } = require('csv-parse/sync');
-
-// Database connection
-const sql = neon(process.env.DATABASE_URL);
-
-// COMPREHENSIVE URL MAPPING - ALL VERIFIED WORKING APPLICATION PAGES
-const VERIFIED_WORKING_URLS = {
-  // From broken CSV file - fix invalid URLs
-  "Beginning with Children Legacy Network": "https://www.beginningwithchildren.org/programs/",
-  "Free After-School & Summer Programs (via DiscoverDYCD)": "https://www.nyc.gov/site/dycd/services/after-school-programs.page",
-  "Fresh Air Fund Summer Camps": "https://www.freshair.org/summer-camps/",
-  "Garden Kitchen Labs with NYC Parks": "https://www.nycgovparks.org/programs/education/garden-kitchen-labs",
-  "Harlem Grown": "https://www.harlemgrown.org/",
-  "Rocking the Boat: Rowing": "https://www.rockingtheboat.org/programs/",
-  "Teachoo: Learn Math": "https://www.teachoo.com/",
-  
-  // Major programs with proper application URLs
-  "MIT PRIMES": "https://math.mit.edu/research/highschool/primes/applications/",
-  "MITES & MOSTEC": "https://oeop.mit.edu/programs/mites/apply/",
-  "NASA SEES": "https://sees.utexas.edu/apply/",
-  "Hutton Junior Fisheries": "https://huttonjuniorfisheries.org/application/",
-  "NIST SHIP": "https://www.nist.gov/careers/student-opportunities/student-high-school-inquiry-program-ship",
-  "NIH HiSTEP": "https://www.training.nih.gov/programs/histep",
-  "Navy SEAP": "https://www.navystem.com/seap",
-  "MIT Beaver Works": "https://beaverworks.ll.mit.edu/CMS/bw/bwsi/apply",
-  "Girls Who Code SIP": "https://girlswhocode.com/programs/summer-immersion-program/",
-  "LaunchX": "https://launchx.com/apply/",
-  "Google Science Fair": "https://www.googlesciencefair.com/",
-  "Conrad Challenge": "https://www.conradchallenge.org/apply/",
-  "Diamond Challenge": "https://diamondchallenge.org/apply/",
-  "CyberPatriot": "https://www.uscyberpatriot.org/competition/registration",
-  "National Youth Science Camp": "https://www.nysc.org/apply/",
-  "Smithsonian YAP": "https://youth.si.edu/Opportunities/Smithsonian-Youth-Access-Program",
-  "USSYP": "https://www.ussyp.org/",
-  "Bank of America Leaders": "https://about.bankofamerica.com/en/what-guides-us/student-leaders-program",
-  "U.S. Senate Page": "https://www.senate.gov/visiting/common/generic/senate_page_program.htm",
-  "Princeton SJP": "https://www.princeton.edu/meet-princeton/diversity-visits/summer-journalism-program/",
-  "YoungArts Awards": "https://www.youngarts.org/apply/",
-  "Scholastic Awards": "https://www.artandwriting.org/apply/",
-  "Notre Dame Leadership": "https://www.nd.edu/admissions/visit/leadership-seminars/",
-  "YYGS": "https://globalscholars.yale.edu/apply/",
-  "ISSYP": "https://www.perimeterinstitute.ca/outreach/students/programs/international-summer-school-young-physicists",
-  "Shad Canada": "https://www.shad.ca/apply/",
-  "Technion SciTech": "https://sci-tech.technion.ac.il/en/programs/",
-  "PROMYS": "https://promys.org/apply/",
-  "Regeneron STS": "https://www.societyforscience.org/regeneron-sts/",
-  "Regeneron ISEF": "https://www.societyforscience.org/isef/compete/",
-  "Academic Decathlon": "https://www.usad.org/",
-  "Odyssey of the Mind": "https://www.odysseyofthemind.com/",
-  
-  // Summer Health Professions Education Programs
-  "Summer Health Professions Education Program (SHPEP) - Columbia University": "https://www.columbia.edu/cu/shpep/",
-  "Summer Health Professions Education Program (Howard)": "https://medicine.howard.edu/academics/md-program/special-programs/shpep",
-  "Summer Health Professions Education Program (Louisville)": "https://louisville.edu/medicine/departments/familymedicine/diversity/shpep",
-  "Summer Health Professions Education Program (Nebraska)": "https://www.unmc.edu/diversity/programs/shpep/",
-  "Summer Health Professions Education Program (Rutgers)": "https://rwjms.rutgers.edu/education/special-masters-programs/shpep",
-  "Summer Health Professions Education Program (UCLA & Drew)": "https://www.cdrewu.edu/student-affairs/shpep",
-  "Summer Health Professions Education Program (UT Houston)": "https://www.uth.edu/diversity/students/shpep/",
-  "Summer Health Professions Education Program (Washington)": "https://www.washington.edu/diversity/health-equity/shpep/",
-  "Summer Health Professions Education Program (Western)": "https://www.westernu.edu/diversity/shpep/",
-  
-  // Medical/Research Programs
-  "MD-PhD Undergraduate Summer (MPUS) Fellowship": "https://geiselmed.dartmouth.edu/mdphd/mpus/",
-  "Undergraduate Research for Prospective Physician-Scientists and Physician-Engineers": "https://medicine.iu.edu/md-phd/undergraduate-opportunities/",
-  "SUCCESS Summer Undergraduate Course Creating Excellence in Scientific Study": "https://medicine.osu.edu/departments/biomedical-education/student-services/summer-programs",
-  "Summer in Biological Sciences (SIBS) Undergraduate Research Program": "https://www.umassmed.edu/gsbs/diversity/summer-programs/sibs/",
-  "Preparation for Graduate and Medical Education (PARAdiGM) Program": "https://www.uab.edu/medicine/paradigm/",
-  "Summer Undergraduate Research Fellowship (SURF) Program": "https://www.mayo.edu/research/training-grant-programs/undergrad-programs/surf",
-  "Summer Undergraduate MSTP Research (SUMR) Program": "https://medicine.wustl.edu/education/md-phd-program/prospective-students/sumr/",
-  "MD/PhD Summer Undergraduate Research Program": "https://www.unmc.edu/mdphd/prospective-students/summer-program.html",
-  "Gateways to the Laboratory Summer Program": "https://mdphd.weill.cornell.edu/gateways-laboratory-summer-program",
-  "Summer Student Training and Research (STAR)": "https://www.vumc.org/star/",
-  
-  // Major Universities
-  "Washington University in St. Louis Olin Business School": "https://www.olin.wustl.edu/EN-US/academic-programs/specialized-masters-programs/summer-programs/Pages/default.aspx",
-  "Harvard University Summer Programs": "https://www.summer.harvard.edu/high-school-programs/",
-  "Stanford University Summer Programs": "https://summerinstitutes.spcs.stanford.edu/",
-  "Yale University Summer Programs": "https://www.yale.edu/academics/academic-programs/pre-college-programs",
-  "Princeton University Summer Programs": "https://www.princeton.edu/meet-princeton/",
-  "MIT Summer Programs": "https://oeop.mit.edu/programs/",
-  "Cornell University Summer Programs": "https://www.cornell.edu/academics/pre-college.cfm",
-  "Columbia University Summer Programs": "https://www.college.columbia.edu/cce/",
-  "University of Pennsylvania Summer Programs": "https://www.upenn.edu/summer/",
-  "Dartmouth College Summer Programs": "https://www.dartmouth.edu/summer/",
-  "Brown University Summer Programs": "https://www.brown.edu/academics/pre-college/",
-  "University of Chicago Summer Programs": "https://summer.uchicago.edu/",
-  "Northwestern University Summer Programs": "https://www.northwestern.edu/pre-college/",
-  "Duke University Summer Programs": "https://learnmore.duke.edu/youth-programs/",
-  "Vanderbilt University Summer Programs": "https://www.vanderbilt.edu/summer/",
-  "Rice University Summer Programs": "https://enrichment.rice.edu/",
-  "Carnegie Mellon University Summer Programs": "https://www.cmu.edu/pre-college/",
-  "Johns Hopkins University Summer Programs": "https://cty.jhu.edu/",
-  "Georgetown University Summer Programs": "https://scs.georgetown.edu/programs/summer-programs/",
-  "Emory University Summer Programs": "https://www.emory.edu/summer/",
-  
-  // Government & National Labs
-  "Argonne National Laboratory": "https://www.anl.gov/education/undergraduate-programs",
-  "Oak Ridge National Laboratory": "https://www.ornl.gov/content/internships-co-ops",
-  "Lawrence Livermore National Laboratory": "https://education.llnl.gov/undergraduate-programs/",
-  "Los Alamos National Laboratory": "https://www.lanl.gov/careers/career-options/student-internships/undergraduate/index.php",
-  "Sandia National Laboratories": "https://www.sandia.gov/careers/students-postdocs/internships/",
-  "Fermilab": "https://ed.fnal.gov/programs/intern/",
-  "NASA": "https://intern.nasa.gov/",
-  "National Institutes of Health": "https://www.training.nih.gov/programs",
-  "Centers for Disease Control": "https://www.cdc.gov/fellowships/",
-  "Environmental Protection Agency": "https://www.epa.gov/careers/student-opportunities"
-};
-
-async function massFixManualUrls() {
-  console.log('🚨 MASS FIX: Reading CSV files and fixing ALL broken URLs...\n');
-  
-  try {
-    // Read the broken URLs CSV file
-    const brokenUrlsCsv = fs.readFileSync('./attached_assets/Broken_or_Invalid_URLs_Only_1752078256723.csv', 'utf8');
-    const brokenUrlsData = parse(brokenUrlsCsv, { 
-      columns: true, 
-      skip_empty_lines: true 
-    });
+// Mass fix for manually identified broken URLs
+async function massFixBrokenURLs() {
+    console.log('=== MASS FIX FOR BROKEN URLs ===');
     
-    console.log(`📊 Found ${brokenUrlsData.length} opportunities with broken URLs from CSV...\n`);
+    // Get all opportunities
+    const response = await fetch('http://localhost:5000/api/opportunities');
+    const opportunities = await response.json();
     
-    let totalFixed = 0;
+    console.log(`Total opportunities: ${opportunities.length}`);
     
-    // Fix URLs from the verified mapping
-    for (const [title, correctUrl] of Object.entries(VERIFIED_WORKING_URLS)) {
-      const result = await sql`
-        UPDATE opportunities 
-        SET url = ${correctUrl}
-        WHERE title = ${title}
-        RETURNING id, title
-      `;
-      
-      if (result.length > 0) {
-        console.log(`✅ Fixed: ${title} -> ${correctUrl}`);
-        totalFixed++;
-      }
-    }
-    
-    // Fix broken URLs from CSV data
-    for (const row of brokenUrlsData) {
-      const title = row.title;
-      const badUrl = row.url;
-      
-      // Skip if already fixed above
-      if (VERIFIED_WORKING_URLS[title]) continue;
-      
-      let correctUrl = null;
-      
-      // Generate appropriate URLs based on title analysis
-      const titleLower = title.toLowerCase();
-      
-      if (titleLower.includes('harvard')) {
-        correctUrl = 'https://www.summer.harvard.edu/high-school-programs/';
-      } else if (titleLower.includes('stanford')) {
-        correctUrl = 'https://summerinstitutes.spcs.stanford.edu/';
-      } else if (titleLower.includes('mit')) {
-        correctUrl = 'https://oeop.mit.edu/programs/';
-      } else if (titleLower.includes('yale')) {
-        correctUrl = 'https://www.yale.edu/academics/academic-programs/pre-college-programs';
-      } else if (titleLower.includes('princeton')) {
-        correctUrl = 'https://www.princeton.edu/meet-princeton/';
-      } else if (titleLower.includes('columbia')) {
-        correctUrl = 'https://www.college.columbia.edu/cce/';
-      } else if (titleLower.includes('cornell')) {
-        correctUrl = 'https://www.cornell.edu/academics/pre-college.cfm';
-      } else if (titleLower.includes('penn') || titleLower.includes('pennsylvania')) {
-        correctUrl = 'https://www.upenn.edu/summer/';
-      } else if (titleLower.includes('dartmouth')) {
-        correctUrl = 'https://www.dartmouth.edu/summer/';
-      } else if (titleLower.includes('brown')) {
-        correctUrl = 'https://www.brown.edu/academics/pre-college/';
-      } else if (titleLower.includes('chicago')) {
-        correctUrl = 'https://summer.uchicago.edu/';
-      } else if (titleLower.includes('northwestern')) {
-        correctUrl = 'https://www.northwestern.edu/pre-college/';
-      } else if (titleLower.includes('duke')) {
-        correctUrl = 'https://learnmore.duke.edu/youth-programs/';
-      } else if (titleLower.includes('johns hopkins')) {
-        correctUrl = 'https://cty.jhu.edu/';
-      } else if (titleLower.includes('nasa')) {
-        correctUrl = 'https://intern.nasa.gov/';
-      } else if (titleLower.includes('nih') || titleLower.includes('national institutes')) {
-        correctUrl = 'https://www.training.nih.gov/programs';
-      } else if (titleLower.includes('smithsonian')) {
-        correctUrl = 'https://www.si.edu/learn';
-      } else if (titleLower.includes('museum')) {
-        if (titleLower.includes('brooklyn')) correctUrl = 'https://www.brooklynmuseum.org/education/';
-        else if (titleLower.includes('metropolitan')) correctUrl = 'https://www.metmuseum.org/learn/';
-        else correctUrl = 'https://www.si.edu/learn';
-      } else if (titleLower.includes('library')) {
-        if (titleLower.includes('congress')) correctUrl = 'https://www.loc.gov/programs/';
-        else correctUrl = 'https://www.nypl.org/education/teens/';
-      } else if (titleLower.includes('hospital') || titleLower.includes('medical center')) {
-        correctUrl = 'https://www.mountsinai.org/careers/students/';
-      } else if (titleLower.includes('internship') || titleLower.includes('intern')) {
-        correctUrl = 'https://www.internships.com/';
-      } else if (titleLower.includes('science fair') || titleLower.includes('competition')) {
-        correctUrl = 'https://www.societyforscience.org/';
-      } else {
-        // Generate organization URL from first meaningful word
-        const words = title.split(' ');
-        const firstWord = words[0].toLowerCase().replace(/[^a-z]/g, '');
-        if (firstWord.length > 2) {
-          correctUrl = `https://www.${firstWord}.org/`;
-        } else {
-          correctUrl = 'https://www.opportunitynetwork.org/search/';
-        }
-      }
-      
-      if (correctUrl) {
-        const result = await sql`
-          UPDATE opportunities 
-          SET url = ${correctUrl}
-          WHERE title = ${title}
-          RETURNING id, title
-        `;
+    // Manually identified broken URLs and their fixes based on verification
+    const criticalFixes = {
+        // National Association of Realtors - 404 error
+        'https://www.nar.realtor/education-and-events': 'https://www.nar.realtor/education',
         
-        if (result.length > 0) {
-          console.log(`✅ Fixed broken URL: ${title} -> ${correctUrl}`);
-          totalFixed++;
+        // AmeriCorps VISTA - 403 error
+        'https://americorps.gov/serve/americorps-vista': 'https://www.americorps.gov/serve/americorps-vista',
+        
+        // National Honor Society - 404 error (from user screenshot)
+        'https://www.nationalhonorsociety.org/students/scholarships/': 'https://www.nhs.us/students/scholarships/',
+        'https://www.nationalhonorsociety.org/': 'https://www.nhs.us/',
+        
+        // Additional broken URLs from patterns
+        'https://www.nraef.org/scholarships/': 'https://www.chooserestaurants.org/Scholarships',
+        'https://restaurant.org/nraef/scholarships/': 'https://www.chooserestaurants.org/Scholarships',
+        
+        // Peace Corps variations
+        'https://www.peacecorps.gov/': 'https://www.peacecorps.gov/volunteer/',
+        
+        // Education URLs that commonly break
+        'https://mitadmissions.org/apply/firstyear/mites/': 'https://oeop.mit.edu/programs/mites',
+        'https://www.davidsongifted.org/fellow-program': 'https://www.davidsongifted.org/support-scholars/fellowship-program/',
+        'https://www.davidsongifted.org/fellowship-program/': 'https://www.davidsongifted.org/support-scholars/fellowship-program/',
+        
+        // Microsoft career URLs
+        'https://careers.microsoft.com/students/us/en/ur-scholarships': 'https://careers.microsoft.com/us/en/students',
+        
+        // Adobe career URLs
+        'https://www.adobe.com/careers/university/digital-academy.html': 'https://www.adobe.com/careers/university.html',
+        
+        // Foundation URLs
+        'https://www.coca-colascholarsfoundation.org/apply/': 'https://www.coca-colascholarsfoundation.org/scholarships/',
+        'https://www.reaganfoundation.org/media/355919/grf-scholarship-application-instructions.pdf': 'https://www.reaganfoundation.org/education/scholarship-programs/grf-scholarship/',
+        
+        // Art education
+        'https://www.arteducators.org/learn-tools/awards-grants': 'https://www.arteducators.org/community/awards-grants',
+        
+        // Medical associations
+        'https://www.adafoundation.org/en/how-we-help/scholarships': 'https://www.adafoundation.org/en/how-we-help/scholarships',
+        'https://nmfonline.org': 'https://www.nmfonline.org/',
+        
+        // Veterans organizations
+        'https://www.vfw.org/community/youth-and-education/youth-scholarships': 'https://www.vfw.org/community/youth-and-education/youth-scholarships',
+        'https://www.elks.org/scholars/scholarships/': 'https://www.elks.org/scholars/',
+        'https://www.elks.org/scholars/mvs.cfm': 'https://www.elks.org/scholars/',
+        
+        // Corporate scholarships
+        'https://corporate.target.com/sustainability-social-responsibility/education/': 'https://corporate.target.com/sustainability-ESG/social/education',
+        'https://carsonscholars.org/scholarships/': 'https://carsonscholars.org/scholarship-program/',
+        'https://scholars.horatioalger.org/apply/': 'https://scholars.horatioalger.org/',
+        
+        // Science programs
+        'https://www.cee.org/programs/research-science-institute': 'https://www.cee.org/research-science-institute',
+        'https://www.tellurideassociation.org/programs/high-school-students/tasp/': 'https://www.tellurideassociation.org/programs/high-school-students/summer-seminar/',
+        
+        // Engineering organizations
+        'https://www.asme.org/students/competitions': 'https://www.asme.org/students-and-faculty/students/competitions',
+        'https://www.aiche.org/community/students/awards-scholarships-competitions': 'https://www.aiche.org/students/awards-scholarships-competitions',
+        'https://www.ieee.org/membership/students/competitions/index.html': 'https://www.ieee.org/membership/students/competitions.html',
+        
+        // State education programs
+        'https://www.txstate.edu/mathworks/camps/ssm.html': 'https://www.txstate.edu/academics/mathematics-statistics.html',
+        'https://ucop.edu/mesa/': 'https://www.ucop.edu/student-affairs/programs-and-initiatives/mesa/',
+        
+        // International programs
+        'https://www.rhodeshouse.ox.ac.uk/scholarships/the-rhodes-scholarship/': 'https://www.rhodestrust.com/the-scholarship/',
+        'https://us.fulbrightonline.org': 'https://us.fulbrightonline.org/',
+        
+        // Tech companies
+        'https://www.amazonfutureengineer.com/scholarships': 'https://www.amazonfutureengineer.com/scholarships',
+        'https://summerofcode.withgoogle.com': 'https://summerofcode.withgoogle.com/',
+        
+        // Math and science foundations
+        'https://www.simonsfoundation.org/grant/math-x-investigator-awards/': 'https://www.simonsfoundation.org/funding-opportunities/',
+        
+        // Summer programs
+        'https://summerscience.org': 'https://summerscience.org/',
+        'https://camp.interlochen.org': 'https://camp.interlochen.org/',
+        'https://diamondchallenge.org': 'https://diamondchallenge.org/',
+        'https://clscholarship.org': 'https://clscholarship.org/',
+        
+        // State science organizations
+        'https://www.floridaacademyofsciences.org': 'https://www.floridaacademyofsciences.org/',
+        'https://www.stanys.org': 'https://www.stanys.org/',
+        
+        // Writers organizations
+        'https://www.wgfoundation.org/': 'https://www.wgfoundation.org'
+    };
+    
+    // Find opportunities that need fixing
+    const oppsNeedingFix = opportunities.filter(opp => 
+        opp.url && (
+            criticalFixes[opp.url] ||
+            // Pattern matches for variations
+            opp.url.includes('nationalhonorsociety.org/students/scholarships') ||
+            opp.url.includes('nar.realtor/education-and-events/scholarships') ||
+            opp.url.includes('americorps.gov/serve/americorps-vista') ||
+            opp.url.includes('restaurant.org/nraef') ||
+            opp.url.includes('nraef.org/scholarships') ||
+            opp.url.includes('careers.microsoft.com/students/us/en/ur-scholarships') ||
+            opp.url.includes('adobe.com/careers/university/digital-academy') ||
+            opp.url.includes('coca-colascholarsfoundation.org/apply') ||
+            opp.url.includes('arteducators.org/learn-tools/awards-grants') ||
+            opp.url.includes('elks.org/scholars/scholarships') ||
+            opp.url.includes('elks.org/scholars/mvs.cfm') ||
+            opp.url.includes('carsonscholars.org/scholarships') ||
+            opp.url.includes('scholars.horatioalger.org/apply') ||
+            opp.url.includes('cee.org/programs/research-science-institute') ||
+            opp.url.includes('asme.org/students/competitions') ||
+            opp.url.includes('aiche.org/community/students/awards-scholarships-competitions') ||
+            opp.url.includes('ieee.org/membership/students/competitions/index.html') ||
+            opp.url.includes('txstate.edu/mathworks/camps/ssm.html') ||
+            opp.url.includes('rhodeshouse.ox.ac.uk/scholarships/the-rhodes-scholarship') ||
+            opp.url.includes('simonsfoundation.org/grant/math-x-investigator-awards') ||
+            opp.url.includes('davidsongifted.org/fellow-program') ||
+            opp.url.includes('davidsongifted.org/fellowship-program') ||
+            opp.url.includes('mitadmissions.org/apply/firstyear/mites') ||
+            opp.url.includes('tellurideassociation.org/programs/high-school-students/tasp') ||
+            // HTTP to HTTPS upgrades
+            opp.url.startsWith('http://')
+        )
+    );
+    
+    console.log(`Found ${oppsNeedingFix.length} opportunities needing URL fixes`);
+    
+    let fixedCount = 0;
+    const failedFixes = [];
+    
+    for (const opp of oppsNeedingFix) {
+        let newUrl = criticalFixes[opp.url];
+        
+        // Pattern-based fixes if not in direct mapping
+        if (!newUrl) {
+            const oldUrl = opp.url;
+            
+            if (oldUrl.includes('nationalhonorsociety.org/students/scholarships')) {
+                newUrl = 'https://www.nhs.us/students/scholarships/';
+            } else if (oldUrl.includes('nar.realtor/education-and-events/scholarships')) {
+                newUrl = 'https://www.nar.realtor/education';
+            } else if (oldUrl.includes('americorps.gov/serve/americorps-vista')) {
+                newUrl = 'https://www.americorps.gov/serve/americorps-vista';
+            } else if (oldUrl.includes('restaurant.org/nraef') || oldUrl.includes('nraef.org/scholarships')) {
+                newUrl = 'https://www.chooserestaurants.org/Scholarships';
+            } else if (oldUrl.includes('careers.microsoft.com/students/us/en/ur-scholarships')) {
+                newUrl = 'https://careers.microsoft.com/us/en/students';
+            } else if (oldUrl.includes('adobe.com/careers/university/digital-academy')) {
+                newUrl = 'https://www.adobe.com/careers/university.html';
+            } else if (oldUrl.includes('coca-colascholarsfoundation.org/apply')) {
+                newUrl = 'https://www.coca-colascholarsfoundation.org/scholarships/';
+            } else if (oldUrl.includes('arteducators.org/learn-tools/awards-grants')) {
+                newUrl = 'https://www.arteducators.org/community/awards-grants';
+            } else if (oldUrl.includes('elks.org/scholars/scholarships') || oldUrl.includes('elks.org/scholars/mvs.cfm')) {
+                newUrl = 'https://www.elks.org/scholars/';
+            } else if (oldUrl.includes('carsonscholars.org/scholarships')) {
+                newUrl = 'https://carsonscholars.org/scholarship-program/';
+            } else if (oldUrl.includes('scholars.horatioalger.org/apply')) {
+                newUrl = 'https://scholars.horatioalger.org/';
+            } else if (oldUrl.includes('cee.org/programs/research-science-institute')) {
+                newUrl = 'https://www.cee.org/research-science-institute';
+            } else if (oldUrl.includes('asme.org/students/competitions')) {
+                newUrl = 'https://www.asme.org/students-and-faculty/students/competitions';
+            } else if (oldUrl.includes('aiche.org/community/students/awards-scholarships-competitions')) {
+                newUrl = 'https://www.aiche.org/students/awards-scholarships-competitions';
+            } else if (oldUrl.includes('ieee.org/membership/students/competitions/index.html')) {
+                newUrl = 'https://www.ieee.org/membership/students/competitions.html';
+            } else if (oldUrl.includes('txstate.edu/mathworks/camps/ssm.html')) {
+                newUrl = 'https://www.txstate.edu/academics/mathematics-statistics.html';
+            } else if (oldUrl.includes('rhodeshouse.ox.ac.uk/scholarships/the-rhodes-scholarship')) {
+                newUrl = 'https://www.rhodestrust.com/the-scholarship/';
+            } else if (oldUrl.includes('simonsfoundation.org/grant/math-x-investigator-awards')) {
+                newUrl = 'https://www.simonsfoundation.org/funding-opportunities/';
+            } else if (oldUrl.includes('davidsongifted.org/fellow-program') || oldUrl.includes('davidsongifted.org/fellowship-program')) {
+                newUrl = 'https://www.davidsongifted.org/support-scholars/fellowship-program/';
+            } else if (oldUrl.includes('mitadmissions.org/apply/firstyear/mites')) {
+                newUrl = 'https://oeop.mit.edu/programs/mites';
+            } else if (oldUrl.includes('tellurideassociation.org/programs/high-school-students/tasp')) {
+                newUrl = 'https://www.tellurideassociation.org/programs/high-school-students/summer-seminar/';
+            } else if (oldUrl.startsWith('http://')) {
+                newUrl = oldUrl.replace('http://', 'https://');
+            }
         }
-      }
+        
+        if (!newUrl) {
+            console.log(`⚠️  No fix available for: ${opp.title.substring(0, 50)}... (${opp.url})`);
+            continue;
+        }
+        
+        // Apply the fix
+        try {
+            const response = await fetch(`http://localhost:5000/api/opportunities/${opp.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    url: newUrl
+                })
+            });
+            
+            if (response.ok) {
+                console.log(`✅ FIXED: ${opp.title.substring(0, 50)}...`);
+                console.log(`   OLD: ${opp.url}`);
+                console.log(`   NEW: ${newUrl}`);
+                fixedCount++;
+            } else {
+                console.log(`❌ FAILED: ${opp.title.substring(0, 50)}...`);
+                failedFixes.push({ id: opp.id, title: opp.title, url: opp.url, newUrl, error: response.statusText });
+            }
+        } catch (error) {
+            console.log(`❌ ERROR: ${opp.title.substring(0, 50)}... - ${error.message}`);
+            failedFixes.push({ id: opp.id, title: opp.title, url: opp.url, newUrl, error: error.message });
+        }
+        
+        // Small delay between requests
+        await new Promise(resolve => setTimeout(resolve, 50));
     }
     
-    // Fix any remaining opportunities with no URLs at all
-    const noUrlOpportunities = await sql`
-      SELECT id, title 
-      FROM opportunities 
-      WHERE url IS NULL OR url = '' OR LENGTH(url) < 10
-      ORDER BY title
-      LIMIT 100
-    `;
+    console.log('\n=== MASS FIX COMPLETE ===');
+    console.log(`✅ Successfully fixed: ${fixedCount} URLs`);
+    console.log(`❌ Failed to fix: ${failedFixes.length} URLs`);
     
-    console.log(`\n📝 Found ${noUrlOpportunities.length} opportunities with no URLs...\n`);
-    
-    for (const opp of noUrlOpportunities) {
-      const titleLower = opp.title.toLowerCase();
-      let defaultUrl = 'https://www.opportunitynetwork.org/search/';
-      
-      // Generate better URLs based on content
-      if (titleLower.includes('university') || titleLower.includes('college')) {
-        defaultUrl = 'https://www.collegeweeklive.com/';
-      } else if (titleLower.includes('internship')) {
-        defaultUrl = 'https://www.internships.com/';
-      } else if (titleLower.includes('science') || titleLower.includes('research')) {
-        defaultUrl = 'https://www.sciencebuddies.org/';
-      } else if (titleLower.includes('art') || titleLower.includes('music')) {
-        defaultUrl = 'https://www.artforkidshub.com/';
-      } else if (titleLower.includes('summer')) {
-        defaultUrl = 'https://www.summerprogram.com/';
-      }
-      
-      await sql`
-        UPDATE opportunities 
-        SET url = ${defaultUrl}
-        WHERE id = ${opp.id}
-      `;
-      
-      console.log(`✅ Added URL: ${opp.title} -> ${defaultUrl}`);
-      totalFixed++;
+    if (failedFixes.length > 0) {
+        console.log('\nFailed fixes:');
+        failedFixes.forEach(item => {
+            console.log(`- ${item.title.substring(0, 40)}... (${item.url})`);
+        });
     }
     
-    console.log(`\n🎉 MASS URL FIX COMPLETE!`);
-    console.log(`🔗 Total URLs fixed: ${totalFixed}`);
-    console.log(`💯 ALL OPPORTUNITIES NOW HAVE WORKING URLs!`);
+    // Save results
+    const fs = require('fs');
+    fs.writeFileSync(`mass-fix-results-${Date.now()}.json`, JSON.stringify({
+        timestamp: new Date().toISOString(),
+        totalOpportunities: opportunities.length,
+        foundNeedingFix: oppsNeedingFix.length,
+        successfullyFixed: fixedCount,
+        failedToFix: failedFixes.length,
+        failedFixes
+    }, null, 2));
     
-    // Final validation
-    const remainingNoUrl = await sql`
-      SELECT COUNT(*) as count
-      FROM opportunities 
-      WHERE url IS NULL OR url = '' OR LENGTH(url) < 10
-    `;
+    console.log('\n💾 Results saved to mass-fix-results file');
     
-    const remainingBroken = await sql`
-      SELECT COUNT(*) as count
-      FROM opportunities 
-      WHERE url LIKE '%Academic Prep%' OR 
-            url LIKE '%Free + $%' OR 
-            url LIKE '%weeks%' OR 
-            url LIKE '%example.com%' OR
-            url NOT LIKE 'http%'
-    `;
-    
-    console.log(`\n📊 FINAL STATUS:`);
-    console.log(`❌ Opportunities with no URL: ${remainingNoUrl[0].count}`);
-    console.log(`❌ Opportunities with broken URL patterns: ${remainingBroken[0].count}`);
-    
-  } catch (error) {
-    console.error('❌ Error in mass URL fix:', error);
-  }
+    return { fixedCount, failedFixes };
 }
 
-massFixManualUrls();
+massFixBrokenURLs().catch(console.error);
