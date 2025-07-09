@@ -93,7 +93,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const uniqueOpportunities = opportunities.filter((opp, index, self) => 
         index === self.findIndex(o => {
           const titleSimilar = areTitlesSimilar(o.title, opp.title);
-          const orgSimilar = (o.organization || '').toLowerCase() === (opp.organization || '').toLowerCase();
+          const orgSimilar = o.organization.toLowerCase() === opp.organization.toLowerCase();
           return titleSimilar && orgSimilar;
         })
       );
