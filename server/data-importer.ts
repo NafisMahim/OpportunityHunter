@@ -3682,14 +3682,15 @@ export class DataImporter {
     console.log('🔄 Importing new high school opportunities from attached files...');
     
     const filesToProcess = [
-      'attached_assets/Pasted-Title-Description-Eligibility-Categories-Link-Dates-Location-Cost-Notes-Next-Gen-Internship-Jacobs-1752026983921_1752026983921.txt',
-      'attached_assets/Pasted-Title-Description-Eligibility-Category-Link-Dates-Location-Cost-StandOut-Connect-High-School-Intern-1752026996038_1752026996039.txt',
-      'attached_assets/high_school_opportunities_50_complete_1752027067129.csv',
-      'attached_assets/high_school_opportunities_csv_2_1752027067137.txt',
-      'attached_assets/high_school_opportunities_sample_1752027067137.csv'
+      'attached_assets/high_school_opportunities_50_complete_1752027571745.csv',
+      'attached_assets/high_school_opportunities_csv_2_1752027571749.txt',
+      'attached_assets/high_school_opportunities_sample_1752027571749.csv',
+      'attached_assets/Pasted-Title-Description-Eligibility-Category-Link-Dates-Location-Cost-StandOut-Connect-High-School-Intern-1752027605346_1752027605346.txt',
+      'attached_assets/Pasted-Title-Description-Eligibility-Categories-Link-Dates-Location-Cost-Notes-Next-Gen-Internship-Jacobs-1752026983921_1752026983921.txt'
     ];
     
     let totalImported = 0;
+    let totalProcessed = 0;
     
     for (const filePath of filesToProcess) {
       try {
@@ -3698,6 +3699,9 @@ export class DataImporter {
           
           const content = fs.readFileSync(filePath, 'utf-8');
           const opportunities = await this.parseHighSchoolOpportunityFile(content, filePath);
+          totalProcessed += opportunities.length;
+          
+          console.log(`📋 Found ${opportunities.length} opportunities in ${path.basename(filePath)}`);
           
           for (const opportunity of opportunities) {
             try {
@@ -3705,11 +3709,15 @@ export class DataImporter {
               totalImported++;
               console.log(`✓ Imported: ${opportunity.title}`);
             } catch (error) {
-              console.log(`Duplicate skipped: ${opportunity.title}`);
+              if (error instanceof Error && error.message.includes('UNIQUE constraint failed')) {
+                console.log(`⚡ Duplicate skipped: ${opportunity.title}`);
+              } else {
+                console.error(`❌ Error importing ${opportunity.title}:`, error);
+              }
             }
           }
           
-          console.log(`✅ Successfully imported ${opportunities.length} opportunities from ${path.basename(filePath)}`);
+          console.log(`✅ Processed ${opportunities.length} opportunities from ${path.basename(filePath)}`);
         } else {
           console.log(`⚠️  File ${filePath} not found`);
         }
@@ -3718,6 +3726,7 @@ export class DataImporter {
       }
     }
     
+    console.log(`🎯 Total processed: ${totalProcessed} opportunities from all files`);
     console.log(`🎉 Total imported: ${totalImported} new high school opportunities`);
   }
 
