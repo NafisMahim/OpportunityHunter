@@ -1,0 +1,40 @@
+Beginning with Children Legacy Network,https://Academic Prep,url,comprehensive-batch-opportunities.json,YES
+Free After-School & Summer Programs (via DiscoverDYCD),https://After School/Summer,url,comprehensive-batch-opportunities.json,YES
+Fresh Air Fund Summer Camps,https://Summer,url,comprehensive-batch-opportunities.json,YES
+Garden Kitchen Labs with NYC Parks,https://Humanities/Science,url,comprehensive-batch-opportunities.json,YES
+Harlem Grown,https://Weekends,url,comprehensive-batch-opportunities.json,YES
+Rocking the Boat: Rowing,https://Sports/Science,url,comprehensive-batch-opportunities.json,YES
+Teachoo: Learn Math,"https://Math, Science, Humanities, Academic Prep",url,comprehensive-batch-opportunities.json,YES
+MIT PRIMES,https://Year-long (starts January),url,comprehensive-batch-opportunities.json,YES
+MITES & MOSTEC,https://Engineering/Science,url,comprehensive-batch-opportunities.json,YES
+NASA SEES,https://Earth/Space Sciences,url,comprehensive-batch-opportunities.json,YES
+Hutton Junior Fisheries,https://Free + $3,url,comprehensive-batch-opportunities.json,YES
+NIST SHIP,https://Engineering/IT/Physics,url,comprehensive-batch-opportunities.json,YES
+NIH HiSTEP,https://5 weeks (late June-July),url,comprehensive-batch-opportunities.json,YES
+Navy SEAP,https://8 weeks (June-August),url,comprehensive-batch-opportunities.json,YES
+MIT Beaver Works,https://4 weeks (July),url,comprehensive-batch-opportunities.json,YES
+Girls Who Code SIP,https://Free,url,comprehensive-batch-opportunities.json,YES
+LaunchX,https://Entrepreneurship,url,comprehensive-batch-opportunities.json,YES
+Google Science Fair,https://Finals July,url,comprehensive-batch-opportunities.json,YES
+Conrad Challenge,https://Aug-Oct registration,url,comprehensive-batch-opportunities.json,YES
+Diamond Challenge,https://Jan submission,url,comprehensive-batch-opportunities.json,YES
+CyberPatriot,https://National Finals April,url,comprehensive-batch-opportunities.json,YES
+National Youth Science Camp,https://July-August,url,comprehensive-batch-opportunities.json,YES
+Smithsonian YAP,https://June-July,url,comprehensive-batch-opportunities.json,YES
+USSYP,https://March (DC week),url,comprehensive-batch-opportunities.json,YES
+Bank of America Leaders,https://8 weeks summer + July summit,url,comprehensive-batch-opportunities.json,YES
+U.S. Senate Page,https://Summer/fall/spring sessions,url,comprehensive-batch-opportunities.json,YES
+Princeton SJP,https://10 days summer + year-round,url,comprehensive-batch-opportunities.json,YES
+YoungArts Awards,https://Jan finals,url,comprehensive-batch-opportunities.json,YES
+Scholastic Awards,https://Carnegie Hall June,url,comprehensive-batch-opportunities.json,YES
+Notre Dame Leadership,https://10 days July,url,comprehensive-batch-opportunities.json,YES
+YYGS,https://2-week summer sessions,url,comprehensive-batch-opportunities.json,YES
+ISSYP,https://July (2 weeks),url,comprehensive-batch-opportunities.json,YES
+Shad Canada,https://$6,url,comprehensive-batch-opportunities.json,YES
+Technion SciTech,https://July,url,comprehensive-batch-opportunities.json,YES
+PROMYS,https://6 weeks summer,url,comprehensive-batch-opportunities.json,YES
+Regeneron STS,https://Nov deadline,url,comprehensive-batch-opportunities.json,YES
+Regeneron ISEF,https://May,url,comprehensive-batch-opportunities.json,YES
+Academic Decathlon,https://Varies by region,url,comprehensive-batch-opportunities.json,YES
+Odyssey of the Mind,https://~$135/school,url,comprehensive-batch-opportunities.json,YES
+Summer Health Professions Education Program (SHPEP) - Columbia University,https://example.com/contact-for-details,url,comprehensive-batch-opportunities.json,YES
