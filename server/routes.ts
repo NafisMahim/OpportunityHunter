@@ -225,6 +225,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Import batch opportunities endpoint
+  app.post("/api/opportunities/import", async (req, res) => {
+    try {
+      const { opportunities } = req.body;
+      if (!opportunities || !Array.isArray(opportunities)) {
+        return res.status(400).json({ message: "Invalid opportunities data" });
+      }
+
+      let imported = 0;
+      let skipped = 0;
+
+      for (const oppData of opportunities) {
+        try {
+          // Validate the opportunity data
+          const validatedData = insertOpportunitySchema.parse(oppData);
+          await storage.createOpportunity(validatedData);
+          imported++;
+        } catch (error) {
+          console.log(`Skipped opportunity: ${oppData.title} - ${error.message}`);
+          skipped++;
+        }
+      }
+
+      const totalOpportunities = await storage.getOpportunities();
+      
+      res.json({
+        imported,
+        skipped,
+        total: totalOpportunities.length,
+        message: `Successfully imported ${imported} opportunities, skipped ${skipped} duplicates`
+      });
+    } catch (error) {
+      console.error('Batch import error:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // MASSIVE Scholarship Extraction from HTML files
   app.post("/api/import-scholarships", async (req, res) => {
     try {
