@@ -26,6 +26,7 @@ export interface IStorage {
   getOpportunities(): Promise<Opportunity[]>;
   getOpportunity(id: number): Promise<Opportunity | undefined>;
   createOpportunity(opportunity: InsertOpportunity): Promise<Opportunity>;
+  updateOpportunity(id: number, opportunity: Partial<InsertOpportunity>): Promise<Opportunity | undefined>;
   deleteOpportunity(id: number): Promise<boolean>;
   searchOpportunities(query: string, filters?: {
     type?: string;
@@ -125,6 +126,20 @@ export class DatabaseStorage implements IStorage {
       .values(insertOpportunity)
       .returning();
     return opportunity;
+  }
+
+  async updateOpportunity(id: number, updateData: Partial<InsertOpportunity>): Promise<Opportunity | undefined> {
+    try {
+      const [opportunity] = await db
+        .update(opportunities)
+        .set(updateData)
+        .where(eq(opportunities.id, id))
+        .returning();
+      return opportunity || undefined;
+    } catch (error) {
+      console.error(`Error updating opportunity ${id}:`, error);
+      return undefined;
+    }
   }
 
   async deleteOpportunity(id: number): Promise<boolean> {

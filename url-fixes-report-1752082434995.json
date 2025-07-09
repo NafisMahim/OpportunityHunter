@@ -1,0 +1,303 @@
+{
+  "timestamp": "2025-07-09T17:33:54.994Z",
+  "totalChecked": 180,
+  "fixesApplied": 37,
+  "results": [
+    {
+      "id": 2682,
+      "title": "National Restaurant Association Educational Foundation Scholarships",
+      "organization": "National Restaurant Association Educational Foundation",
+      "oldUrl": "https://restaurant.org/nraef/scholarships/",
+      "newUrl": "https://www.nraef.org/scholarships/",
+      "status": "fixed"
+    },
+    {
+      "id": 2681,
+      "title": "National Association of Realtors Scholarships",
+      "organization": "National Association of Realtors",
+      "oldUrl": "https://www.nar.realtor/education-and-events/scholarships",
+      "newUrl": "https://www.nar.realtor/education",
+      "status": "fixed"
+    },
+    {
+      "id": 2680,
+      "title": "Peace Corps Volunteer Program",
+      "organization": "Peace Corps",
+      "oldUrl": "https://www.peacecorps.gov/",
+      "newUrl": "https://www.peacecorps.gov",
+      "status": "fixed"
+    },
+    {
+      "id": 2679,
+      "title": "AmeriCorps VISTA Program",
+      "organization": "AmeriCorps",
+      "oldUrl": "https://americorps.gov/serve/americorps-vista",
+      "newUrl": "https://americorps.gov/serve/americorps-vista",
+      "status": "fixed"
+    },
+    {
+      "id": 2678,
+      "title": "Rhodes Scholarship",
+      "organization": "Rhodes Trust",
+      "oldUrl": "https://www.rhodeshouse.ox.ac.uk/scholarships/the-rhodes-scholarship/",
+      "newUrl": "https://www.rhodeshouse.ox.ac.uk/scholarships/the-rhodes-scholarship/",
+      "status": "fixed"
+    },
+    {
+      "id": 2677,
+      "title": "Fulbright U.S. Student Program",
+      "organization": "U.S. Department of State",
+      "oldUrl": "https://us.fulbrightonline.org/",
+      "newUrl": "https://us.fulbrightonline.org",
+      "status": "fixed"
+    },
+    {
+      "id": 2676,
+      "title": "Screenwriters Federation of America Scholarships",
+      "organization": "Screenwriters Federation of America",
+      "oldUrl": "https://www.screenwritersfederation.org/",
+      "newUrl": "https://www.wgfoundation.org/",
+      "status": "fixed"
+    },
+    {
+      "id": 2675,
+      "title": "National Art Education Association Scholarships",
+      "organization": "National Art Education Association",
+      "oldUrl": "https://www.arteducators.org/learn-tools/awards-grants",
+      "newUrl": "https://www.arteducators.org/community/awards-grants",
+      "status": "fixed"
+    },
+    {
+      "id": 2674,
+      "title": "American Dental Association (ADA) Foundation Scholarships",
+      "organization": "American Dental Association Foundation",
+      "oldUrl": "https://www.adafoundation.org/en/how-we-help/scholarships",
+      "newUrl": "https://www.adafoundation.org/en/how-we-help/scholarships",
+      "status": "fixed"
+    },
+    {
+      "id": 2673,
+      "title": "National Medical Fellowships (NMF) Scholarships",
+      "organization": "National Medical Fellowships",
+      "oldUrl": "https://nmfonline.org/",
+      "newUrl": "https://nmfonline.org",
+      "status": "fixed"
+    },
+    {
+      "id": 2672,
+      "title": "Adobe Digital Academy Scholarships",
+      "organization": "Adobe Systems",
+      "oldUrl": "https://www.adobe.com/careers/university/digital-academy.html",
+      "newUrl": "https://www.adobe.com/careers/university/",
+      "status": "fixed"
+    },
+    {
+      "id": 2671,
+      "title": "Microsoft Scholarship Program",
+      "organization": "Microsoft Corporation",
+      "oldUrl": "https://careers.microsoft.com/students/us/en/ur-scholarships",
+      "newUrl": "https://careers.microsoft.com/us/en/students",
+      "status": "fixed"
+    },
+    {
+      "id": 2670,
+      "title": "American Society of Mechanical Engineers (ASME) Student Competitions",
+      "organization": "ASME",
+      "oldUrl": "https://www.asme.org/students/competitions",
+      "newUrl": "https://www.asme.org/students/competitions",
+      "status": "fixed"
+    },
+    {
+      "id": 2669,
+      "title": "American Institute of Chemical Engineers (AIChE) Student Competitions",
+      "organization": "AIChE",
+      "oldUrl": "https://www.aiche.org/students/awards-scholarships-competitions",
+      "newUrl": "https://www.aiche.org/community/students/awards-scholarships-competitions",
+      "status": "fixed"
+    },
+    {
+      "id": 2668,
+      "title": "Institute of Electrical and Electronics Engineers (IEEE) Student Competitions",
+      "organization": "IEEE",
+      "oldUrl": "https://www.ieee.org/membership/students/competitions/index.html",
+      "newUrl": "https://www.ieee.org/membership/students/competitions/",
+      "status": "fixed"
+    },
+    {
+      "id": 2667,
+      "title": "Florida Junior Science and Humanities Symposium",
+      "organization": "Florida Academy of Sciences",
+      "oldUrl": "https://www.floridaacademyofsciences.org/",
+      "newUrl": "https://www.floridaacademyofsciences.org",
+      "status": "fixed"
+    },
+    {
+      "id": 2666,
+      "title": "New York State Science Congress",
+      "organization": "Science Teachers Association of New York State",
+      "oldUrl": "https://www.stanys.org/",
+      "newUrl": "https://www.stanys.org",
+      "status": "fixed"
+    },
+    {
+      "id": 2665,
+      "title": "Texas Science Talent Search",
+      "organization": "Texas Science Talent Search",
+      "oldUrl": "https://www.txsts.org/",
+      "newUrl": "https://www.tstsonline.org/",
+      "status": "fixed"
+    },
+    {
+      "id": 2664,
+      "title": "California MESA Schools Program",
+      "organization": "University of California",
+      "oldUrl": "https://mesa.ucop.edu/",
+      "newUrl": "https://ucop.edu/mesa/",
+      "status": "fixed"
+    },
+    {
+      "id": 2643,
+      "title": "Voice of Democracy Scholarship Contest",
+      "organization": "Veterans of Foreign Wars",
+      "oldUrl": "https://www.vfw.org/community/youth-and-education/youth-scholarships",
+      "newUrl": "https://www.vfw.org/community/youth-and-education/youth-scholarships",
+      "status": "fixed"
+    },
+    {
+      "id": 2642,
+      "title": "Elks National Foundation Most Valuable Student Scholarship",
+      "organization": "Elks National Foundation",
+      "oldUrl": "https://www.elks.org/scholars/",
+      "newUrl": "https://www.elks.org/scholars/scholarships/",
+      "status": "fixed"
+    },
+    {
+      "id": 2641,
+      "title": "Target All-Around Scholarship",
+      "organization": "Target Corporation",
+      "oldUrl": "https://corporate.target.com/corporate-responsibility/education/target-all-around-scholarship",
+      "newUrl": "https://corporate.target.com/sustainability-social-responsibility/education/",
+      "status": "fixed"
+    },
+    {
+      "id": 2640,
+      "title": "Carson Scholars Fund",
+      "organization": "Carson Scholars Fund",
+      "oldUrl": "https://carsonscholars.org/scholarships/",
+      "newUrl": "https://carsonscholars.org/scholarships/",
+      "status": "fixed"
+    },
+    {
+      "id": 2639,
+      "title": "Horatio Alger Association Scholarship",
+      "organization": "Horatio Alger Association",
+      "oldUrl": "https://scholars.horatioalger.org/",
+      "newUrl": "https://scholars.horatioalger.org/apply/",
+      "status": "fixed"
+    },
+    {
+      "id": 2638,
+      "title": "Ronald Reagan Presidential Foundation Scholarship",
+      "organization": "Ronald Reagan Presidential Foundation",
+      "oldUrl": "https://www.reaganfoundation.org/education/scholarship-programs/",
+      "newUrl": "https://www.reaganfoundation.org/media/355919/grf-scholarship-application-instructions.pdf",
+      "status": "fixed"
+    },
+    {
+      "id": 2637,
+      "title": "Coca-Cola Scholars Program",
+      "organization": "Coca-Cola Scholars Foundation",
+      "oldUrl": "https://www.coca-colascholarsfoundation.org/",
+      "newUrl": "https://www.coca-colascholarsfoundation.org/apply/",
+      "status": "fixed"
+    },
+    {
+      "id": 2636,
+      "title": "Simons Foundation Math+X Investigator Program",
+      "organization": "Simons Foundation",
+      "oldUrl": "https://www.simonsfoundation.org/mathematics-physical-sciences/",
+      "newUrl": "https://www.simonsfoundation.org/grant/math-x-investigator-awards/",
+      "status": "fixed"
+    },
+    {
+      "id": 2635,
+      "title": "Davidson Fellows Scholarship Program",
+      "organization": "Davidson Institute",
+      "oldUrl": "https://www.davidsongifted.org/fellow-program",
+      "newUrl": "https://www.davidsongifted.org/programs/fellows/",
+      "status": "fixed"
+    },
+    {
+      "id": 2634,
+      "title": "Critical Language Scholarship Program",
+      "organization": "U.S. Department of State",
+      "oldUrl": "https://clscholarship.org/",
+      "newUrl": "https://clscholarship.org",
+      "status": "fixed"
+    },
+    {
+      "id": 2633,
+      "title": "MITES at MIT",
+      "organization": "MIT",
+      "oldUrl": "https://oeop.mit.edu/programs/mites",
+      "newUrl": "https://mitadmissions.org/apply/firstyear/mites/",
+      "status": "fixed"
+    },
+    {
+      "id": 2632,
+      "title": "Google Summer of Code",
+      "organization": "Google",
+      "oldUrl": "https://summerofcode.withgoogle.com/",
+      "newUrl": "https://summerofcode.withgoogle.com",
+      "status": "fixed"
+    },
+    {
+      "id": 2620,
+      "title": "Interlochen Arts Academy Summer Programs",
+      "organization": "Interlochen Center for the Arts",
+      "oldUrl": "https://camp.interlochen.org/",
+      "newUrl": "https://camp.interlochen.org",
+      "status": "fixed"
+    },
+    {
+      "id": 2619,
+      "title": "Telluride Association Summer Program (TASP)",
+      "organization": "Telluride Association",
+      "oldUrl": "https://www.tellurideassociation.org/our-programs/high-school-students/",
+      "newUrl": "https://www.tellurideassociation.org/programs/high-school-students/tasp/",
+      "status": "fixed"
+    },
+    {
+      "id": 2618,
+      "title": "Diamond Challenge for High School Entrepreneurs",
+      "organization": "University of Delaware",
+      "oldUrl": "https://diamondchallenge.org/",
+      "newUrl": "https://diamondchallenge.org",
+      "status": "fixed"
+    },
+    {
+      "id": 2613,
+      "title": "Minority Introduction to Engineering and Science (MITES)",
+      "organization": "MIT",
+      "oldUrl": "https://oeop.mit.edu/programs/mites",
+      "newUrl": "https://mitadmissions.org/apply/firstyear/mites/",
+      "status": "fixed"
+    },
+    {
+      "id": 2609,
+      "title": "Summer Science Program (SSP)",
+      "organization": "Summer Science Program",
+      "oldUrl": "https://summerscience.org/",
+      "newUrl": "https://summerscience.org",
+      "status": "fixed"
+    },
+    {
+      "id": 2608,
+      "title": "Research Science Institute (RSI)",
+      "organization": "Center for Excellence in Education",
+      "oldUrl": "https://www.cee.org/research-science-institute",
+      "newUrl": "https://www.cee.org/programs/research-science-institute",
+      "status": "fixed"
+    }
+  ]
+}

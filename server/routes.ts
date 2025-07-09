@@ -132,6 +132,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/opportunities/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updateData = insertOpportunitySchema.partial().parse(req.body);
+      const opportunity = await storage.updateOpportunity(id, updateData);
+      if (!opportunity) {
+        return res.status(404).json({ message: "Opportunity not found" });
+      }
+      res.json(opportunity);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid opportunity data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Application routes
   app.get("/api/users/:userId/applications", async (req, res) => {
     try {
