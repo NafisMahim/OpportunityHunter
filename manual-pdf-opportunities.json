@@ -1,0 +1,835 @@
+[
+  {
+    "title": "Amherst College Diversity Open Houses (DIVOH)",
+    "description": "Weekend program for underrepresented students to explore Amherst's campus, student body, faculty, classes, and residence halls. Application Deadline: August 13 at 1pm EST. Program Dates: September 22-24 or October 13-15.",
+    "url": "https://www.amherst.edu/admission",
+    "location": "Amherst, MA",
+    "categories": [
+      "Academic Programs",
+      "Diversity Programs"
+    ]
+  },
+  {
+    "title": "Middlebury College Discover Middlebury",
+    "description": "Program for seniors from traditionally under-represented groups interested in small liberal arts colleges. Application Deadline: August 13. Program Dates: October 7-8.",
+    "url": "https://www.middlebury.edu/admissions",
+    "location": "Middlebury, VT",
+    "categories": [
+      "Academic Programs",
+      "Diversity Programs"
+    ]
+  },
+  {
+    "title": "Emory University Preview Program",
+    "description": "Three-day visit for invited students to explore campus, interact with current students, meet faculty and staff, and stay overnight. Application Deadline: August 15. Program Dates: October 11-13.",
+    "url": "https://apply.emory.edu/discover/visit.html",
+    "location": "Atlanta, GA",
+    "categories": [
+      "Academic Programs",
+      "Campus Visits"
+    ]
+  },
+  {
+    "title": "Scripps College Discover Scripps",
+    "description": "Two-day program for students from historically underrepresented backgrounds to explore Scripps College campus. Application Deadline: August 15. Program Dates: October 7-8 or October 14-15.",
+    "url": "https://www.scrippscollege.edu/admission",
+    "location": "Claremont, CA",
+    "categories": [
+      "Academic Programs",
+      "Diversity Programs"
+    ]
+  },
+  {
+    "title": "Tulane University PreviewTU",
+    "description": "Students learn about Tulane and New Orleans diversity, explore academic offerings, and immerse in campus life. Priority Deadline: August 15. Program Dates: October 20-22.",
+    "url": "https://admission.tulane.edu/visit/preview-tu",
+    "location": "New Orleans, LA",
+    "categories": [
+      "Academic Programs",
+      "Campus Visits"
+    ]
+  },
+  {
+    "title": "Bowdoin College Explore Bowdoin",
+    "description": "Three-day program for high-achieving high school seniors from diverse backgrounds. Application Deadline: August 17 (session 1) or September 21 (session 2). Program Dates: September 20-23 or November 1-4.",
+    "url": "https://www.bowdoin.edu/admissions/visit/explore-bowdoin/",
+    "location": "Brunswick, ME",
+    "categories": [
+      "Academic Programs",
+      "Diversity Programs"
+    ]
+  },
+  {
+    "title": "Claremont McKenna College Preview Fly-in Program",
+    "description": "Program funding travel for multicultural and first-generation students. Application Deadline: August 18. Program Dates: October 13-16.",
+    "url": "https://www.cmc.edu/admission/visit/preview-program",
+    "location": "Claremont, CA",
+    "categories": [
+      "Academic Programs",
+      "First-Generation Support"
+    ]
+  },
+  {
+    "title": "Carleton College Taste of Carleton (TOC)",
+    "description": "All-expenses-paid program bringing 60 high school seniors to campus for three days and two nights. Application Deadline: August 19. Program Dates: October 18-20.",
+    "url": "https://www.carleton.edu/admissions/visit/taste-of-carleton/",
+    "location": "Northfield, MN",
+    "categories": [
+      "Academic Programs",
+      "Campus Visits"
+    ]
+  },
+  {
+    "title": "University of Pennsylvania PEEP",
+    "description": "Program for academically high-achieving high school seniors from low-income or first-generation backgrounds. Priority Deadline: August 20. Program Dates: October 7-9.",
+    "url": "https://www.admissions.upenn.edu/visit/overnight-programs",
+    "location": "Philadelphia, PA",
+    "categories": [
+      "Academic Programs",
+      "First-Generation Support"
+    ]
+  },
+  {
+    "title": "Harvey Mudd College FAST Program",
+    "description": "Future Achievers in Science and Technology program for high-achieving, college-bound seniors. Application Deadline: August 23. Program Dates: September 20-22 or November 8-10.",
+    "url": "https://www.hmc.edu/admission/visit/fast/",
+    "location": "Claremont, CA",
+    "categories": [
+      "STEM Programs",
+      "Academic Programs"
+    ]
+  },
+  {
+    "title": "Davidson College Access Davidson",
+    "description": "Program for high school seniors from traditionally under-represented groups or those without access to visit campus otherwise. Priority Deadline: August 27. Program Dates: October 14-16.",
+    "url": "https://www.davidson.edu/admission/visit/access-davidson",
+    "location": "Davidson, NC",
+    "categories": [
+      "Academic Programs",
+      "Diversity Programs"
+    ]
+  },
+  {
+    "title": "Bates College Prologue to Bates",
+    "description": "Fly-in program for students entering senior year who express interest in inclusive and pluralistic community. Application Deadline: September 1. Program Dates: October 7-9 or October 28-30.",
+    "url": "https://www.bates.edu/admission/visit/prologue/",
+    "location": "Lewiston, ME",
+    "categories": [
+      "Academic Programs",
+      "Diversity Programs"
+    ]
+  },
+  {
+    "title": "Johns Hopkins University HOME Program",
+    "description": "On-campus overnight program connecting high school seniors to clubs, organizations, and resources of multicultural community. Application Deadline: September 1. Program Dates: September 27-29.",
+    "url": "https://apply.jhu.edu/visit/diversity-programs/",
+    "location": "Baltimore, MD",
+    "categories": [
+      "Academic Programs",
+      "Multicultural"
+    ]
+  },
+  {
+    "title": "Grinnell College Discover Grinnell",
+    "description": "Great way to get broad overview of Grinnell experience for college search or finalizing application list. Application Deadline: September 3. Program Dates: September 23-24.",
+    "url": "https://www.grinnell.edu/admission/visit/discover-grinnell",
+    "location": "Grinnell, IA",
+    "categories": [
+      "Academic Programs",
+      "Campus Visits"
+    ]
+  },
+  {
+    "title": "Haverford College Have-A-Look",
+    "description": "Program for students from backgrounds traditionally underrepresented in higher education. Priority Deadline: September 7. Program Dates: September 23-25 or October 28-30.",
+    "url": "https://www.haverford.edu/admission/visit/have-a-look",
+    "location": "Haverford, PA",
+    "categories": [
+      "Academic Programs",
+      "Diversity Programs"
+    ]
+  },
+  {
+    "title": "Reed College Fall Visit Program",
+    "description": "Three-day, two-night exploration of Reed and Portland for highly qualified high school seniors. Application Deadline: September 7. Program Dates: October 7-9.",
+    "url": "https://www.reed.edu/apply/visit/fall-visit.html",
+    "location": "Portland, OR",
+    "categories": [
+      "Academic Programs",
+      "Campus Visits"
+    ]
+  },
+  {
+    "title": "Vassar College Vassar View",
+    "description": "Immersive introduction to Vassar College campus for high-achieving seniors from diverse backgrounds. Application Deadline: September 7. Program Dates: October 7-9.",
+    "url": "https://admissions.vassar.edu/visit/vassar-view/",
+    "location": "Poughkeepsie, NY",
+    "categories": [
+      "Academic Programs",
+      "Diversity Programs"
+    ]
+  },
+  {
+    "title": "Wesleyan University Transportation Assistance Program (TAP)",
+    "description": "All-expenses-paid visit for select high school seniors. Two programs: Columbus Day (Oct 7-8) and Veterans Day (Nov 11-12). Application Deadlines: September 7 and October 12.",
+    "url": "https://www.wesleyan.edu/admission/visit/diversityvisitprogram.html",
+    "location": "Middletown, CT",
+    "categories": [
+      "Academic Programs",
+      "Transportation Assistance"
+    ]
+  },
+  {
+    "title": "Colgate University Colgate in Focus",
+    "description": "Program for talented high school seniors who have overcome significant challenges in pursuing post-secondary education. Application Deadline: September 8. Program Dates: October 14-16.",
+    "url": "https://www.colgate.edu/admission/visit/colgate-focus",
+    "location": "Hamilton, NY",
+    "categories": [
+      "Academic Programs",
+      "Overcoming Challenges"
+    ]
+  },
+  {
+    "title": "Oberlin College Multicultural Visit Program (MVP)",
+    "description": "Selective, all-expenses-paid visit program for high-achieving seniors interested in College of Arts and Sciences. Application Deadline: September 13 (October) or October 11 (November). Program Dates: October 11-13 or November 8-10.",
+    "url": "https://www.oberlin.edu/admission/visit/multicultural-visit-program",
+    "location": "Oberlin, OH",
+    "categories": [
+      "Academic Programs",
+      "Multicultural"
+    ]
+  },
+  {
+    "title": "Bucknell University Journey to Bucknell",
+    "description": "Overnight program for high-achieving, traditionally underrepresented high school seniors. Must have minimum 3.5 unweighted GPA. Priority Deadline: September 14. Program Dates: November 4-6.",
+    "url": "https://www.bucknell.edu/admission/visit/journey-bucknell",
+    "location": "Lewisburg, PA",
+    "categories": [
+      "Academic Programs",
+      "High Achievers"
+    ]
+  },
+  {
+    "title": "Dickinson College Discover Diversity at Dickinson",
+    "description": "Three-day overnight program for promising high-school seniors from traditionally underrepresented backgrounds. Application Deadline: September 14. Program Dates: November 8-10.",
+    "url": "https://www.dickinson.edu/admission/visit/discover-diversity",
+    "location": "Carlisle, PA",
+    "categories": [
+      "Academic Programs",
+      "Diversity Programs"
+    ]
+  },
+  {
+    "title": "Babson College Fall Preview Program",
+    "description": "Program providing students opportunity to experience life on campus including engaging with students, faculty, staff and learning about resources. Application Deadline: Mid-September. Program Dates: October 21-22.",
+    "url": "https://www.babson.edu/admission/visit/preview-programs/",
+    "location": "Babson Park, MA",
+    "categories": [
+      "Business Programs",
+      "Campus Preview"
+    ]
+  },
+  {
+    "title": "Lewis and Clark College Compass Scholars Weekend",
+    "description": "Opportunity to travel to campus, meet students and faculty, participate in leadership development, experience life at Lewis & Clark. Application Deadline: September 17. Program Dates: November 4-6.",
+    "url": "https://college.lclark.edu/admission/visit/compass-scholars/",
+    "location": "Portland, OR",
+    "categories": [
+      "Academic Programs",
+      "Leadership Development"
+    ]
+  },
+  {
+    "title": "Miami University Bridges Program",
+    "description": "Overnight visit program for diverse and multicultural students. Application Deadline: September 24. Program Dates: November 4-6.",
+    "url": "https://miamioh.edu/admission/visit/bridges/index.html",
+    "location": "Oxford, OH",
+    "categories": [
+      "Academic Programs",
+      "Multicultural"
+    ]
+  },
+  {
+    "title": "Ladder Internships",
+    "description": "Selective virtual internship program placing high school students at startups and nonprofits worldwide. 10-20 hours/week on real projects with mentorship. Tuition-based (~$2,490) with financial aid available.",
+    "url": "https://www.ladderinternships.com",
+    "location": "Virtual (work from anywhere)",
+    "categories": [
+      "Internships",
+      "STEM",
+      "Business"
+    ]
+  },
+  {
+    "title": "Stanford SHTEM Summer Internships",
+    "description": "8-week remote research internship fostering interdisciplinary collaboration across STEM, humanities, and arts. Students work 30-40 hours/week on group projects. Note: 2025 program on hiatus, resuming 2026.",
+    "url": "https://compression.stanford.edu/outreach/shtem-summer-internships-high-schoolers-and-community-college-students",
+    "location": "Virtual (remote projects)",
+    "categories": [
+      "STEM",
+      "Research",
+      "Internships"
+    ]
+  },
+  {
+    "title": "NASA SEES High School Summer Intern Program",
+    "description": "Nationally competitive STEM internship analyzing NASA satellite data with scientists and engineers. Combines virtual learning (June) and 2-week residential experience in Austin (July). Applications due February 22.",
+    "url": "https://www.csr.utexas.edu/education-outreach/high-school-internships/sees/",
+    "location": "Hybrid - online plus UT Austin",
+    "categories": [
+      "STEM",
+      "Research",
+      "NASA"
+    ]
+  },
+  {
+    "title": "Idaho National Laboratory High School Internship",
+    "description": "DOE-sponsored summer internship (6+ weeks) tackling real-world energy, cybersecurity, and engineering challenges. 80% lab time with mentor, 20% enrichment. Students age 16+ with minimum 3.0 GPA.",
+    "url": "https://inl.gov/inl-initiatives/education/high-school-internship-program",
+    "location": "Idaho Falls, Idaho",
+    "categories": [
+      "STEM",
+      "Research",
+      "Energy"
+    ]
+  },
+  {
+    "title": "Science & Engineering Apprenticeship Program (SEAP)",
+    "description": "Prestigious 8-week paid summer research apprenticeship at U.S. Navy laboratories nationwide. ~300 placements across 38 labs. Students receive $4,000-$4,500 stipend. Applications open August, close November 1.",
+    "url": "https://navalsteminterns.us/seap",
+    "location": "Multiple Navy research labs across U.S.",
+    "categories": [
+      "STEM",
+      "Research",
+      "Defense"
+    ]
+  },
+  {
+    "title": "Fermilab TARGET Program",
+    "description": "Six-week summer internship exposing Illinois high school sophomores and juniors to physics, engineering, and computer science research. Must attend Illinois high school with 3.0+ GPA. Paid hourly (~$17.20/hour).",
+    "url": "https://internships.fnal.gov/target/",
+    "location": "Batavia, Illinois",
+    "categories": [
+      "STEM",
+      "Physics",
+      "Research"
+    ]
+  },
+  {
+    "title": "Sandia National Laboratories High School Internship",
+    "description": "Year-round internship program offering roles in technical R&D, cybersecurity, engineering, and business. Students age 16+ with 3.0+ GPA. Flexible full-time summer or part-time year-round positions.",
+    "url": "https://www.sandia.gov/careers/students_postdocs/internships/#high-school",
+    "location": "Albuquerque, NM and Livermore, CA",
+    "categories": [
+      "STEM",
+      "Business",
+      "Cybersecurity"
+    ]
+  },
+  {
+    "title": "Oak Ridge National Laboratory Internship",
+    "description": "Summer internship program in advanced scientific research. Students work on cutting-edge projects in nuclear science, materials, computing, and environmental research.",
+    "url": "https://www.ornl.gov/careers/students",
+    "location": "Oak Ridge, TN",
+    "categories": [
+      "STEM",
+      "Research",
+      "Nuclear Science"
+    ]
+  },
+  {
+    "title": "Lawrence Livermore National Laboratory Internship",
+    "description": "Competitive summer internship program for students interested in science, technology, engineering, and mathematics careers. Work with world-class scientists and engineers.",
+    "url": "https://www.llnl.gov/careers/students-and-postdocs/internships",
+    "location": "Livermore, CA",
+    "categories": [
+      "STEM",
+      "Research",
+      "National Security"
+    ]
+  },
+  {
+    "title": "Argonne National Laboratory Internship",
+    "description": "Research participation program providing hands-on experience in scientific research and engineering. Students work alongside leading researchers on innovative projects.",
+    "url": "https://www.anl.gov/education/undergraduate-graduate-student-programs",
+    "location": "Argonne, IL",
+    "categories": [
+      "STEM",
+      "Research",
+      "Engineering"
+    ]
+  },
+  {
+    "title": "American University Summer Programs",
+    "description": "Learn professional skills from expert faculty using Washington, DC as classroom and laboratory for experiential learning in communication, international studies, and politics. Grades 9-12.",
+    "url": "https://www.american.edu/spexs/precollege/",
+    "location": "Washington, DC",
+    "categories": [
+      "Academic Programs",
+      "Communications",
+      "Politics"
+    ]
+  },
+  {
+    "title": "Babson College Summer Study",
+    "description": "Residential program for rising high school juniors and seniors providing real-world experience while building business knowledge and entrepreneurial skills. Grades 10-12.",
+    "url": "https://www.babson.edu/academics/executive-and-enterprise-education/babson-academy/",
+    "location": "Babson Park, MA",
+    "categories": [
+      "Business",
+      "Entrepreneurship",
+      "Academic Programs"
+    ]
+  },
+  {
+    "title": "Boston University Summer Programs",
+    "description": "Portfolio of challenging summer high school programs offering opportunity to explore new subjects and college life with students from 50 states and 87 countries. Grades 9-12.",
+    "url": "https://www.bu.edu/summer/high-school-programs/",
+    "location": "Boston, MA",
+    "categories": [
+      "Academic Programs",
+      "International"
+    ]
+  },
+  {
+    "title": "Brandeis University Precollege Programs",
+    "description": "Outstanding residential experiences for exceptional high school students exploring academic and artistic pursuits with diverse global community. Grades 10-12.",
+    "url": "https://www.brandeis.edu/summer/",
+    "location": "Waltham, MA",
+    "categories": [
+      "Academic Programs",
+      "Arts"
+    ]
+  },
+  {
+    "title": "Brown University Pre-College Programs",
+    "description": "Experience college, prepare for academic success, and make friends from around the world. Multiple sessions 1-7 weeks, 300+ courses on campus, online, and abroad. Grades 9-12.",
+    "url": "https://precollege.brown.edu/",
+    "location": "Providence, RI",
+    "categories": [
+      "Academic Programs",
+      "International"
+    ]
+  },
+  {
+    "title": "UCLA Summer Programs",
+    "description": "UCLA opens doors to high school students in welcoming environment appreciating diversity and global perspectives. Grades 9-12.",
+    "url": "https://www.summer.ucla.edu",
+    "location": "Los Angeles, CA",
+    "categories": [
+      "Academic Programs",
+      "Diversity"
+    ]
+  },
+  {
+    "title": "UCLA Game Lab Summer Institute",
+    "description": "Introduces high school students to game-making as artistic practice, teaching techniques and tools for analog and digital games. No previous game-making skills required. Grades 9-12.",
+    "url": "https://games.ucla.edu/gamelab/",
+    "location": "Los Angeles, CA",
+    "categories": [
+      "Arts",
+      "Technology",
+      "Game Design"
+    ]
+  },
+  {
+    "title": "UC San Diego Summer Programs",
+    "description": "Summer academic programs for high school students to explore university-level coursework and campus life. Grades 9-12.",
+    "url": "https://extension.ucsd.edu/",
+    "location": "San Diego, CA",
+    "categories": [
+      "Academic Programs"
+    ]
+  },
+  {
+    "title": "Carleton College Liberal Arts Experience (CLAE)",
+    "description": "One-week summer program for 52 high school students who completed sophomore year, all expenses paid. Introduces strengths of liberal arts education through science, art, social sciences, and technology. Grade 10.",
+    "url": "https://www.carleton.edu/summer/clae/",
+    "location": "Northfield, MN",
+    "categories": [
+      "Liberal Arts",
+      "Academic Programs"
+    ]
+  },
+  {
+    "title": "Carnegie Mellon University Pre-College",
+    "description": "Summer Pre-College programs showing life at Carnegie Mellon from classroom to weekends. Meet people worldwide, learn from world-renowned faculty, explore Pittsburgh. Grades 10-11.",
+    "url": "https://www.cmu.edu/pre-college/",
+    "location": "Pittsburgh, PA",
+    "categories": [
+      "Academic Programs",
+      "Technology"
+    ]
+  },
+  {
+    "title": "University of Chicago Summer Programs",
+    "description": "Immerse in college experience raising interests and abilities to new levels. Learn from scholars, researchers, and educators transforming how we see our world. Grades 9-12.",
+    "url": "https://summer.uchicago.edu",
+    "location": "Chicago, IL",
+    "categories": [
+      "Academic Programs",
+      "Research"
+    ]
+  },
+  {
+    "title": "Columbia University Summer High School Program",
+    "description": "Intensive academic experience on Columbia's campus with college-level courses taught by Columbia faculty and graduate students.",
+    "url": "https://www.ce.columbia.edu/high-school",
+    "location": "New York, NY",
+    "categories": [
+      "Academic Programs",
+      "Ivy League"
+    ]
+  },
+  {
+    "title": "Cornell University Summer Programs",
+    "description": "Pre-college programs offering high school students opportunity to experience Cornell's academic environment and campus life.",
+    "url": "https://www.sce.cornell.edu/sc/",
+    "location": "Ithaca, NY",
+    "categories": [
+      "Academic Programs",
+      "Ivy League"
+    ]
+  },
+  {
+    "title": "Harvard University Summer Programs",
+    "description": "Rigorous academic programs allowing high school students to experience Harvard's intellectual environment and campus community.",
+    "url": "https://www.summer.harvard.edu/high-school-programs",
+    "location": "Cambridge, MA",
+    "categories": [
+      "Academic Programs",
+      "Ivy League"
+    ]
+  },
+  {
+    "title": "Johns Hopkins Center for Talented Youth",
+    "description": "Intensive academic programs for academically talented students to explore advanced topics and accelerate learning.",
+    "url": "https://cty.jhu.edu/",
+    "location": "Baltimore, MD and other locations",
+    "categories": [
+      "Gifted Education",
+      "Academic Programs"
+    ]
+  },
+  {
+    "title": "MIT Summer Programs",
+    "description": "Various programs exposing high school students to MIT's cutting-edge research and academic environment in science, technology, engineering, and mathematics.",
+    "url": "https://web.mit.edu/summerprograms/",
+    "location": "Cambridge, MA",
+    "categories": [
+      "STEM",
+      "Research",
+      "Academic Programs"
+    ]
+  },
+  {
+    "title": "Stanford University Summer College",
+    "description": "Intensive academic experience allowing high school students to take college-level courses and experience Stanford campus life.",
+    "url": "https://summerinstitutes.spcs.stanford.edu/",
+    "location": "Stanford, CA",
+    "categories": [
+      "Academic Programs",
+      "Research"
+    ]
+  },
+  {
+    "title": "Research Science Institute (RSI)",
+    "description": "Six-week, cost-free program at MIT for students to conduct original research projects with mentors. Widely regarded as most prestigious science program for high schoolers.",
+    "url": "https://www.cee.org/programs/rsi",
+    "location": "Cambridge, MA",
+    "categories": [
+      "STEM",
+      "Research",
+      "Prestigious"
+    ]
+  },
+  {
+    "title": "NASA High School Aerospace Scholars",
+    "description": "Interactive online learning experience highlighted by six-day internship where students study math, science, engineering, or computer science by interacting with NASA engineers.",
+    "url": "https://www.nasa.gov/learning-resources/nasa-high-school-aerospace-scholars/",
+    "location": "NASA Johnson Space Center, Houston, TX",
+    "categories": [
+      "STEM",
+      "Aerospace",
+      "NASA"
+    ]
+  },
+  {
+    "title": "Telluride Association Summer Program (TASP)",
+    "description": "Six-week educational experience offering challenges and rewards rarely encountered in secondary school or college. All expenses paid. Very prestigious program.",
+    "url": "https://www.tellurideassociation.org/high-school-students/tasp/",
+    "location": "Cornell University and University of Michigan",
+    "categories": [
+      "Humanities",
+      "Academic Programs",
+      "Prestigious"
+    ]
+  },
+  {
+    "title": "Boston University Summer Challenge Program",
+    "description": "General academic summer program for high school students to experience college-level coursework and campus life with comprehensive support services.",
+    "url": "https://www.bu.edu/summer/high-school-programs/summer-challenge",
+    "location": "Boston, MA",
+    "categories": [
+      "Academic Programs"
+    ]
+  },
+  {
+    "title": "Carleton College Liberal Arts Experience",
+    "description": "High school students who are current sophomores invited to one-week summer program at Carleton College, all expenses paid. Introduces liberal arts education strengths.",
+    "url": "https://apps.carleton.edu/summer/clae/",
+    "location": "Northfield, MN",
+    "categories": [
+      "Liberal Arts",
+      "All Expenses Paid"
+    ]
+  },
+  {
+    "title": "Carnegie Mellon Pre-College",
+    "description": "Summer Pre-College programs showing what life at Carnegie Mellon is about from classroom to weekends. Meet people from all over world, be inspired by world-renowned faculty.",
+    "url": "https://apps.carleton.edu/summer/clae/",
+    "location": "Pittsburgh, PA",
+    "categories": [
+      "Technology",
+      "Academic Programs"
+    ]
+  },
+  {
+    "title": "Research Science Institute (RSI)",
+    "description": "Six-week, cost-free program designed to kick-start careers of leadership in science, mathematics, engineering, and technology held at MIT. Most prestigious competitive science program for high school students.",
+    "url": "https://www.cee.org/programs/rsi",
+    "location": "Cambridge, MA",
+    "categories": [
+      "STEM",
+      "Research",
+      "Prestigious"
+    ]
+  },
+  {
+    "title": "Telluride Association Summer Program (TASP)",
+    "description": "Six-week educational experience for high school juniors offering challenges and rewards rarely encountered in secondary school or college. All expenses paid, very prestigious.",
+    "url": "https://www.tellurideassociation.org/programs/high_school_students/tasp/",
+    "location": "Cornell University and University of Michigan",
+    "categories": [
+      "Humanities",
+      "Prestigious",
+      "All Expenses Paid"
+    ]
+  },
+  {
+    "title": "Academic Study Associates/Summerfuel",
+    "description": "Independent academic summer program providing enriching educational experiences for motivated high school students.",
+    "url": "https://www.asaprograms.com",
+    "location": "Various locations",
+    "categories": [
+      "Academic Programs",
+      "Independent"
+    ]
+  },
+  {
+    "title": "Summer Institute for the Gifted",
+    "description": "Academic enrichment program designed for intellectually gifted and academically talented students to explore advanced topics.",
+    "url": "https://www.giftedstudy.com",
+    "location": "Various university campuses",
+    "categories": [
+      "Gifted Education",
+      "Academic Programs"
+    ]
+  },
+  {
+    "title": "Education Unlimited",
+    "description": "Summer programs offering academic enrichment and college preparation experiences for high school students.",
+    "url": "https://www.educationunlimited.com",
+    "location": "California university campuses",
+    "categories": [
+      "Academic Programs",
+      "College Prep"
+    ]
+  },
+  {
+    "title": "Summer Discovery",
+    "description": "Pre-college summer programs on prestigious university campuses offering academic courses and college preparation.",
+    "url": "https://www.summerdiscovery.com",
+    "location": "Various university campuses",
+    "categories": [
+      "Academic Programs",
+      "College Prep"
+    ]
+  },
+  {
+    "title": "MD Anderson High School Summer Program",
+    "description": "Eight-week summer program for graduating high school seniors at University of Texas MD Anderson Cancer Center. Introduces qualified young Texans to research environment and biomedical sciences careers. 20 students selected.",
+    "url": "https://www.mdanderson.org/education-and-research/education-and-training/schools-and-programs/summer-science-programs/high-school-summer-program.html",
+    "location": "Houston, TX",
+    "categories": [
+      "STEM",
+      "Medical",
+      "Research"
+    ]
+  },
+  {
+    "title": "Summer Science Program (SSP)",
+    "description": "Residential enrichment program where gifted high school students complete challenging, hands-on research project in celestial mechanics. Learn college-level astronomy, physics, calculus, and programming by day, take telescopic observations by night.",
+    "url": "https://www.summerscience.org/home/index.php",
+    "location": "Various locations",
+    "categories": [
+      "STEM",
+      "Astronomy",
+      "Research"
+    ]
+  },
+  {
+    "title": "Baylor High School Summer Science Research Program",
+    "description": "Gives superior high school students hands-on research experience working on projects with Baylor University science professors across many disciplines. Occurs during university's first summer session.",
+    "url": "https://www.baylor.edu/summerscience/",
+    "location": "Waco, TX",
+    "categories": [
+      "STEM",
+      "Research",
+      "University Partnership"
+    ]
+  },
+  {
+    "title": "Research Science Institute (RSI)",
+    "description": "Six-week, cost-free program designed to kick-start careers of leadership in science, mathematics, engineering, and technology held at MIT. Widely regarded as 'most prestigious competitive science program for high school students in the nation'.",
+    "url": "https://www.cee.org/programs/rsi",
+    "location": "Cambridge, MA",
+    "categories": [
+      "STEM",
+      "Research",
+      "Prestigious"
+    ]
+  },
+  {
+    "title": "Telluride Association Summer Program (TASP)",
+    "description": "Six-week educational experience for high school juniors offering challenges and rewards rarely encountered in secondary school or college. All expenses paid. Very prestigious program with many students moving to Ivy League schools.",
+    "url": "https://www.tellurideassociation.org/programs/high_school_students/tasp/",
+    "location": "Cornell University and University of Michigan",
+    "categories": [
+      "Humanities",
+      "Prestigious",
+      "All Expenses Paid"
+    ]
+  },
+  {
+    "title": "Mickey Leland Kibbutzim Internship",
+    "description": "Non-profit leadership program significantly changing lives of Houston high school students. Helps send students to Israel during summer of junior year for life-changing experience. Students must live in Texas' 18th Congressional District.",
+    "url": "https://www.mickeylelandkibbutzim.org",
+    "location": "Israel",
+    "categories": [
+      "Leadership",
+      "International",
+      "Cultural Exchange"
+    ]
+  },
+  {
+    "title": "Asian American Journalists Association J Camp",
+    "description": "Six-day training camp bringing together multicultural group of high school students nationwide to sharpen journalism skills. No fee to apply, all costs covered including airfare, lodging, and meals. Open to all ethnicities.",
+    "url": "https://www.aaja.org/programs/for_students/journalism_trainings/j_camp",
+    "location": "Various locations",
+    "categories": [
+      "Journalism",
+      "Media",
+      "All Expenses Paid"
+    ]
+  },
+  {
+    "title": "British American Foundation of Texas Junior Achievers Award",
+    "description": "2-4 week study abroad program in United Kingdom for low-income families in Houston area. Students must be 16-17 years old.",
+    "url": "https://www.britishamericanfoundationoftexas.org/",
+    "location": "United Kingdom",
+    "categories": [
+      "Study Abroad",
+      "International",
+      "Financial Need"
+    ]
+  },
+  {
+    "title": "National Hispanic Youth Initiative Program",
+    "description": "For current Hispanic 10th and 11th graders considering career in health care or biomedical research. Eight-day program held in Washington DC providing intensive exposure to healthcare fields.",
+    "url": "https://icps.org/",
+    "location": "Washington, DC",
+    "categories": [
+      "Healthcare",
+      "STEM",
+      "Hispanic Students"
+    ]
+  },
+  {
+    "title": "West Point Summer Leaders Seminar",
+    "description": "Week-long immersion in academic, military and social life for those considering West Point. Explore West Point from all angles including intense military training and athletic activities.",
+    "url": "https://admissions.usma.edu/summer_program.html",
+    "location": "West Point, NY",
+    "categories": [
+      "Military",
+      "Leadership",
+      "Academic Programs"
+    ]
+  },
+  {
+    "title": "NASA High School Aerospace Scholars",
+    "description": "Interactive online learning experience highlighted by six-day internship where selected students study math, science, engineering, or computer science by interacting with engineers at NASA Johnson Space Center. Must be 16+ and junior in high school.",
+    "url": "https://aerospacescholars.jsc.nasa.gov/",
+    "location": "Houston, TX (NASA Johnson Space Center)",
+    "categories": [
+      "STEM",
+      "Aerospace",
+      "NASA"
+    ]
+  },
+  {
+    "title": "Bank of America Student Leaders Internship",
+    "description": "Eight-week paid internship at nonprofit/charitable organization in Houston plus week-long Student Leadership Summit in Washington, DC (all expenses paid). Gain valuable civic, social and business leadership skills.",
+    "url": "https://www.bankofamerica.com/neistudentleaders",
+    "location": "Houston, TX and Washington, DC",
+    "categories": [
+      "Leadership",
+      "Paid Internship",
+      "Civic Engagement"
+    ]
+  },
+  {
+    "title": "Carleton College Liberal Arts Experience (CLAE)",
+    "description": "High school students who are current sophomores invited to one-week summer program at Carleton College, all expenses paid. Introduces strengths of liberal arts education through science, art, social sciences, and technology.",
+    "url": "https://apps.carleton.edu/summer/clae/",
+    "location": "Northfield, MN",
+    "categories": [
+      "Liberal Arts",
+      "All Expenses Paid",
+      "Academic Programs"
+    ]
+  },
+  {
+    "title": "Duke University Talent Identification Program Field Studies",
+    "description": "Advanced-level coursework allowing students to study from experts in their fields and gain international experience. Programs include clinical psychology, archaeology, music, creative writing, and filmmaking.",
+    "url": "https://www.tip.duke.edu/",
+    "location": "Various locations including international",
+    "categories": [
+      "Academic Programs",
+      "International",
+      "Arts"
+    ]
+  },
+  {
+    "title": "Junior Statesman Foundation Summer Programs",
+    "description": "Opportunity for outstanding freshmen, sophomores, and juniors with interest in politics and current events. Learn about politics and government in dynamic academic environment on Georgetown, Princeton, and Stanford campuses.",
+    "url": "https://jsa.org/summer-programs/",
+    "location": "Georgetown, Princeton, Stanford",
+    "categories": [
+      "Politics",
+      "Government",
+      "Leadership"
+    ]
+  },
+  {
+    "title": "Close Up Summer High School Program",
+    "description": "Six-day program giving in-depth look at government using Washington, DC as living classroom. Opportunity to earn college credit from University of Virginia. Multiple summer programs available.",
+    "url": "https://www.closeup.org/programs/hsexplore.aspx",
+    "location": "Washington, DC",
+    "categories": [
+      "Government",
+      "Civics",
+      "College Credit"
+    ]
+  }
+]

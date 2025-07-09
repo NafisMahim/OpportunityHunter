@@ -27,6 +27,7 @@ export const opportunities = pgTable("opportunities", {
   relevancyScore: integer("relevancy_score").default(0),
   requirements: text("requirements").array().default([]),
   tags: text("tags").array().default([]),
+  categories: text("categories").array().default([]),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
