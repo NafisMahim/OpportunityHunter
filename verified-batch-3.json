@@ -1,0 +1,429 @@
+[
+  {
+    "title": "Senate Youth Program (USSYP)",
+    "description": "$10,000 scholarship plus week-long Washington D.C. program for outstanding high school students interested in government service. Two students selected per state.",
+    "organization": "The Hearst Foundations",
+    "location": "Washington, D.C.",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "October 2025",
+    "url": "https://ussenateyouth.org/",
+    "relevancyScore": 98,
+    "requirements": [
+      "Junior or senior",
+      "Student government/civic activity leadership"
+    ],
+    "tags": [
+      "Government",
+      "Public Service",
+      "Leadership"
+    ],
+    "categories": [
+      "Government"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Boys/Girls State Program",
+    "description": "Week-long civic education program teaching government operations through hands-on activities. Available in all 50 states with scholarship opportunities.",
+    "organization": "American Legion",
+    "location": "State Programs",
+    "type": "internship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Spring applications",
+    "url": "https://www.legion.org/boysstategirlsstate",
+    "relevancyScore": 92,
+    "requirements": [
+      "Rising seniors",
+      "School/community nomination"
+    ],
+    "tags": [
+      "Government",
+      "Civic Education"
+    ],
+    "categories": [
+      "Government"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Congressional Awards Program",
+    "description": "Congress's award for young people recognizing achievements in voluntary public service, personal development, physical fitness, and expedition/exploration.",
+    "organization": "U.S. Congress",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Ongoing enrollment",
+    "url": "https://www.congressionalaward.org/",
+    "relevancyScore": 89,
+    "requirements": [
+      "Ages 13.5-24",
+      "Service and activity hours"
+    ],
+    "tags": [
+      "Public Service",
+      "Leadership"
+    ],
+    "categories": [
+      "Government"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Model United Nations Conference",
+    "description": "Educational simulation of UN proceedings for high school and college students. National conferences with scholarship opportunities for outstanding delegates.",
+    "organization": "United Nations Association",
+    "location": "Various Cities",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Conference registration deadlines",
+    "url": "https://www.unausa.org/global-classrooms-model-un/",
+    "relevancyScore": 86,
+    "requirements": [
+      "High school students",
+      "International affairs interest"
+    ],
+    "tags": [
+      "International Affairs",
+      "Diplomacy"
+    ],
+    "categories": [
+      "International Affairs"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "National Security Language Initiative for Youth (NSLI-Y)",
+    "description": "State Department program providing scholarships for U.S. high school students to learn critical languages abroad with full funding.",
+    "organization": "U.S. Department of State",
+    "location": "International",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "November 2025",
+    "url": "https://www.nsliforyouth.org/",
+    "relevancyScore": 96,
+    "requirements": [
+      "U.S. citizens",
+      "15-18 years old",
+      "Academic excellence"
+    ],
+    "tags": [
+      "Languages",
+      "International",
+      "State Department"
+    ],
+    "categories": [
+      "International Affairs"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Youth for Understanding (YFU) Exchange Scholarships",
+    "description": "International exchange program scholarships for high school students to study abroad. Over $1 million in scholarships available annually.",
+    "organization": "Youth for Understanding USA",
+    "location": "International",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "March 15, 2025",
+    "url": "https://www.yfu.org/",
+    "relevancyScore": 91,
+    "requirements": [
+      "High school students",
+      "Academic and leadership criteria"
+    ],
+    "tags": [
+      "Study Abroad",
+      "International"
+    ],
+    "categories": [
+      "International Affairs"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Scholastic Journalism Educators Association Contests",
+    "description": "National high school journalism competitions with scholarship awards for writing, photography, design, and multimedia journalism.",
+    "organization": "Journalism Education Association",
+    "location": "National Competition",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "February 2025",
+    "url": "https://jea.org/",
+    "relevancyScore": 84,
+    "requirements": [
+      "High school students",
+      "Journalism coursework or experience"
+    ],
+    "tags": [
+      "Journalism",
+      "Writing",
+      "Media"
+    ],
+    "categories": [
+      "Journalism"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "Student Press Law Center Scholarships",
+    "description": "Scholarships for high school students pursuing journalism with focus on First Amendment and media law education.",
+    "organization": "Student Press Law Center",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "April 2025",
+    "url": "https://splc.org/",
+    "relevancyScore": 82,
+    "requirements": [
+      "High school journalism students",
+      "First Amendment interest"
+    ],
+    "tags": [
+      "Journalism",
+      "Law",
+      "First Amendment"
+    ],
+    "categories": [
+      "Journalism"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "CyberPatriot National Youth Cyber Defense Competition",
+    "description": "National cyber defense competition for high school and middle school students. Scholarships and recognition for cybersecurity skills.",
+    "organization": "Air Force Association",
+    "location": "National Competition",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Team registration deadline",
+    "url": "https://www.uscyberpatriot.org/",
+    "relevancyScore": 94,
+    "requirements": [
+      "Team competition",
+      "Cybersecurity interest"
+    ],
+    "tags": [
+      "Cybersecurity",
+      "Technology",
+      "Computer Science"
+    ],
+    "categories": [
+      "Computer Science"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Technology Student Association (TSA) National Conference",
+    "description": "National STEM competition with 70+ events covering engineering, technology, computer science, and design for middle and high school students.",
+    "organization": "Technology Student Association",
+    "location": "National Conference",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "State qualification required",
+    "url": "https://tsaweb.org/",
+    "relevancyScore": 93,
+    "requirements": [
+      "TSA member",
+      "State competition advancement"
+    ],
+    "tags": [
+      "Technology",
+      "Engineering",
+      "STEM"
+    ],
+    "categories": [
+      "Technology"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Congressional App Challenge",
+    "description": "Nationwide competition encouraging students to learn coding by creating their own apps. Congressional recognition and prizes for winners.",
+    "organization": "U.S. House of Representatives",
+    "location": "Congressional Districts",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "November 1, 2025",
+    "url": "https://www.congressionalappchallenge.us/",
+    "relevancyScore": 90,
+    "requirements": [
+      "Middle/high school students",
+      "App development project"
+    ],
+    "tags": [
+      "Programming",
+      "App Development",
+      "Technology"
+    ],
+    "categories": [
+      "Computer Science"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "National FFA Convention Career Show",
+    "description": "Largest student convention in the country for agricultural education students. Career opportunities, competitions, and scholarship awards.",
+    "organization": "National FFA Organization",
+    "location": "Indianapolis, IN",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Chapter participation required",
+    "url": "https://www.ffa.org/",
+    "relevancyScore": 88,
+    "requirements": [
+      "FFA chapter member",
+      "Agricultural education student"
+    ],
+    "tags": [
+      "Agriculture",
+      "Career Development"
+    ],
+    "categories": [
+      "Agriculture"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "4-H National Youth Science Day",
+    "description": "Hands-on science activities and competitions for youth interested in STEM and agriculture. County, state, and national recognition opportunities.",
+    "organization": "4-H Youth Development",
+    "location": "National/Local",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "October 2025",
+    "url": "https://4-h.org/",
+    "relevancyScore": 85,
+    "requirements": [
+      "4-H member or participant",
+      "Ages 5-18"
+    ],
+    "tags": [
+      "Agriculture",
+      "Science",
+      "Youth Development"
+    ],
+    "categories": [
+      "Agriculture"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "National Art Honor Society Scholarships",
+    "description": "Scholarships for high school students demonstrating outstanding ability and achievement in art. Local and national recognition programs.",
+    "organization": "National Art Education Association",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "February 2025",
+    "url": "https://www.arteducators.org/learn-tools/national-art-honor-society",
+    "relevancyScore": 83,
+    "requirements": [
+      "NAHS member",
+      "Art portfolio"
+    ],
+    "tags": [
+      "Visual Arts",
+      "Art Education"
+    ],
+    "categories": [
+      "Fine Arts"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "National Thespian Society Festival",
+    "description": "National theatre festival for high school students with workshops, performances, scholarships, and college recruiting opportunities.",
+    "organization": "Educational Theatre Association",
+    "location": "National Festival",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "School delegation registration",
+    "url": "https://www.schooltheatre.org/",
+    "relevancyScore": 86,
+    "requirements": [
+      "Thespian Society member",
+      "Theatre experience"
+    ],
+    "tags": [
+      "Theatre",
+      "Performing Arts"
+    ],
+    "categories": [
+      "Fine Arts"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Siemens Foundation STEM Scholarships",
+    "description": "Scholarships supporting underrepresented students pursuing STEM fields with focus on increasing diversity in science and technology.",
+    "organization": "Siemens Foundation",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Spring 2025",
+    "url": "https://www.siemens-foundation.org/",
+    "relevancyScore": 91,
+    "requirements": [
+      "Underrepresented groups in STEM",
+      "Academic achievement"
+    ],
+    "tags": [
+      "STEM",
+      "Diversity",
+      "Science"
+    ],
+    "categories": [
+      "STEM"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "Exploravision Science Competition",
+    "description": "Science competition for K-12 students to envision and communicate technology of the future. $10,000+ in prizes for winning teams.",
+    "organization": "National Science Teachers Association",
+    "location": "National Competition",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "February 2025",
+    "url": "https://www.exploravision.org/",
+    "relevancyScore": 87,
+    "requirements": [
+      "Teams of 2-4 students",
+      "Grades K-12"
+    ],
+    "tags": [
+      "Science",
+      "Innovation",
+      "Future Technology"
+    ],
+    "categories": [
+      "Science"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "eCYBERMISSION STEM Competition",
+    "description": "Web-based science, technology, engineering, and mathematics competition for teams of 6th-9th grade students. $5,000 team awards plus individual recognition.",
+    "organization": "U.S. Army Educational Outreach Program",
+    "location": "Online Competition",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "February 2025",
+    "url": "https://www.ecybermission.com/",
+    "relevancyScore": 89,
+    "requirements": [
+      "Teams of 3-4 students",
+      "Grades 6-9",
+      "STEM project"
+    ],
+    "tags": [
+      "STEM",
+      "Middle School",
+      "Team Competition"
+    ],
+    "categories": [
+      "STEM"
+    ],
+    "isRemote": true
+  }
+]

@@ -1,0 +1,194 @@
+[
+  {
+    "title": "Research Science Institute (RSI)",
+    "description": "Premier summer research program at MIT for 80 exceptional high school students worldwide. Free 6-week intensive research experience with renowned scientists.",
+    "organization": "Center for Excellence in Education",
+    "location": "Cambridge, MA",
+    "type": "internship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "January 2025",
+    "url": "https://www.cee.org/research-science-institute",
+    "relevancyScore": 99,
+    "requirements": [
+      "Rising seniors",
+      "Exceptional academic record",
+      "STEM focus"
+    ],
+    "tags": [
+      "Research",
+      "STEM",
+      "MIT"
+    ],
+    "categories": [
+      "STEM"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Summer Science Program (SSP)",
+    "description": "Intensive 39-day program in astrophysics and biochemistry. Students conduct original research projects while earning college credit.",
+    "organization": "Summer Science Program",
+    "location": "Multiple Universities",
+    "type": "internship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "March 2025",
+    "url": "https://summerscience.org/",
+    "relevancyScore": 96,
+    "requirements": [
+      "Rising seniors",
+      "Strong STEM background"
+    ],
+    "tags": [
+      "Astrophysics",
+      "Biochemistry",
+      "Research"
+    ],
+    "categories": [
+      "STEM"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Telluride Association Summer Program (TASP)",
+    "description": "Prestigious 6-week summer program for rising seniors with full scholarships. Deep engagement with original texts and intense discussions.",
+    "organization": "Telluride Association",
+    "location": "Multiple Universities",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "January 2025",
+    "url": "https://www.tellurideassociation.org/our-programs/high-school-students/",
+    "relevancyScore": 97,
+    "requirements": [
+      "Rising seniors",
+      "Exceptional academic record"
+    ],
+    "tags": [
+      "Liberal Arts",
+      "Critical Thinking",
+      "Philosophy"
+    ],
+    "categories": [
+      "Liberal Arts"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Google Summer of Code",
+    "description": "Global program offering student developers stipends to write code for various open source software projects with mentoring organizations.",
+    "organization": "Google",
+    "location": "Online/Global",
+    "type": "internship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "April 2025",
+    "url": "https://summerofcode.withgoogle.com/",
+    "relevancyScore": 95,
+    "requirements": [
+      "18+ years old",
+      "Programming experience"
+    ],
+    "tags": [
+      "Open Source",
+      "Programming",
+      "Google"
+    ],
+    "categories": [
+      "Computer Science"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "MITES at MIT",
+    "description": "MIT's rigorous 6-week summer program for underrepresented high school students interested in engineering and science careers.",
+    "organization": "MIT",
+    "location": "Cambridge, MA",
+    "type": "internship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "February 1, 2025",
+    "url": "https://oeop.mit.edu/programs/mites",
+    "relevancyScore": 98,
+    "requirements": [
+      "Rising seniors",
+      "Underrepresented minorities",
+      "Strong academics"
+    ],
+    "tags": [
+      "Engineering",
+      "Diversity",
+      "MIT"
+    ],
+    "categories": [
+      "Engineering"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Diamond Challenge for High School Entrepreneurs",
+    "description": "Global competition for high school students to submit business concepts for social good or innovative market solutions.",
+    "organization": "University of Delaware",
+    "location": "Global Competition",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "January 2025",
+    "url": "https://diamondchallenge.org/",
+    "relevancyScore": 91,
+    "requirements": [
+      "High school students",
+      "Business concept submission"
+    ],
+    "tags": [
+      "Social Entrepreneurship",
+      "Innovation"
+    ],
+    "categories": [
+      "Business"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "Critical Language Scholarship Program",
+    "description": "Intensive overseas language and cultural immersion program for undergraduate and graduate students in critical foreign languages.",
+    "organization": "U.S. Department of State",
+    "location": "International",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "November 2025",
+    "url": "https://clscholarship.org/",
+    "relevancyScore": 96,
+    "requirements": [
+      "Undergraduate/graduate students",
+      "U.S. citizenship"
+    ],
+    "tags": [
+      "Foreign Languages",
+      "Cultural Immersion"
+    ],
+    "categories": [
+      "International Affairs"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Interlochen Arts Academy Summer Programs",
+    "description": "Premier arts education programs in music, theater, dance, creative writing, and visual arts with scholarships available.",
+    "organization": "Interlochen Center for the Arts",
+    "location": "Interlochen, MI",
+    "type": "internship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Priority deadline March 1",
+    "url": "https://camp.interlochen.org/",
+    "relevancyScore": 94,
+    "requirements": [
+      "Middle and high school students",
+      "Artistic talent"
+    ],
+    "tags": [
+      "Performing Arts",
+      "Visual Arts",
+      "Creative Writing"
+    ],
+    "categories": [
+      "Fine Arts"
+    ],
+    "isRemote": false
+  }
+]

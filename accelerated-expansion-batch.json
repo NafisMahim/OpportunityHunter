@@ -1,0 +1,489 @@
+[
+  {
+    "title": "California MESA Schools Program",
+    "description": "Mathematics, Engineering, Science Achievement program for underrepresented students with competitions and university partnerships.",
+    "organization": "University of California",
+    "location": "California",
+    "type": "internship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "School enrollment required",
+    "url": "https://mesa.ucop.edu/",
+    "relevancyScore": 87,
+    "requirements": [
+      "California students",
+      "STEM interest",
+      "Underrepresented groups"
+    ],
+    "tags": [
+      "STEM",
+      "California",
+      "Diversity"
+    ],
+    "categories": [
+      "STEM"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Texas Science Talent Search",
+    "description": "Statewide science research competition for Texas high school students with university scholarships and research opportunities.",
+    "organization": "Texas Science Talent Search",
+    "location": "Texas",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "February 2025",
+    "url": "https://www.txsts.org/",
+    "relevancyScore": 86,
+    "requirements": [
+      "Texas residents",
+      "Science research project"
+    ],
+    "tags": [
+      "Science Research",
+      "Texas",
+      "State Competition"
+    ],
+    "categories": [
+      "Science"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "New York State Science Congress",
+    "description": "Annual science fair for New York students with regional and state-level competitions leading to international opportunities.",
+    "organization": "Science Teachers Association of New York State",
+    "location": "New York",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Regional deadlines vary",
+    "url": "https://www.stanys.org/",
+    "relevancyScore": 84,
+    "requirements": [
+      "New York students",
+      "Science project"
+    ],
+    "tags": [
+      "Science Fair",
+      "New York",
+      "Regional"
+    ],
+    "categories": [
+      "Science"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Florida Junior Science and Humanities Symposium",
+    "description": "Research presentation competition for Florida students with scholarships and recognition for outstanding scientific work.",
+    "organization": "Florida Academy of Sciences",
+    "location": "Florida",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "January 2025",
+    "url": "https://www.floridaacademyofsciences.org/",
+    "relevancyScore": 83,
+    "requirements": [
+      "Florida students",
+      "Research presentation"
+    ],
+    "tags": [
+      "Research",
+      "Florida",
+      "Science Symposium"
+    ],
+    "categories": [
+      "Science"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Institute of Electrical and Electronics Engineers (IEEE) Student Competitions",
+    "description": "Multiple student competitions in robotics, programming, and engineering design with cash prizes and recognition.",
+    "organization": "IEEE",
+    "location": "International",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Various competition deadlines",
+    "url": "https://www.ieee.org/membership/students/competitions/index.html",
+    "relevancyScore": 92,
+    "requirements": [
+      "Engineering/technology students",
+      "IEEE student membership"
+    ],
+    "tags": [
+      "Engineering",
+      "Technology",
+      "Professional Society"
+    ],
+    "categories": [
+      "Engineering"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "American Institute of Chemical Engineers (AIChE) Student Competitions",
+    "description": "Chemical engineering competitions including ChemE Jeopardy, Design Competition, and Research Presentations.",
+    "organization": "AIChE",
+    "location": "National Conference",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Conference registration deadlines",
+    "url": "https://www.aiche.org/students/awards-scholarships-competitions",
+    "relevancyScore": 89,
+    "requirements": [
+      "Chemical engineering students",
+      "Conference attendance"
+    ],
+    "tags": [
+      "Chemical Engineering",
+      "Design",
+      "Research"
+    ],
+    "categories": [
+      "Engineering"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "American Society of Mechanical Engineers (ASME) Student Competitions",
+    "description": "Mechanical engineering design competitions, innovation challenges, and technical presentations.",
+    "organization": "ASME",
+    "location": "Regional/National",
+    "type": "competition",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Competition-specific deadlines",
+    "url": "https://www.asme.org/students/competitions",
+    "relevancyScore": 88,
+    "requirements": [
+      "Mechanical engineering students",
+      "Design projects"
+    ],
+    "tags": [
+      "Mechanical Engineering",
+      "Design",
+      "Innovation"
+    ],
+    "categories": [
+      "Engineering"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Microsoft Scholarship Program",
+    "description": "Scholarships for students pursuing degrees in computer science, computer engineering, or related technical disciplines.",
+    "organization": "Microsoft Corporation",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "February 2025",
+    "url": "https://careers.microsoft.com/students/us/en/ur-scholarships",
+    "relevancyScore": 94,
+    "requirements": [
+      "Computer science/engineering majors",
+      "Demonstrated passion for technology"
+    ],
+    "tags": [
+      "Technology",
+      "Computer Science",
+      "Corporate"
+    ],
+    "categories": [
+      "Computer Science"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "Amazon Future Engineer Scholarship",
+    "description": "Four-year $40,000 scholarship plus paid internship opportunity for underserved students studying computer science.",
+    "organization": "Amazon",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "January 31, 2025",
+    "url": "https://www.amazonfutureengineer.com/scholarships",
+    "relevancyScore": 96,
+    "requirements": [
+      "Computer science major",
+      "Financial need",
+      "Underrepresented groups"
+    ],
+    "tags": [
+      "Computer Science",
+      "Diversity",
+      "Corporate"
+    ],
+    "categories": [
+      "Computer Science"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "Adobe Digital Academy Scholarships",
+    "description": "Scholarships and training programs for students from underrepresented communities pursuing careers in technology.",
+    "organization": "Adobe Systems",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "March 2025",
+    "url": "https://www.adobe.com/careers/university/digital-academy.html",
+    "relevancyScore": 90,
+    "requirements": [
+      "Technology focus",
+      "Underrepresented communities"
+    ],
+    "tags": [
+      "Technology",
+      "Digital Design",
+      "Diversity"
+    ],
+    "categories": [
+      "Technology"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "National Medical Fellowships (NMF) Scholarships",
+    "description": "Need and merit-based scholarships for underrepresented minority medical students pursuing careers in medicine.",
+    "organization": "National Medical Fellowships",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "September 2025",
+    "url": "https://nmfonline.org/",
+    "relevancyScore": 93,
+    "requirements": [
+      "Medical students",
+      "Underrepresented minorities",
+      "Financial need"
+    ],
+    "tags": [
+      "Medicine",
+      "Diversity",
+      "Healthcare"
+    ],
+    "categories": [
+      "Healthcare"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "American Dental Association (ADA) Foundation Scholarships",
+    "description": "Scholarships for dental students demonstrating academic excellence and financial need.",
+    "organization": "American Dental Association Foundation",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "October 2025",
+    "url": "https://www.adafoundation.org/en/how-we-help/scholarships",
+    "relevancyScore": 87,
+    "requirements": [
+      "Dental students",
+      "Academic merit",
+      "Financial need"
+    ],
+    "tags": [
+      "Dentistry",
+      "Healthcare",
+      "Professional"
+    ],
+    "categories": [
+      "Healthcare"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "National Art Education Association Scholarships",
+    "description": "Scholarships for students pursuing art education and teaching careers with various award amounts.",
+    "organization": "National Art Education Association",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "October 2025",
+    "url": "https://www.arteducators.org/learn-tools/awards-grants",
+    "relevancyScore": 81,
+    "requirements": [
+      "Art education students",
+      "Teaching career commitment"
+    ],
+    "tags": [
+      "Art Education",
+      "Teaching",
+      "Creative Arts"
+    ],
+    "categories": [
+      "Fine Arts"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "Screenwriters Federation of America Scholarships",
+    "description": "Scholarships and mentorship programs for aspiring screenwriters and filmmakers with industry connections.",
+    "organization": "Screenwriters Federation of America",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "June 2025",
+    "url": "https://www.screenwritersfederation.org/",
+    "relevancyScore": 78,
+    "requirements": [
+      "Screenwriting students",
+      "Portfolio submission"
+    ],
+    "tags": [
+      "Screenwriting",
+      "Film",
+      "Creative Writing"
+    ],
+    "categories": [
+      "Fine Arts"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "Fulbright U.S. Student Program",
+    "description": "Prestigious international educational exchange program providing funding for study, research, or teaching abroad.",
+    "organization": "U.S. Department of State",
+    "location": "International",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "October 2025",
+    "url": "https://us.fulbrightonline.org/",
+    "relevancyScore": 98,
+    "requirements": [
+      "Recent graduates/graduate students",
+      "U.S. citizenship"
+    ],
+    "tags": [
+      "International",
+      "Research",
+      "Cultural Exchange"
+    ],
+    "categories": [
+      "International Affairs"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Rhodes Scholarship",
+    "description": "International postgraduate awards for selected students to study at the University of Oxford in England.",
+    "organization": "Rhodes Trust",
+    "location": "Oxford, England",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "October 2025",
+    "url": "https://www.rhodeshouse.ox.ac.uk/scholarships/the-rhodes-scholarship/",
+    "relevancyScore": 99,
+    "requirements": [
+      "Outstanding academic achievement",
+      "Leadership",
+      "Service"
+    ],
+    "tags": [
+      "International",
+      "Oxford",
+      "Prestigious"
+    ],
+    "categories": [
+      "International Affairs"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "AmeriCorps VISTA Program",
+    "description": "Year-long volunteer service program focusing on building capacity for organizations to fight poverty in America.",
+    "organization": "AmeriCorps",
+    "location": "Nationwide",
+    "type": "internship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Rolling applications",
+    "url": "https://americorps.gov/serve/americorps-vista",
+    "relevancyScore": 85,
+    "requirements": [
+      "18+ years old",
+      "Service commitment",
+      "Background check"
+    ],
+    "tags": [
+      "Community Service",
+      "Poverty Alleviation",
+      "Volunteer"
+    ],
+    "categories": [
+      "Community Service"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "Peace Corps Volunteer Program",
+    "description": "International volunteer service program promoting world peace and friendship through community development work.",
+    "organization": "Peace Corps",
+    "location": "International",
+    "type": "internship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "Rolling applications",
+    "url": "https://www.peacecorps.gov/",
+    "relevancyScore": 91,
+    "requirements": [
+      "College degree",
+      "27-month commitment",
+      "U.S. citizenship"
+    ],
+    "tags": [
+      "International Service",
+      "Development",
+      "Cultural Exchange"
+    ],
+    "categories": [
+      "International Affairs"
+    ],
+    "isRemote": false
+  },
+  {
+    "title": "National Association of Realtors Scholarships",
+    "description": "Scholarships for students pursuing real estate education and careers in the real estate industry.",
+    "organization": "National Association of Realtors",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "March 2025",
+    "url": "https://www.nar.realtor/education-and-events/scholarships",
+    "relevancyScore": 76,
+    "requirements": [
+      "Real estate education focus",
+      "Career commitment"
+    ],
+    "tags": [
+      "Real Estate",
+      "Business",
+      "Industry-specific"
+    ],
+    "categories": [
+      "Business"
+    ],
+    "isRemote": true
+  },
+  {
+    "title": "National Restaurant Association Educational Foundation Scholarships",
+    "description": "Scholarships for students pursuing careers in restaurant, foodservice, and hospitality management.",
+    "organization": "National Restaurant Association Educational Foundation",
+    "location": "National",
+    "type": "scholarship",
+    "source": "Web Research 2025 - Verified",
+    "deadline": "March 31, 2025",
+    "url": "https://restaurant.org/nraef/scholarships/",
+    "relevancyScore": 79,
+    "requirements": [
+      "Foodservice/hospitality students",
+      "Industry commitment"
+    ],
+    "tags": [
+      "Hospitality",
+      "Restaurant Management",
+      "Culinary"
+    ],
+    "categories": [
+      "Business"
+    ],
+    "isRemote": true
+  }
+]

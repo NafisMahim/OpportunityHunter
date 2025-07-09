@@ -262,6 +262,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Remove broken opportunities endpoint
+  app.post("/api/opportunities/remove-broken", async (req, res) => {
+    try {
+      const { brokenURLs } = req.body;
+      if (!brokenURLs || !Array.isArray(brokenURLs)) {
+        return res.status(400).json({ message: "Invalid broken URLs data" });
+      }
+
+      let removed = 0;
+      const allOpportunities = await storage.getOpportunities();
+      
+      for (const url of brokenURLs) {
+        const opportunitiesToRemove = allOpportunities.filter(opp => opp.url === url);
+        for (const opp of opportunitiesToRemove) {
+          try {
+            await storage.deleteOpportunity(opp.id);
+            removed++;
+            console.log(`Removed broken opportunity: ${opp.title} - ${url}`);
+          } catch (error) {
+            console.log(`Failed to remove opportunity ${opp.id}: ${error.message}`);
+          }
+        }
+      }
+
+      const totalOpportunities = await storage.getOpportunities();
+      
+      res.json({
+        removed,
+        total: totalOpportunities.length,
+        message: `Successfully removed ${removed} broken opportunities`
+      });
+    } catch (error) {
+      console.error('Remove broken opportunities error:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // MASSIVE Scholarship Extraction from HTML files
   app.post("/api/import-scholarships", async (req, res) => {
     try {
