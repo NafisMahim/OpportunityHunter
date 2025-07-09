@@ -496,6 +496,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // New High School Opportunities Import Route
+  app.post("/api/import-new-high-school", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      await storage.createActivity({
+        userId,
+        message: "🎓 Started importing new high school opportunities from attached CSV and text files",
+        type: "import",
+      });
+
+      res.json({ message: "New high school opportunities import started - processing 5 files" });
+
+      // Import new high school opportunities in background
+      import('./data-importer').then(({ dataImporter }) => {
+        return dataImporter.importNewHighSchoolOpportunities();
+      }).then(async () => {
+        await storage.createActivity({
+          userId,
+          message: "🎯 Successfully imported all new high school opportunities from CSV and text files",
+          type: "import",
+        });
+      }).catch(async (error) => {
+        console.error('New high school import error:', error);
+        await storage.createActivity({
+          userId,
+          message: "New high school import encountered an error. Check file format.",
+          type: "error",
+        });
+      });
+
+    } catch (error) {
+      console.error('New high school import route error:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
   // Export route
   app.get("/api/users/:userId/export", async (req, res) => {
     try {

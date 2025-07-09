@@ -3677,6 +3677,174 @@ export class DataImporter {
     
     return [...new Set(tags)]; // Remove duplicates
   }
+
+  async importNewHighSchoolOpportunities(): Promise<void> {
+    console.log('🔄 Importing new high school opportunities from attached files...');
+    
+    const filesToProcess = [
+      'attached_assets/Pasted-Title-Description-Eligibility-Categories-Link-Dates-Location-Cost-Notes-Next-Gen-Internship-Jacobs-1752026983921_1752026983921.txt',
+      'attached_assets/Pasted-Title-Description-Eligibility-Category-Link-Dates-Location-Cost-StandOut-Connect-High-School-Intern-1752026996038_1752026996039.txt',
+      'attached_assets/high_school_opportunities_50_complete_1752027067129.csv',
+      'attached_assets/high_school_opportunities_csv_2_1752027067137.txt',
+      'attached_assets/high_school_opportunities_sample_1752027067137.csv'
+    ];
+    
+    let totalImported = 0;
+    
+    for (const filePath of filesToProcess) {
+      try {
+        if (fs.existsSync(filePath)) {
+          console.log(`📄 Processing ${path.basename(filePath)}...`);
+          
+          const content = fs.readFileSync(filePath, 'utf-8');
+          const opportunities = await this.parseHighSchoolOpportunityFile(content, filePath);
+          
+          for (const opportunity of opportunities) {
+            try {
+              await storage.createOpportunity(opportunity);
+              totalImported++;
+              console.log(`✓ Imported: ${opportunity.title}`);
+            } catch (error) {
+              console.log(`Duplicate skipped: ${opportunity.title}`);
+            }
+          }
+          
+          console.log(`✅ Successfully imported ${opportunities.length} opportunities from ${path.basename(filePath)}`);
+        } else {
+          console.log(`⚠️  File ${filePath} not found`);
+        }
+      } catch (error) {
+        console.error(`❌ Error processing ${filePath}:`, error);
+      }
+    }
+    
+    console.log(`🎉 Total imported: ${totalImported} new high school opportunities`);
+  }
+
+  private async parseHighSchoolOpportunityFile(content: string, filePath: string): Promise<InsertOpportunity[]> {
+    const opportunities: InsertOpportunity[] = [];
+    const lines = content.split('\n');
+    
+    if (lines.length < 2) return opportunities;
+    
+    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+    
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      try {
+        const values = this.parseCSVLine(line);
+        if (values.length < headers.length) continue;
+        
+        const data: Record<string, string> = {};
+        headers.forEach((header, index) => {
+          data[header] = values[index]?.trim().replace(/"/g, '') || '';
+        });
+        
+        // Skip if essential fields are missing
+        if (!data.Title || !data.Link || data.Title.length < 3) continue;
+        
+        const opportunity: InsertOpportunity = {
+          title: data.Title,
+          description: this.cleanDescription(data.Description || ''),
+          type: this.determineOpportunityType(data.Title, data.Description || '', data.Category || data['Major/Subject'] || data['Major/Subject focus']),
+          location: data.Location || 'Various',
+          salary: this.parseSalary(data.Cost || ''),
+          amount: data.Cost || null,
+          prize: null,
+          organization: this.extractOrganization(data.Title),
+          source: `High School Opportunities - ${path.basename(filePath)}`,
+          deadline: data.Deadline || data.Dates || null,
+          url: this.cleanUrl(data.Link),
+          relevancyScore: 85,
+          requirements: this.parseRequirements(data.Eligibility || data['Open To/Eligibility'] || ''),
+          tags: this.generateTags(data.Title, data.Category || data['Major/Subject'] || data['Major/Subject focus'], data.Description),
+          createdAt: new Date()
+        };
+        
+        opportunities.push(opportunity);
+      } catch (error) {
+        console.warn(`⚠️  Skipping malformed line ${i} in ${path.basename(filePath)}`);
+      }
+    }
+    
+    return opportunities;
+  }
+
+  private parseCSVLine(line: string): string[] {
+    const values: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    let i = 0;
+    
+    while (i < line.length) {
+      const char = line[i];
+      
+      if (char === '"' && !inQuotes) {
+        inQuotes = true;
+      } else if (char === '"' && inQuotes) {
+        if (i + 1 < line.length && line[i + 1] === '"') {
+          current += '"';
+          i++; // skip next quote
+        } else {
+          inQuotes = false;
+        }
+      } else if (char === ',' && !inQuotes) {
+        values.push(current);
+        current = '';
+      } else {
+        current += char;
+      }
+      
+      i++;
+    }
+    
+    values.push(current);
+    return values;
+  }
+
+  private cleanDescription(description: string): string {
+    if (!description) return '';
+    
+    // Remove content references
+    description = description.replace(/:contentReference\[oaicite:\d+\]\{index=\d+\}/g, '');
+    // Remove extra whitespace
+    description = description.replace(/\s+/g, ' ').trim();
+    
+    return description;
+  }
+
+  private cleanUrl(url: string): string {
+    if (!url) return '';
+    
+    // Remove any surrounding quotes or whitespace
+    url = url.trim().replace(/^["']|["']$/g, '');
+    
+    // Ensure URL has protocol
+    if (url && !url.startsWith('http')) {
+      url = 'https://' + url;
+    }
+    
+    return url;
+  }
+
+  private parseSalary(cost: string): number | null {
+    if (!cost) return null;
+    
+    // Check if it's explicitly paid
+    if (cost.toLowerCase().includes('paid') || cost.toLowerCase().includes('stipend')) {
+      return 1000; // Default stipend amount
+    }
+    
+    // Extract numeric value
+    const match = cost.match(/\$?(\d+(?:,\d+)?)/);
+    if (match) {
+      return parseInt(match[1].replace(',', ''));
+    }
+    
+    return null;
+  }
 }
 
 export const dataImporter = new DataImporter();
